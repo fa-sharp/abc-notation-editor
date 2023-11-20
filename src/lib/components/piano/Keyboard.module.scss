@@ -1,0 +1,11 @@
+.keyboard {
+  display: flex;
+  justify-content: center;
+
+  & > div {
+    display: flex;
+    overflow: auto;
+    padding: 8px;
+    height: 192px;
+  }
+}
