@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function Keyboard({ startKey, endKey }: Props) {
-  const { onAddNote } = useEditorContext();
+  const { onAddMidiNote } = useEditorContext();
 
   const [keys, setKeys] = useState(
     new Array<boolean>(endKey - startKey).fill(false)
@@ -28,7 +28,7 @@ export default function Keyboard({ startKey, endKey }: Props) {
               played={isPlayed}
               onKeyPlayed={() => {
                 setKeys((prev) => prev.with(idx, true));
-                onAddNote(midiNum);
+                onAddMidiNote(midiNum);
               }}
               onKeyReleased={() => {
                 setKeys((prev) => prev.with(idx, false));

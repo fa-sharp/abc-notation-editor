@@ -53,7 +53,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     setCurrentRhythm(value);
   }, []);
 
-  const onAddNote = useCallback(
+  const onAddMidiNote = useCallback(
     (midiNum: number) => {
       editorState.current.addMidiNote(midiNum, currentRhythm, {
         beamed,
@@ -68,6 +68,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   const onAddBarline = useCallback(() => {
     setAbc((prev) => prev + " | ");
   }, []);
+
   const onAddLineBreak = useCallback(() => {
     setAbc((prev) => prev + "\ny");
   }, []);
@@ -88,7 +89,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     changeRhythm,
     setBeamed,
     setRenderDiv,
-    onAddNote,
+    onAddMidiNote,
     onAddBarline,
     onAddLineBreak,
     onBackspace,
@@ -101,25 +102,3 @@ const { BaseContext, Provider } = createProvider(useEditor);
 
 export const useEditorContext = () => useContext(BaseContext);
 export const EditorProvider = Provider;
-
-function getAbcRhythm(currentRhythm: Rhythm, dotted: boolean) {
-  return !dotted
-    ? currentRhythm === Rhythm.Half
-      ? "4"
-      : currentRhythm === Rhythm.Quarter
-        ? "2"
-        : currentRhythm === Rhythm.Eighth
-          ? ""
-          : currentRhythm === Rhythm.Sixteenth
-            ? "/2"
-            : ""
-    : currentRhythm === Rhythm.Half
-      ? "6"
-      : currentRhythm === Rhythm.Quarter
-        ? "3"
-        : currentRhythm === Rhythm.Eighth
-          ? "3/2"
-          : currentRhythm === Rhythm.Sixteenth
-            ? "3/4"
-            : "";
-}

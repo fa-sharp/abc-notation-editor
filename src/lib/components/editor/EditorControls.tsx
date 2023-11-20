@@ -1,5 +1,14 @@
 import { useEditorContext } from "~src/lib/context/EditorContext";
+
+import HalfNoteIcon from "~src/lib/icons/HalfNote.svg";
+import QuarterNoteIcon from "~src/lib/icons/QuarterNote.svg";
+import EighthNoteIcon from "~src/lib/icons/EighthNote.svg";
+import SixteenthNoteIcon from "~src/lib/icons/SixteenthNote.svg";
+import DotIcon from "~src/lib/icons/Dot.svg";
+import ToggleRestIcon from "~src/lib/icons/ToggleRest.svg";
+
 import * as styles from "./EditorControls.module.css";
+import clsx from "clsx";
 
 export default function EditorControls() {
   const {
@@ -18,21 +27,58 @@ export default function EditorControls() {
 
   return (
     <div className={styles.controls}>
-      <button onClick={() => changeRhythm(2)} disabled={currentRhythm === 2}>
-        2
-      </button>
-      <button onClick={() => changeRhythm(4)} disabled={currentRhythm === 4}>
-        4
-      </button>
-      <button onClick={() => changeRhythm(8)} disabled={currentRhythm === 8}>
-        8
-      </button>
-      <button onClick={() => changeRhythm(16)} disabled={currentRhythm === 16}>
-        16
-      </button>
-      Dotted:{" "}
-      <input type="checkbox" checked={isDotted} onChange={onToggleDotted} />
-      Rest: <input type="checkbox" checked={isRest} onChange={onToggleRest} />
+      <div className={styles.controlGroup}>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentRhythm === 2,
+          })}
+          onClick={() => changeRhythm(2)}
+          disabled={currentRhythm === 2}
+        >
+          <HalfNoteIcon height={28} width={28} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentRhythm === 4,
+          })}
+          onClick={() => changeRhythm(4)}
+          disabled={currentRhythm === 4}
+        >
+          <QuarterNoteIcon height={28} width={28} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentRhythm === 8,
+          })}
+          onClick={() => changeRhythm(8)}
+          disabled={currentRhythm === 8}
+        >
+          <EighthNoteIcon height={28} width={28} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentRhythm === 16,
+          })}
+          onClick={() => changeRhythm(16)}
+          disabled={currentRhythm === 16}
+        >
+          <SixteenthNoteIcon height={28} width={28} />
+        </button>
+      </div>
+      <div className={styles.controlGroup}>
+        <button
+          className={clsx(styles.iconButton, { [styles.selected]: isDotted })}
+          onClick={onToggleDotted}
+        >
+          <DotIcon height={28} width={28} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, { [styles.selected]: isRest })}
+          onClick={onToggleRest}
+        >
+          <ToggleRestIcon height={28} width={28} />
+        </button>
+      </div>
       Beamed:{" "}
       <input
         type="checkbox"

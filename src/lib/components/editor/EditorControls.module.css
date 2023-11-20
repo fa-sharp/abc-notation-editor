@@ -1,3 +1,31 @@
 .controls {
   display: flex;
+  gap: 12px;
+}
+
+.controls > .controlGroup {
+  display: flex;
+  gap: 4px;
+}
+
+.controls .iconButton {
+  background: none;
+  border: solid 1px black;
+  border-radius: 50%;
+
+  height: 40px;
+  aspect-ratio: 1;
+}
+
+.controls button {
+  cursor: pointer;
+}
+
+.controls button:disabled {
+  background: rgb(152, 152, 152);
+  color: rgb(52, 52, 52);
+}
+
+.controls button.selected {
+  background-color: lightblue;
 }

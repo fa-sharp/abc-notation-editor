@@ -10,7 +10,7 @@ export default function BasicExample() {
       <Editor width={500} onChange={setAbc} />
       <br />
       Generated ABC:
-      <textarea readOnly rows={10} value={abc} />
+      <textarea readOnly rows={10} cols={50} value={abc} />
     </div>
   );
 }
