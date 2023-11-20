@@ -1,7 +1,7 @@
-import { TuneObject, VoiceItem, renderAbc } from "abcjs";
+import { VoiceItem, renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { AbcNotation, Midi } from "tonal";
+import EditorState from "./EditorState";
 
 enum Rhythm {
   Whole = 1,
@@ -16,10 +16,10 @@ interface Props {
   onChange?: (abc: string) => void;
 }
 
-const useEditorState = ({ staffWidth = 300, onChange = () => {} }: Props) => {
-  const [abc, setAbc] = useState("X:1\nL:1/8\n");
-  const [tuneObject, setTuneObject] = useState<TuneObject>();
-  const [tuneLines, setTuneLines] = useState<VoiceItem[][]>();
+const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
+  const editorState = useRef<EditorState>(new EditorState());
+  const [abc, setAbc] = useState(() => editorState.current.abc);
+
   const renderDiv = useRef<HTMLDivElement | null>(null);
   const setRenderDiv = useCallback(
     (div: HTMLDivElement | null) => (renderDiv.current = div),
@@ -42,9 +42,8 @@ const useEditorState = ({ staffWidth = 300, onChange = () => {} }: Props) => {
         if (items) arr.push(items);
         return arr;
       }, []);
-      console.log({ tuneObject, lines, abc });
-      setTuneObject(tuneObject);
-      setTuneLines(lines);
+      editorState.current.updateTuneData(lines);
+      console.log(editorState.current);
     }
     onChange(abc);
   }, [abc, staffWidth, onChange]);
@@ -56,17 +55,12 @@ const useEditorState = ({ staffWidth = 300, onChange = () => {} }: Props) => {
 
   const onAddNote = useCallback(
     (midiNum: number) => {
-      const abcNote = AbcNotation.scientificToAbcNotation(
-        Midi.midiToNoteName(midiNum)
-      );
-      setAbc(
-        (prev) =>
-          prev +
-          `${beamed ? "" : " "}${!rest ? abcNote : "z"}${getAbcRhythm(
-            currentRhythm,
-            dotted
-          )}`
-      );
+      editorState.current.addMidiNote(midiNum, currentRhythm, {
+        beamed,
+        dotted,
+        rest,
+      });
+      setAbc(editorState.current.abc);
     },
     [beamed, currentRhythm, dotted, rest]
   );
@@ -79,19 +73,9 @@ const useEditorState = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   }, []);
 
   const onBackspace = useCallback(() => {
-    if (!tuneLines) return;
-    const line = tuneLines[tuneLines.length - 1];
-    if (!line) return;
-    const lastItem = line[line.length - 1];
-    switch (lastItem?.el_type) {
-      case "bar":
-      case "note":
-        setAbc((abc) => abc.slice(0, lastItem.startChar));
-        break;
-      default:
-        break;
-    }
-  }, [tuneLines]);
+    editorState.current.backspace();
+    setAbc(editorState.current.abc);
+  }, []);
 
   const onToggleRest = useCallback(() => setRest((prev) => !prev), []);
   const onToggleDotted = useCallback(() => setDotted((prev) => !prev), []);
@@ -113,7 +97,7 @@ const useEditorState = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   };
 };
 
-const { BaseContext, Provider } = createProvider(useEditorState);
+const { BaseContext, Provider } = createProvider(useEditor);
 
 export const useEditorContext = () => useContext(BaseContext);
 export const EditorProvider = Provider;
