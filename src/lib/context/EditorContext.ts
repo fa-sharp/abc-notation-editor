@@ -2,8 +2,9 @@ import { VoiceItem, renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import EditorState from "./EditorState";
+import { useStaffListeners } from "./StaffClick";
 
-enum Rhythm {
+export enum Rhythm {
   Whole = 1,
   Half = 2,
   Quarter = 4,
@@ -31,22 +32,49 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   const [beamed, setBeamed] = useState(false);
   const [rest, setRest] = useState(false);
 
-  useEffect(() => {
-    if (renderDiv.current) {
-      const [tuneObject] = renderAbc(renderDiv.current, abc, {
-        staffwidth: staffWidth,
-        wrap: { minSpacing: 2, maxSpacing: 2.7, preferredMeasuresPerLine: 4 },
+  const onAddNamedNote = useCallback(
+    (noteName: string) => {
+      editorState.current.addNote(noteName, currentRhythm, {
+        beamed,
+        dotted,
+        rest,
       });
-      const lines = tuneObject.lines.reduce<VoiceItem[][]>((arr, line) => {
-        const items = line.staff?.[0]?.voices?.[0];
-        if (items) arr.push(items);
-        return arr;
-      }, []);
-      editorState.current.updateTuneData(lines);
-      console.log(editorState.current);
-    }
+      setAbc(editorState.current.abc);
+    },
+    [beamed, currentRhythm, dotted, rest]
+  );
+
+  const { setupStaffListeners } = useStaffListeners({
+    rhythm: currentRhythm,
+    onAddNote: onAddNamedNote,
+  });
+
+  useEffect(() => {
     onChange(abc);
-  }, [abc, staffWidth, onChange]);
+    if (!renderDiv.current) return;
+    const [tuneObject] = renderAbc(renderDiv.current, abc + "y", {
+      add_classes: true,
+      scale: 1.5,
+      staffwidth: staffWidth,
+      viewportHorizontal: true,
+      wrap: { minSpacing: 2, maxSpacing: 2.7, preferredMeasuresPerLine: 4 },
+    });
+    const lines = tuneObject.lines.reduce<VoiceItem[][]>((arr, line) => {
+      const items = line.staff?.[0]?.voices?.[0];
+      if (items) arr.push(items);
+      return arr;
+    }, []);
+    editorState.current.updateTuneData(lines);
+    console.log(editorState.current);
+
+    const cleanUpStaffListeners = setupStaffListeners(
+      renderDiv.current,
+      tuneObject
+    );
+    return () => {
+      if (cleanUpStaffListeners) cleanUpStaffListeners();
+    };
+  }, [abc, onChange, setupStaffListeners, staffWidth]);
 
   const changeRhythm = useCallback((value: Rhythm) => {
     if (value !== Rhythm.Eighth && value !== Rhythm.Sixteenth) setBeamed(false);
@@ -55,7 +83,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
 
   const onAddMidiNote = useCallback(
     (midiNum: number) => {
-      editorState.current.addMidiNote(midiNum, currentRhythm, {
+      editorState.current.addNote(midiNum, currentRhythm, {
         beamed,
         dotted,
         rest,

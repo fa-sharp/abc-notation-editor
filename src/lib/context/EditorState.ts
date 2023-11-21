@@ -6,10 +6,15 @@ export default class EditorState {
   abc: string;
   tuneLines: VoiceItem[][] = [];
   measures: Measure[] = [];
+
+  keySig = "C";
   timeSig: keyof typeof TimeSignature = "4/4";
+  clef: "bass" | "treble" = "treble";
 
   constructor(template?: string) {
-    this.abc = template || `X:1\nL:1/8\nM:${this.timeSig}\n`;
+    this.abc =
+      template ||
+      `X:1\nK:${this.keySig} clef=${this.clef}\nL:1/8\nM:${this.timeSig}\n`;
   }
 
   #updateMeasures() {
@@ -31,6 +36,8 @@ export default class EditorState {
         currentMeasure.lineEndIdx++;
         if (item.el_type === "note") {
           const note = item as AbcjsNote;
+          if (note.rest?.type === "spacer") return;
+
           currentMeasure.notes.push(note);
           currentMeasure.duration += note.duration;
           if (currentMeasure.duration >= fullMeasureDuration) {
@@ -62,14 +69,15 @@ export default class EditorState {
     this.#updateMeasures();
   }
 
-  addMidiNote(
-    midiNum: number,
+  addNote(
+    note: number | string,
     rhythm: Rhythm,
     options?: { beamed?: boolean; rest?: boolean; dotted?: boolean }
   ) {
-    const abcNote = AbcNotation.scientificToAbcNotation(
-      Midi.midiToNoteName(midiNum)
-    );
+    const abcNote =
+      typeof note === "number"
+        ? AbcNotation.scientificToAbcNotation(Midi.midiToNoteName(note))
+        : AbcNotation.scientificToAbcNotation(note);
     this.abc += `${options?.beamed ? "" : " "}${
       !options?.rest ? abcNote : "z"
     }${getAbcRhythm(rhythm, options?.dotted)}`;
@@ -77,7 +85,7 @@ export default class EditorState {
     const currentMeasure = this.measures.at(-1);
     if (
       currentMeasure &&
-      currentMeasure.duration + 1 / rhythm >=
+      currentMeasure.duration + (1 / rhythm) * (options?.dotted ? 3 / 2 : 1) >=
         TimeSignature[this.timeSig].duration
     )
       this.abc += " |";
