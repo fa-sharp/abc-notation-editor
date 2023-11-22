@@ -62,6 +62,17 @@ export const useStaffListeners = ({
           topLine.getBoundingClientRect().y,
       });
 
+      /** Click listener for adding notes with the mouse */
+      const staffClickListener = (e: PointerEvent) => {
+        onAddNote(convertStaffClickToNote(e.clientY));
+      };
+
+      // Setup the cursor icon
+      let showingCursor = false;
+      const cursorIconDiv = document.createElement("div");
+      const root = createRoot(cursorIconDiv);
+      const iconSize = 36;
+
       const renderDivRect = renderDiv.getBoundingClientRect();
       const checkMouseInsideStaff = (e: PointerEvent) =>
         e.clientX >= renderDivRect.left &&
@@ -69,25 +80,14 @@ export const useStaffListeners = ({
         e.clientY >= renderDivRect.top &&
         e.clientY <= renderDivRect.bottom;
 
-      // Click listener for adding notes with the mouse
-      const staffClickListener = (e: PointerEvent) => {
-        if (!checkMouseInsideStaff(e)) return;
-        onAddNote(convertStaffClickToNote(e.clientY));
-      };
-
-      // Movement listeners for showing the note cursor
-      let showingCursor = false;
-      const cursorIconDiv = document.createElement("div");
-      const root = createRoot(cursorIconDiv);
-      const iconSize = 36;
-
+      /** Movement listener for showing & moving the cursor */
       const staffCursorListener = (e: PointerEvent) => {
         const isMouseInsideStaff = checkMouseInsideStaff(e);
         if (isMouseInsideStaff && !showingCursor) {
           showingCursor = true;
           Object.assign(cursorIconDiv.style, {
             position: "fixed",
-            top: `${e.clientY - (iconSize - 8)}px`,
+            top: `${e.clientY - (iconSize - 8)}px`, // TODO adjust the icon position
             left: `${e.clientX - iconSize / 2}px`,
           });
           renderDiv.appendChild(cursorIconDiv);
@@ -101,12 +101,12 @@ export const useStaffListeners = ({
       };
 
       renderDiv.style.cursor = "none"; // disable regular cursor on the staff
-      window.addEventListener("pointerdown", staffClickListener);
+      renderDiv.addEventListener("pointerdown", staffClickListener);
       window.addEventListener("pointermove", staffCursorListener);
 
       return () => {
         console.debug("Tearing down / setting up mouse click listeners");
-        window.removeEventListener("pointerdown", staffClickListener);
+        renderDiv.removeEventListener("pointerdown", staffClickListener);
         window.removeEventListener("pointermove", staffCursorListener);
       };
     },
