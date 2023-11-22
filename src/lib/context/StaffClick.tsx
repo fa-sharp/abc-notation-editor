@@ -1,5 +1,5 @@
 import { TuneObject } from "abcjs";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Scale } from "tonal";
 import { createRoot } from "react-dom/client";
 import { Rhythm } from "./EditorContext";
@@ -9,17 +9,20 @@ import QuarterNoteIcon from "~src/lib/icons/QuarterNote.svg";
 import EighthNoteIcon from "~src/lib/icons/EighthNote.svg";
 import SixteenthNoteIcon from "~src/lib/icons/SixteenthNote.svg";
 
-interface StaffInfo {
+const c4MajorDegrees = Scale.degrees("C4 major");
+
+/** Generate a function that will turn the mouse click's Y coordinate into a note. */
+const getStaffClickToNoteFn = ({
+  lineGap,
+  topLineY,
+  clef,
+}: {
+  clef: "bass" | "treble";
   /** Distance between two staff lines */
   lineGap: number;
   /** Y coordinate of the top staff line */
   topLineY: number;
-  clef: "bass" | "treble";
-}
-
-const c4MajorDegrees = Scale.degrees("C4 major");
-
-const getStaffClickToNoteFn = ({ lineGap, topLineY, clef }: StaffInfo) => {
+}) => {
   const getNoteFromDegrees = (degrees: number) =>
     c4MajorDegrees(clef === "treble" ? degrees + 11 : degrees - 2);
 
@@ -28,7 +31,6 @@ const getStaffClickToNoteFn = ({ lineGap, topLineY, clef }: StaffInfo) => {
     const estimatedDegreesFromTopLine = Math.round(
       distanceFromTopLine / (lineGap / 2)
     );
-
     return getNoteFromDegrees(estimatedDegreesFromTopLine);
   };
 };
@@ -52,7 +54,6 @@ export const useStaffListeners = ({
       const secondLine = topLine?.nextSibling as SVGPathElement | undefined;
       if (!topLine || !secondLine) return;
 
-      // Staff click listener for adding notes
       const convertStaffClickToNote = getStaffClickToNoteFn({
         clef: "treble",
         topLineY: topLine.getBoundingClientRect().y,
@@ -60,43 +61,53 @@ export const useStaffListeners = ({
           secondLine.getBoundingClientRect().y -
           topLine.getBoundingClientRect().y,
       });
-      const staffClickListener = (e: MouseEvent) => {
+
+      const renderDivRect = renderDiv.getBoundingClientRect();
+      const checkMouseInsideStaff = (e: PointerEvent) =>
+        e.clientX >= renderDivRect.left &&
+        e.clientX <= renderDivRect.right &&
+        e.clientY >= renderDivRect.top &&
+        e.clientY <= renderDivRect.bottom;
+
+      // Click listener for adding notes with the mouse
+      const staffClickListener = (e: PointerEvent) => {
+        if (!checkMouseInsideStaff(e)) return;
         onAddNote(convertStaffClickToNote(e.clientY));
       };
 
-      // Movement listeners for the icon cursor
+      // Movement listeners for showing the note cursor
+      let showingCursor = false;
       const cursorIconDiv = document.createElement("div");
       const root = createRoot(cursorIconDiv);
       const iconSize = 36;
-      const mouseEnterListener = (e: MouseEvent) => {
-        Object.assign(cursorIconDiv.style, {
-          position: "fixed",
-          top: `${e.clientY - (iconSize - 8)}px`,
-          left: `${e.clientX - iconSize / 2}px`,
-        });
-        renderDiv.appendChild(cursorIconDiv);
-        root.render(getIcon(rhythm, iconSize));
-      };
-      const mouseMoveListener = (e: MouseEvent) => {
+
+      const staffCursorListener = (e: PointerEvent) => {
+        const isMouseInsideStaff = checkMouseInsideStaff(e);
+        if (isMouseInsideStaff && !showingCursor) {
+          showingCursor = true;
+          Object.assign(cursorIconDiv.style, {
+            position: "fixed",
+            top: `${e.clientY - (iconSize - 8)}px`,
+            left: `${e.clientX - iconSize / 2}px`,
+          });
+          renderDiv.appendChild(cursorIconDiv);
+          root.render(getIcon(rhythm, iconSize));
+        } else if (!isMouseInsideStaff && showingCursor) {
+          showingCursor = false;
+          renderDiv.removeChild(cursorIconDiv);
+        }
         cursorIconDiv.style.top = `${e.clientY - (iconSize - 8)}px`;
         cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
       };
-      const mouseLeaveListener = () => {
-        console.log("Removing cursor icon...", { renderDiv, cursorIconDiv });
-        renderDiv.removeChild(cursorIconDiv);
-      };
 
-      renderDiv.addEventListener("mousedown", staffClickListener);
-      renderDiv.addEventListener("mousemove", mouseMoveListener);
-      renderDiv.addEventListener("mouseleave", mouseLeaveListener);
-      renderDiv.addEventListener("mouseenter", mouseEnterListener);
+      renderDiv.style.cursor = "none"; // disable regular cursor on the staff
+      window.addEventListener("pointerdown", staffClickListener);
+      window.addEventListener("pointermove", staffCursorListener);
 
       return () => {
-        console.log("Setting up event listeners");
-        renderDiv.removeEventListener("mousedown", staffClickListener);
-        renderDiv.removeEventListener("mousemove", mouseMoveListener);
-        renderDiv.removeEventListener("mouseleave", mouseLeaveListener);
-        renderDiv.removeEventListener("mouseenter", mouseEnterListener);
+        console.debug("Tearing down / setting up mouse click listeners");
+        window.removeEventListener("pointerdown", staffClickListener);
+        window.removeEventListener("pointermove", staffCursorListener);
       };
     },
     [onAddNote, rhythm]
