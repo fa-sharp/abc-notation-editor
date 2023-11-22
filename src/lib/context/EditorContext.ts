@@ -56,9 +56,9 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   useEffect(() => {
     onChange(abc);
     if (!renderDiv.current) return;
-    const [tuneObject] = renderAbc(renderDiv.current, abc + "y", {
+    const [tuneObject] = renderAbc(renderDiv.current, abc + "yy", {
       add_classes: true,
-      scale: 1.2,
+      scale: 1,
       staffwidth: staffWidth,
       viewportHorizontal: true,
       wrap: { minSpacing: 2, maxSpacing: 2.7, preferredMeasuresPerLine: 4 },

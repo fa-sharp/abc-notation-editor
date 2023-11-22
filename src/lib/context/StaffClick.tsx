@@ -1,5 +1,5 @@
 import { TuneObject } from "abcjs";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Scale } from "tonal";
 import { createRoot } from "react-dom/client";
 import { Rhythm } from "./EditorContext";
@@ -54,16 +54,15 @@ export const useStaffListeners = ({
       const secondLine = topLine?.nextSibling as SVGPathElement | undefined;
       if (!topLine || !secondLine) return;
 
-      const convertStaffClickToNote = getStaffClickToNoteFn({
-        clef: "treble",
-        topLineY: topLine.getBoundingClientRect().y,
-        lineGap:
-          secondLine.getBoundingClientRect().y -
-          topLine.getBoundingClientRect().y,
-      });
-
       /** Click listener for adding notes with the mouse */
       const staffClickListener = (e: PointerEvent) => {
+        const convertStaffClickToNote = getStaffClickToNoteFn({
+          clef: "treble",
+          topLineY: topLine.getBoundingClientRect().y,
+          lineGap:
+            secondLine.getBoundingClientRect().y -
+            topLine.getBoundingClientRect().y,
+        });
         onAddNote(convertStaffClickToNote(e.clientY));
       };
 
@@ -77,13 +76,15 @@ export const useStaffListeners = ({
       /** Movement listener for showing & moving the cursor */
       const staffCursorListener = (e: PointerEvent) => {
         const cursorTargetRect = cursorTarget.getBoundingClientRect();
-        const checkMouseInsideStaff = (e: PointerEvent) =>
+        const isMouseInsideStaff =
           e.clientX >= cursorTargetRect.left &&
           e.clientX <= cursorTargetRect.left + cursorTarget.clientWidth &&
           e.clientY >= cursorTargetRect.top &&
-          e.clientY <= cursorTargetRect.bottom;
-        const isMouseInsideStaff = checkMouseInsideStaff(e);
-        if (isMouseInsideStaff && !showingCursor) {
+          e.clientY <= cursorTargetRect.top + cursorTarget.clientHeight;
+        if (isMouseInsideStaff && showingCursor) {
+          cursorIconDiv.style.top = `${e.clientY - (iconSize - 8)}px`;
+          cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
+        } else if (isMouseInsideStaff && !showingCursor) {
           showingCursor = true;
           Object.assign(cursorIconDiv.style, {
             position: "fixed",
@@ -96,8 +97,6 @@ export const useStaffListeners = ({
           showingCursor = false;
           renderDiv.removeChild(cursorIconDiv);
         }
-        cursorIconDiv.style.top = `${e.clientY - (iconSize - 8)}px`;
-        cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
       };
 
       renderDiv.addEventListener("pointerdown", staffClickListener);

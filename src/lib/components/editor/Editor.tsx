@@ -17,7 +17,7 @@ export default function Editor({
   onChange = () => {},
 }: Props) {
   return (
-    <EditorProvider staffWidth={width - 20} onChange={onChange}>
+    <EditorProvider staffWidth={width - 50} onChange={onChange}>
       <div className={styles.editor}>
         <Score width={width} height={height} />
         <EditorControls />

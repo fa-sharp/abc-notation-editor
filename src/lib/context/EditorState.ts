@@ -1,5 +1,5 @@
 import { VoiceItem } from "abcjs";
-import { AbcNotation, Midi, Note, Tonal } from "tonal";
+import { AbcNotation, Midi, Note } from "tonal";
 import { AbcjsNote } from "../types/abcjs";
 
 export default class EditorState {
