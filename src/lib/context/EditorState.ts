@@ -1,5 +1,5 @@
 import { VoiceItem } from "abcjs";
-import { AbcNotation, Midi } from "tonal";
+import { AbcNotation, Midi, Note, Tonal } from "tonal";
 import { AbcjsNote } from "../types/abcjs";
 
 export default class EditorState {
@@ -72,12 +72,23 @@ export default class EditorState {
   addNote(
     note: number | string,
     rhythm: Rhythm,
-    options?: { beamed?: boolean; rest?: boolean; dotted?: boolean }
+    options?: {
+      accidental?: "none" | "sharp" | "flat";
+      beamed?: boolean;
+      rest?: boolean;
+      dotted?: boolean;
+    }
   ) {
     const abcNote =
       typeof note === "number"
-        ? AbcNotation.scientificToAbcNotation(Midi.midiToNoteName(note))
-        : AbcNotation.scientificToAbcNotation(note);
+        ? AbcNotation.scientificToAbcNotation(
+            Midi.midiToNoteName(note, {
+              sharps: options?.accidental === "sharp",
+            })
+          )
+        : AbcNotation.scientificToAbcNotation(
+            getNote(note, options?.accidental)
+          );
     this.abc += `${options?.beamed ? "" : " "}${
       !options?.rest ? abcNote : "z"
     }${getAbcRhythm(rhythm, options?.dotted)}`;
@@ -122,6 +133,19 @@ enum Rhythm {
   Quarter = 4,
   Eighth = 8,
   Sixteenth = 16,
+}
+
+function getNote(
+  noteName: string,
+  accidental: "none" | "sharp" | "flat" = "none"
+) {
+  if (accidental === "none") return noteName;
+  const note = Note.get(noteName);
+  const destName = note.letter + (accidental === "sharp" ? "#" : "b");
+  return Note.enharmonic(
+    Note.transpose(noteName, accidental === "sharp" ? "m2" : "m-2"),
+    destName
+  );
 }
 
 function getAbcRhythm(currentRhythm: Rhythm, dotted = false) {

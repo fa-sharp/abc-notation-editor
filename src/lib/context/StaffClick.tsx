@@ -72,16 +72,16 @@ export const useStaffListeners = ({
       const cursorIconDiv = document.createElement("div");
       const root = createRoot(cursorIconDiv);
       const iconSize = 36;
-
-      const renderDivRect = renderDiv.getBoundingClientRect();
-      const checkMouseInsideStaff = (e: PointerEvent) =>
-        e.clientX >= renderDivRect.left &&
-        e.clientX <= renderDivRect.right &&
-        e.clientY >= renderDivRect.top &&
-        e.clientY <= renderDivRect.bottom;
+      const cursorTarget = renderDiv.parentElement!;
 
       /** Movement listener for showing & moving the cursor */
       const staffCursorListener = (e: PointerEvent) => {
+        const cursorTargetRect = cursorTarget.getBoundingClientRect();
+        const checkMouseInsideStaff = (e: PointerEvent) =>
+          e.clientX >= cursorTargetRect.left &&
+          e.clientX <= cursorTargetRect.left + cursorTarget.clientWidth &&
+          e.clientY >= cursorTargetRect.top &&
+          e.clientY <= cursorTargetRect.bottom;
         const isMouseInsideStaff = checkMouseInsideStaff(e);
         if (isMouseInsideStaff && !showingCursor) {
           showingCursor = true;
@@ -100,7 +100,6 @@ export const useStaffListeners = ({
         cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
       };
 
-      renderDiv.style.cursor = "none"; // disable regular cursor on the staff
       renderDiv.addEventListener("pointerdown", staffClickListener);
       window.addEventListener("pointermove", staffCursorListener);
 

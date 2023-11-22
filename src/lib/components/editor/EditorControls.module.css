@@ -1,6 +1,6 @@
 .controls {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
 }
 
 .controls > .controlGroup {

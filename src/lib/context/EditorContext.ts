@@ -28,25 +28,29 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   );
 
   const [currentRhythm, setCurrentRhythm] = useState<Rhythm>(Rhythm.Eighth);
+  const [accidental, setAccidental] = useState<"none" | "sharp" | "flat">(
+    "none"
+  );
   const [dotted, setDotted] = useState(false);
   const [beamed, setBeamed] = useState(false);
   const [rest, setRest] = useState(false);
 
-  const onAddNamedNote = useCallback(
-    (noteName: string) => {
+  const onAddNote = useCallback(
+    (noteName: string | number) => {
       editorState.current.addNote(noteName, currentRhythm, {
         beamed,
         dotted,
         rest,
+        accidental,
       });
       setAbc(editorState.current.abc);
     },
-    [beamed, currentRhythm, dotted, rest]
+    [accidental, beamed, currentRhythm, dotted, rest]
   );
 
   const { setupStaffListeners } = useStaffListeners({
     rhythm: currentRhythm,
-    onAddNote: onAddNamedNote,
+    onAddNote,
   });
 
   useEffect(() => {
@@ -81,18 +85,6 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     setCurrentRhythm(value);
   }, []);
 
-  const onAddMidiNote = useCallback(
-    (midiNum: number) => {
-      editorState.current.addNote(midiNum, currentRhythm, {
-        beamed,
-        dotted,
-        rest,
-      });
-      setAbc(editorState.current.abc);
-    },
-    [beamed, currentRhythm, dotted, rest]
-  );
-
   const onAddBarline = useCallback(() => {
     setAbc((prev) => prev + " | ");
   }, []);
@@ -106,23 +98,29 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     setAbc(editorState.current.abc);
   }, []);
 
+  const onSetAccidental = useCallback(
+    (v: "none" | "sharp" | "flat") => setAccidental(v),
+    []
+  );
   const onToggleRest = useCallback(() => setRest((prev) => !prev), []);
   const onToggleDotted = useCallback(() => setDotted((prev) => !prev), []);
 
   return {
     currentRhythm,
+    currentAccidental: accidental,
     isBeamed: beamed,
     isRest: rest,
     isDotted: dotted,
     changeRhythm,
     setBeamed,
     setRenderDiv,
-    onAddMidiNote,
+    onAddNote,
     onAddBarline,
     onAddLineBreak,
     onBackspace,
     onToggleRest,
     onToggleDotted,
+    onSetAccidental,
   };
 };
 
