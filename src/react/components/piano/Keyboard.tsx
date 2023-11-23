@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { useEditorContext } from "../../context/EditorContext";
 import Key from "./Key";
 
 import * as styles from "./Keyboard.module.scss";
-import { useEditorContext } from "~src/lib/context/EditorContext";
 
 type Props = {
   startKey: number;

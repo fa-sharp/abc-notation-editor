@@ -1,16 +1,9 @@
-import { VoiceItem, renderAbc } from "abcjs";
+import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import EditorState from "./EditorState";
-import { useStaffListeners } from "./StaffClick";
-
-export enum Rhythm {
-  Whole = 1,
-  Half = 2,
-  Quarter = 4,
-  Eighth = 8,
-  Sixteenth = 16,
-}
+import { setupStaffListeners } from "~src/core/listeners/mouseListeners";
+import EditorState from "~src/core/state/EditorState";
+import { Accidental, Rhythm } from "~src/core/types/constants";
 
 interface Props {
   staffWidth?: number;
@@ -27,17 +20,15 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     []
   );
 
-  const [currentRhythm, setCurrentRhythm] = useState<Rhythm>(Rhythm.Eighth);
-  const [accidental, setAccidental] = useState<"none" | "sharp" | "flat">(
-    "none"
-  );
+  const [rhythm, setRhythm] = useState<Rhythm>(Rhythm.Eighth);
+  const [accidental, setAccidental] = useState<Accidental>(Accidental.None);
   const [dotted, setDotted] = useState(false);
   const [beamed, setBeamed] = useState(false);
   const [rest, setRest] = useState(false);
 
   const onAddNote = useCallback(
     (noteName: string | number) => {
-      editorState.current.addNote(noteName, currentRhythm, {
+      editorState.current.addNote(noteName, rhythm, {
         beamed,
         dotted,
         rest,
@@ -45,14 +36,10 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
       });
       setAbc(editorState.current.abc);
     },
-    [accidental, beamed, currentRhythm, dotted, rest]
+    [accidental, beamed, rhythm, dotted, rest]
   );
 
-  const { setupStaffListeners } = useStaffListeners({
-    rhythm: currentRhythm,
-    onAddNote,
-  });
-
+  // Render the ABC notation, update editor state, and setup staff listeners
   useEffect(() => {
     onChange(abc);
     if (!renderDiv.current) return;
@@ -63,26 +50,22 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
       viewportHorizontal: true,
       wrap: { minSpacing: 2, maxSpacing: 2.7, preferredMeasuresPerLine: 4 },
     });
-    const lines = tuneObject.lines.reduce<VoiceItem[][]>((arr, line) => {
-      const items = line.staff?.[0]?.voices?.[0];
-      if (items) arr.push(items);
-      return arr;
-    }, []);
-    editorState.current.updateTuneData(lines);
-    console.log(editorState.current);
-
+    editorState.current.updateTuneData(tuneObject.lines);
+    console.debug(editorState.current);
     const cleanUpStaffListeners = setupStaffListeners(
       renderDiv.current,
-      tuneObject
+      tuneObject.lines.length,
+      rhythm,
+      onAddNote
     );
     return () => {
       if (cleanUpStaffListeners) cleanUpStaffListeners();
     };
-  }, [abc, onChange, setupStaffListeners, staffWidth]);
+  }, [abc, onAddNote, onChange, rhythm, staffWidth]);
 
   const changeRhythm = useCallback((value: Rhythm) => {
     if (value !== Rhythm.Eighth && value !== Rhythm.Sixteenth) setBeamed(false);
-    setCurrentRhythm(value);
+    setRhythm(value);
   }, []);
 
   const onAddBarline = useCallback(() => {
@@ -98,15 +81,12 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     setAbc(editorState.current.abc);
   }, []);
 
-  const onSetAccidental = useCallback(
-    (v: "none" | "sharp" | "flat") => setAccidental(v),
-    []
-  );
+  const onSetAccidental = useCallback((v: Accidental) => setAccidental(v), []);
   const onToggleRest = useCallback(() => setRest((prev) => !prev), []);
   const onToggleDotted = useCallback(() => setDotted((prev) => !prev), []);
 
   return {
-    currentRhythm,
+    currentRhythm: rhythm,
     currentAccidental: accidental,
     isBeamed: beamed,
     isRest: rest,

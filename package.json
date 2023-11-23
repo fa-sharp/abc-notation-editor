@@ -1,13 +1,13 @@
 {
-  "name": "notation-editor",
+  "name": "abc-visual-editor",
   "version": "0.0.1",
-  "description": "A visual music notation editor React component built on top of abcjs",
-  "source": "src/index.ts",
+  "description": "A visual music notation editor component, built on top of abcjs",
+  "source": "src/react/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
   "scripts": {
-    "dev": "rimraf dist && parcel 'src/examples/**/*.html'",
+    "dev": "rimraf dist && parcel 'examples/**/*.html'",
     "build": "rimraf dist && parcel build"
   },
   "keywords": [
@@ -22,13 +22,14 @@
   "devDependencies": {
     "@parcel/config-default": "^2.10.3",
     "@parcel/packager-ts": "2.10.3",
+    "@parcel/transformer-inline-string": "2.10.3",
     "@parcel/transformer-sass": "2.10.3",
     "@parcel/transformer-svg-react": "^2.10.3",
     "@parcel/transformer-typescript-types": "2.10.3",
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@typescript-eslint/eslint-plugin": "^6.11.0",
-    "@typescript-eslint/parser": "^6.11.0",
+    "@types/react": "^18.2.38",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
     "abcjs": "^6.2.3",
     "eslint": "^8.54.0",
     "eslint-plugin-react": "^7.33.2",
@@ -39,17 +40,20 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
-    "typescript": ">=4.0.0",
+    "typescript": "^5.3.2",
     "typescript-plugin-css-modules": "^5.0.2"
   },
   "peerDependencies": {
-    "abcjs": "^6.2.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "abcjs": "^6.2",
+    "react": "^18",
+    "react-dom": "^18"
   },
   "dependencies": {
     "clsx": "^2.0.0",
     "puro": "^0.8.4",
     "tonal": "^5.0.0"
+  },
+  "@parcel/resolver-default": {
+    "packageExports": true
   }
 }

@@ -1,4 +1,4 @@
-import { useEditorContext } from "~src/lib/context/EditorContext";
+import { useEditorContext } from "../../context/EditorContext";
 
 type Props = {
   width?: number;

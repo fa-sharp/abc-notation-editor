@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Editor from "~src/lib/components/editor/Editor";
+import Editor from "~src/react/components/editor/Editor";
 
 export default function BasicExample() {
   const [abc, setAbc] = useState("");

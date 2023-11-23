@@ -1,16 +1,17 @@
-import { useEditorContext } from "~src/lib/context/EditorContext";
+import clsx from "clsx";
+import { Accidental } from "~src/core/types/constants";
+import { useEditorContext } from "../../context/EditorContext";
 
-import HalfNoteIcon from "~src/lib/icons/HalfNote.svg";
-import QuarterNoteIcon from "~src/lib/icons/QuarterNote.svg";
-import EighthNoteIcon from "~src/lib/icons/EighthNote.svg";
-import SixteenthNoteIcon from "~src/lib/icons/SixteenthNote.svg";
-import DotIcon from "~src/lib/icons/Dot.svg";
-import ToggleRestIcon from "~src/lib/icons/ToggleRest.svg";
-import FlatIcon from "~src/lib/icons/Flat.svg";
-import SharpIcon from "~src/lib/icons/Sharp.svg";
+import DotIcon from "jsx:~icons/Dot.svg";
+import EighthNoteIcon from "jsx:~icons/EighthNote.svg";
+import FlatIcon from "jsx:~icons/Flat.svg";
+import HalfNoteIcon from "jsx:~icons/HalfNote.svg";
+import QuarterNoteIcon from "jsx:~icons/QuarterNote.svg";
+import SharpIcon from "jsx:~icons/Sharp.svg";
+import SixteenthNoteIcon from "jsx:~icons/SixteenthNote.svg";
+import ToggleRestIcon from "jsx:~icons/ToggleRest.svg";
 
 import * as styles from "./EditorControls.module.css";
-import clsx from "clsx";
 
 export default function EditorControls() {
   const {
@@ -34,20 +35,28 @@ export default function EditorControls() {
       <div className={styles.controlGroup}>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentAccidental === "flat",
+            [styles.selected]: currentAccidental === Accidental.Flat,
           })}
           onClick={() =>
-            onSetAccidental(currentAccidental === "flat" ? "none" : "flat")
+            onSetAccidental(
+              currentAccidental === Accidental.Flat
+                ? Accidental.None
+                : Accidental.Flat
+            )
           }
         >
           <FlatIcon height={28} width={28} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentAccidental === "sharp",
+            [styles.selected]: currentAccidental === Accidental.Sharp,
           })}
           onClick={() =>
-            onSetAccidental(currentAccidental === "sharp" ? "none" : "sharp")
+            onSetAccidental(
+              currentAccidental === Accidental.Sharp
+                ? Accidental.None
+                : Accidental.Sharp
+            )
           }
         >
           <SharpIcon height={28} width={28} />

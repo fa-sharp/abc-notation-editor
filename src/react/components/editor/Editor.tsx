@@ -1,4 +1,4 @@
-import { EditorProvider } from "~src/lib/context/EditorContext";
+import { EditorProvider } from "../../context/EditorContext";
 import Score from "../notation/Score";
 import Keyboard from "../piano/Keyboard";
 import EditorControls from "./EditorControls";
