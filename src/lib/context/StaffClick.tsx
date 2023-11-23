@@ -24,7 +24,13 @@ const getStaffClickToNoteFn = ({
   topLineY: number;
 }) => {
   const getNoteFromDegrees = (degrees: number) =>
-    c4MajorDegrees(clef === "treble" ? degrees + 11 : degrees - 2);
+    c4MajorDegrees(
+      clef === "treble"
+        ? degrees > -11
+          ? degrees + 11
+          : degrees + 10
+        : degrees - 2 // TODO fix bass clef here
+    );
 
   return (y: number) => {
     const distanceFromTopLine = topLineY - y;
@@ -56,12 +62,13 @@ export const useStaffListeners = ({
 
       /** Click listener for adding notes with the mouse */
       const staffClickListener = (e: PointerEvent) => {
+        const topStaffLineY = topLine.getBoundingClientRect().y;
+        const staffLineGap =
+          secondLine.getBoundingClientRect().y - topStaffLineY;
         const convertStaffClickToNote = getStaffClickToNoteFn({
           clef: "treble",
-          topLineY: topLine.getBoundingClientRect().y,
-          lineGap:
-            secondLine.getBoundingClientRect().y -
-            topLine.getBoundingClientRect().y,
+          topLineY: topStaffLineY,
+          lineGap: staffLineGap,
         });
         onAddNote(convertStaffClickToNote(e.clientY));
       };
@@ -69,28 +76,79 @@ export const useStaffListeners = ({
       // Setup the cursor icon
       let showingCursor = false;
       const cursorIconDiv = document.createElement("div");
+      cursorIconDiv.style.position = "fixed";
       const root = createRoot(cursorIconDiv);
       const iconSize = 36;
       const cursorTarget = renderDiv.parentElement!;
+      const ledgerLineDivs: HTMLDivElement[] = [];
 
       /** Movement listener for showing & moving the cursor */
       const staffCursorListener = (e: PointerEvent) => {
+        ledgerLineDivs.forEach((div) => div.remove());
         const cursorTargetRect = cursorTarget.getBoundingClientRect();
         const isMouseInsideStaff =
           e.clientX >= cursorTargetRect.left &&
           e.clientX <= cursorTargetRect.left + cursorTarget.clientWidth &&
           e.clientY >= cursorTargetRect.top &&
           e.clientY <= cursorTargetRect.top + cursorTarget.clientHeight;
-        if (isMouseInsideStaff && showingCursor) {
-          cursorIconDiv.style.top = `${e.clientY - (iconSize - 8)}px`;
+
+        if (isMouseInsideStaff) {
+          // Move the cursor
+          cursorIconDiv.style.top = `${
+            e.clientY - (iconSize - iconSize / 5)
+          }px`;
           cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
-        } else if (isMouseInsideStaff && !showingCursor) {
+
+          // Draw ledger lines if needed
+          const topStaffLineY = topLine.getBoundingClientRect().y;
+          const staffLineGap =
+            secondLine.getBoundingClientRect().y - topStaffLineY;
+          const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+          const drawAnticipation = 4;
+
+          // Ledger lines above staff
+          if (e.clientY < topStaffLineY) {
+            for (
+              let y = topStaffLineY - staffLineGap;
+              y >= e.clientY - drawAnticipation;
+              y -= staffLineGap
+            ) {
+              const ledgerDiv = document.createElement("div");
+              Object.assign(ledgerDiv.style, {
+                position: "fixed",
+                top: `${y}px`,
+                left: `${e.clientX - 10}px`,
+                height: "1px",
+                width: "16px",
+                backgroundColor: "#000",
+              });
+              ledgerLineDivs.push(ledgerDiv);
+              renderDiv.appendChild(ledgerDiv);
+            }
+          }
+          // Ledger lines below staff
+          if (e.clientY > bottomStaffLineY) {
+            for (
+              let y = bottomStaffLineY + staffLineGap;
+              y <= e.clientY + drawAnticipation;
+              y += staffLineGap
+            ) {
+              const ledgerDiv = document.createElement("div");
+              Object.assign(ledgerDiv.style, {
+                position: "fixed",
+                top: `${y}px`,
+                left: `${e.clientX - 10}px`,
+                height: "1px",
+                width: "16px",
+                backgroundColor: "#000",
+              });
+              ledgerLineDivs.push(ledgerDiv);
+              renderDiv.appendChild(ledgerDiv);
+            }
+          }
+        }
+        if (isMouseInsideStaff && !showingCursor) {
           showingCursor = true;
-          Object.assign(cursorIconDiv.style, {
-            position: "fixed",
-            top: `${e.clientY - (iconSize - 8)}px`, // TODO adjust the icon position
-            left: `${e.clientX - iconSize / 2}px`,
-          });
           renderDiv.appendChild(cursorIconDiv);
           root.render(getIcon(rhythm, iconSize));
         } else if (!isMouseInsideStaff && showingCursor) {
