@@ -1,4 +1,4 @@
-/// <reference types="../../types.d.ts" />
+/// <reference types="../types.d.ts" />
 
 import Keyboard from "./components/piano/Keyboard";
 import Editor from "./components/editor/Editor";

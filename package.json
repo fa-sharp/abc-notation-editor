@@ -3,12 +3,30 @@
   "version": "0.0.1",
   "description": "A visual music notation editor component, built on top of abcjs",
   "source": "src/react/index.ts",
-  "main": "dist/main.js",
-  "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "targets": {
+    "types": {},
+    "react": {
+      "source": "src/react/index.ts",
+      "distDir": "./dist/react",
+      "isLibrary": true,
+      "includeNodeModules": false,
+      "outputFormat": "esmodule"
+    },
+    "examples": {
+      "distDir": "./dist-examples"
+    }
+  },
+  "exports": {
+    "./react": {
+      "default": "./dist/react",
+      "types": "./dist/types.d.ts"
+    }
+  },
   "scripts": {
-    "dev": "rimraf dist && parcel 'examples/**/*.html'",
-    "build": "rimraf dist && parcel build"
+    "dev:examples": "rimraf dist && parcel 'examples/**/*.html'",
+    "build:lib": "rimraf dist && parcel build --target types --target react",
+    "build:examples": "rimraf dist-examples && parcel build --target examples 'examples/**/*.html'"
   },
   "keywords": [
     "music",
