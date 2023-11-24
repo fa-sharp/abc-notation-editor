@@ -6,12 +6,17 @@ import EditorState from "~src/core/state/EditorState";
 import { Accidental, Rhythm } from "~src/core/types/constants";
 
 interface Props {
+  initialAbc?: string;
   staffWidth?: number;
   onChange?: (abc: string) => void;
 }
 
-const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
-  const editorState = useRef<EditorState>(new EditorState());
+const useEditor = ({
+  initialAbc,
+  staffWidth = 300,
+  onChange = () => {},
+}: Props) => {
+  const editorState = useRef<EditorState>(new EditorState(initialAbc));
   const [abc, setAbc] = useState(() => editorState.current.abc);
 
   const renderDiv = useRef<HTMLDivElement | null>(null);

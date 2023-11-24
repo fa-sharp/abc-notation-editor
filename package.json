@@ -25,6 +25,7 @@
   },
   "scripts": {
     "dev:examples": "rimraf dist && parcel 'examples/**/*.html'",
+    "test:lib": "vitest",
     "build:lib": "rimraf dist && parcel build --target types --target react",
     "build:examples": "rimraf dist-examples && parcel build --target examples 'examples/**/*.html'"
   },
@@ -59,7 +60,10 @@
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.5",
     "typescript": "^5.3.2",
-    "typescript-plugin-css-modules": "^5.0.2"
+    "typescript-plugin-css-modules": "^5.0.2",
+    "vite": "^5.0.2",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^0.34.6"
   },
   "peerDependencies": {
     "abcjs": "^6.2",

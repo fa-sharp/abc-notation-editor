@@ -2,11 +2,8 @@ import { TuneLine, VoiceItem } from "abcjs";
 import { AbcjsNote } from "../types/abcjs";
 import { Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Rhythm, TimeSignature } from "../types/constants";
-import { getAbcRhythm } from "../parsing/rhythm";
-import {
-  getAbcNoteFromMidiNum,
-  getAbcNoteFromNoteName,
-} from "../parsing/notes";
+import { getAbcRhythm } from "../utils/rhythm";
+import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
 
 export default class EditorState {
   abc: string;
@@ -70,7 +67,7 @@ export default class EditorState {
       if (Math.abs(measureIdx) >= this.measures.length) return;
       measureIdx--;
     }
-    this.abc = this.abc.slice(0, lastItem.startChar);
+    this.abc = this.abc.slice(0, lastItem.startChar - 1);
   }
 
   shouldBeamNextNote(nextRhythm: Rhythm) {
@@ -84,12 +81,14 @@ export default class EditorState {
     const currentBeat = currentDuration * 4;
 
     return (
-      currentBeat !== 0 &&
-      currentBeat !== 2 &&
+      ((nextRhythm === Rhythm.Eighth &&
+        currentBeat !== 0 &&
+        currentBeat !== 2) ||
+        (nextRhythm === Rhythm.Sixteenth &&
+          ![0, 1, 2, 3].includes(currentBeat))) &&
       [0.125, 0.0625]
         .concat([0.125, 0.0625].map((v) => v * 1.5))
-        .includes(lastNote.duration) &&
-      (nextRhythm === Rhythm.Eighth || nextRhythm === Rhythm.Sixteenth)
+        .includes(lastNote.duration)
     );
   }
 }
