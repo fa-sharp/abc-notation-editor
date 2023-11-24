@@ -33,7 +33,7 @@ test<TestCtx>("Can add note with accidental to ABC score", ({ state }) => {
   expect(state.abc).toBe(initialAbc + " _E");
 });
 
-test<TestCtx>("Can correctly add barlines when adding notes", ({ state }) => {
+test<TestCtx>("Correctly adds barlines when adding notes", ({ state }) => {
   state.addNote("A4", Rhythm.Half);
   state.updateTuneData(parseOnly(state.abc)[0].lines);
   state.addNote("B3", Rhythm.Quarter);
