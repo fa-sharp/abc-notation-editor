@@ -46,12 +46,12 @@ export const setupStaffListeners = (
   const staffCursorListener = (e: PointerEvent) => {
     ledgerLineDivs.forEach((div) => div.remove());
 
-    const cursorTargetRect = staffOuterElement.getBoundingClientRect();
+    const cursorTargetRect = getBoundingRectMinusPadding(staffOuterElement);
     const isMouseInsideStaff =
       e.clientX >= cursorTargetRect.left &&
-      e.clientX <= cursorTargetRect.left + staffOuterElement.clientWidth &&
+      e.clientX <= cursorTargetRect.right &&
       e.clientY >= cursorTargetRect.top &&
-      e.clientY <= cursorTargetRect.top + staffOuterElement.clientHeight;
+      e.clientY <= cursorTargetRect.bottom;
 
     if (isMouseInsideStaff) {
       // Move the cursor
@@ -140,7 +140,7 @@ const getNoteFromC4MajorDegree = Scale.degrees("C4 major");
  * the number of scale degrees we're away from the top staff line, and returns the corresponding
  * note from the C Major scale.
  */
-function getStaffClickToNoteFn(props: {
+export function getStaffClickToNoteFn(props: {
   clef: "bass" | "treble";
   /** Distance from one staff line to the next */
   lineGap: number;
@@ -194,4 +194,16 @@ function getCursorIcon(rhythm: Rhythm, size = 36) {
     }
   }
   return div;
+}
+
+function getBoundingRectMinusPadding(element: HTMLElement) {
+  const rect = element.getBoundingClientRect();
+  const computedStyle = getComputedStyle(element);
+
+  const top = rect.top + parseFloat(computedStyle.paddingTop);
+  const bottom = rect.bottom - parseFloat(computedStyle.paddingBottom);
+  const left = rect.left + parseFloat(computedStyle.paddingLeft);
+  const right = rect.right - parseFloat(computedStyle.paddingRight);
+
+  return { top, bottom, left, right };
 }

@@ -1,7 +1,7 @@
 import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { setupStaffListeners } from "~src/core/listeners/mouseListeners";
+import { setupStaffListeners } from "~src/core/listeners/mouse";
 import EditorState from "~src/core/state/EditorState";
 import { Accidental, Rhythm } from "~src/core/types/constants";
 

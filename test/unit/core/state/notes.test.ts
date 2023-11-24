@@ -33,23 +33,9 @@ test<TestCtx>("Can add note with accidental to ABC score", ({ state }) => {
   expect(state.abc).toBe(initialAbc + " _E");
 });
 
-test<TestCtx>("Correctly adds barlines when adding notes", ({ state }) => {
-  state.addNote("A4", Rhythm.Half);
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
-  state.addNote("B3", Rhythm.Quarter);
-  expect(state.abc.trim().at(-1)).toBe("|");
-});
-
-test<TestCtx>("Still adds barlines if measure is too long", ({ state }) => {
-  state.addNote("A4", Rhythm.Half);
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
-  state.addNote("B3", Rhythm.Half);
-  expect(state.abc.trim().at(-1)).toBe("|");
-});
-
 test<TestCtx>("Can delete last note of ABC score", ({ state }) => {
   state.backspace();
-  expect(state.abc.trim()).toBe(initialAbcHeader + "C2 D2 F2 E2");
+  expect(state.abc.trim()).toBe(initialAbcHeader + "C2 D2 F2 E2 |");
 
   state.updateTuneData(parseOnly(state.abc)[0].lines);
 

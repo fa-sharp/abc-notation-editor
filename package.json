@@ -34,7 +34,8 @@
     "notation",
     "editor",
     "abcjs",
-    "typescript"
+    "typescript",
+    "react"
   ],
   "author": "fa-sharp",
   "license": "ISC",
