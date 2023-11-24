@@ -1,5 +1,5 @@
 .key {
-  --key-width: var(--mod-key-width, 47px);
+  --key-width: var(--mod-key-width, 38px);
   flex-shrink: 0;
   width: var(--key-width);
   min-width: min-content;
@@ -10,14 +10,15 @@
   -webkit-user-drag: none;
   user-select: none;
   transition:
-    box-shadow 200ms,
-    background-color 200ms;
+    box-shadow 100ms,
+    background-color 100ms;
 
   display: flex;
   justify-content: center;
 
   & > .keyLabel {
     align-self: flex-end;
+    font-size: 0.9em;
   }
 
   &.black {

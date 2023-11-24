@@ -63,10 +63,14 @@ export const setupStaffListeners = (
       const staffLineGap =
         secondStaffLine.getBoundingClientRect().y - topStaffLineY;
       const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+      const maxLedgerDistance = staffLineGap * 6;
       const drawLedgerAnticipation = 3;
 
       // Ledger lines above staff
-      if (e.clientY < topStaffLineY) {
+      if (
+        e.clientY < topStaffLineY &&
+        e.clientY > topStaffLineY - maxLedgerDistance
+      ) {
         for (
           let y = topStaffLineY - staffLineGap;
           y >= e.clientY - drawLedgerAnticipation;
@@ -86,7 +90,10 @@ export const setupStaffListeners = (
         }
       }
       // Ledger lines below staff
-      if (e.clientY > bottomStaffLineY) {
+      if (
+        e.clientY > bottomStaffLineY &&
+        e.clientY < bottomStaffLineY + maxLedgerDistance
+      ) {
         for (
           let y = bottomStaffLineY + staffLineGap;
           y <= e.clientY + drawLedgerAnticipation;
@@ -182,8 +189,8 @@ function getCursorIcon(rhythm: Rhythm, size = 36) {
     div.innerHTML = svg;
     const svgEl = div.querySelector("svg");
     if (svgEl) {
-      svgEl.style.height = String(size);
-      svgEl.style.width = String(size);
+      svgEl.style.height = `${size}px`;
+      svgEl.style.width = `${size}px`;
     }
   }
   return div;

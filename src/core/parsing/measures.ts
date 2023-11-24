@@ -16,9 +16,9 @@ export const parseMeasuresFromAbcjs = (
   timeSig: keyof typeof TimeSignature
 ) => {
   const measures: Measure[] = [];
-  tuneLines.forEach((line, lineIdx) => {
-    const fullMeasureDuration = TimeSignature[timeSig].duration;
+  const fullMeasureDuration = TimeSignature[timeSig].duration;
 
+  tuneLines.forEach((line, lineIdx) => {
     let currentMeasure: Measure = {
       line: lineIdx,
       lineStartIdx: 0,
@@ -33,7 +33,7 @@ export const parseMeasuresFromAbcjs = (
       currentMeasure.lineEndIdx++;
       if (item.el_type === "note") {
         const note = item as AbcjsNote;
-        if (note.rest?.type === "spacer") return;
+        if (note.rest?.type === "spacer") continue;
 
         currentMeasure.notes.push(note);
         currentMeasure.duration += note.duration;

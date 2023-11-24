@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { MdOutlinePiano } from "react-icons/md";
 import { Accidental } from "~src/core/types/constants";
 import { useEditorContext } from "../../context/EditorContext";
 
@@ -20,6 +21,8 @@ export default function EditorControls() {
     isBeamed,
     isDotted,
     isRest,
+    showKeyboard,
+    onToggleShowKeyboard,
     onToggleRest,
     onToggleDotted,
     setBeamed,
@@ -32,7 +35,8 @@ export default function EditorControls() {
 
   return (
     <div className={styles.controls}>
-      <div className={styles.controlGroup}>
+      <fieldset className={styles.controlGroup}>
+        <legend>Accidentals</legend>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentAccidental === Accidental.Flat,
@@ -61,8 +65,9 @@ export default function EditorControls() {
         >
           <SharpIcon height={28} width={28} />
         </button>
-      </div>
-      <div className={styles.controlGroup}>
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Rhythms</legend>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentRhythm === 2,
@@ -99,8 +104,9 @@ export default function EditorControls() {
         >
           <SixteenthNoteIcon height={28} width={28} />
         </button>
-      </div>
-      <div className={styles.controlGroup}>
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Toggles</legend>
         <button
           className={clsx(styles.iconButton, { [styles.selected]: isDotted })}
           onClick={onToggleDotted}
@@ -113,7 +119,15 @@ export default function EditorControls() {
         >
           <ToggleRestIcon height={28} width={28} />
         </button>
-      </div>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: showKeyboard,
+          })}
+          onClick={onToggleShowKeyboard}
+        >
+          <MdOutlinePiano size={28} />
+        </button>
+      </fieldset>
       Beamed:{" "}
       <input
         type="checkbox"

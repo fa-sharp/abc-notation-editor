@@ -72,4 +72,24 @@ export default class EditorState {
     }
     this.abc = this.abc.slice(0, lastItem.startChar);
   }
+
+  shouldBeamNextNote(nextRhythm: Rhythm) {
+    const lastMeasure = this.measures.at(-1);
+    const lastNote = lastMeasure?.notes.at(-1);
+    if (!lastNote || !lastMeasure) return false;
+    const currentDuration = lastMeasure.notes.reduce(
+      (acc, curr) => acc + curr.duration,
+      0
+    );
+    const currentBeat = currentDuration * 4;
+
+    return (
+      currentBeat !== 0 &&
+      currentBeat !== 2 &&
+      [0.125, 0.0625]
+        .concat([0.125, 0.0625].map((v) => v * 1.5))
+        .includes(lastNote.duration) &&
+      (nextRhythm === Rhythm.Eighth || nextRhythm === Rhythm.Sixteenth)
+    );
+  }
 }

@@ -21,22 +21,38 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   );
 
   const [rhythm, setRhythm] = useState<Rhythm>(Rhythm.Eighth);
-  const [accidental, setAccidental] = useState<Accidental>(Accidental.None);
-  const [dotted, setDotted] = useState(false);
-  const [beamed, setBeamed] = useState(false);
   const [rest, setRest] = useState(false);
+  const [showKeyboard, setShowKeyboard] = useState(false);
+
+  const [dotted, setDotted] = useState(false);
+  const dottedRef = useRef(dotted);
+  useEffect(() => {
+    dottedRef.current = dotted;
+  }, [dotted]);
+
+  const [accidental, setAccidental] = useState<Accidental>(Accidental.None);
+  const accidentalRef = useRef(accidental);
+  useEffect(() => {
+    accidentalRef.current = accidental;
+  }, [accidental]);
+
+  const [beamed, setBeamed] = useState(false);
+  const beamedRef = useRef(beamed);
+  useEffect(() => {
+    beamedRef.current = beamed;
+  }, [beamed]);
 
   const onAddNote = useCallback(
     (noteName: string | number) => {
       editorState.current.addNote(noteName, rhythm, {
-        beamed,
-        dotted,
+        beamed: beamedRef.current,
+        dotted: dottedRef.current,
         rest,
-        accidental,
+        accidental: accidentalRef.current,
       });
       setAbc(editorState.current.abc);
     },
-    [accidental, beamed, rhythm, dotted, rest]
+    [rhythm, rest]
   );
 
   // Render the ABC notation, update editor state, and setup staff listeners
@@ -51,6 +67,9 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
       wrap: { minSpacing: 2, maxSpacing: 2.7, preferredMeasuresPerLine: 4 },
     });
     editorState.current.updateTuneData(tuneObject.lines);
+    setAccidental(Accidental.None);
+    setBeamed(editorState.current.shouldBeamNextNote(rhythm));
+    setDotted(false);
     console.debug(editorState.current);
     const cleanUpStaffListeners = setupStaffListeners(
       renderDiv.current,
@@ -73,7 +92,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   }, []);
 
   const onAddLineBreak = useCallback(() => {
-    setAbc((prev) => prev + "\ny");
+    setAbc((prev) => prev + "\n");
   }, []);
 
   const onBackspace = useCallback(() => {
@@ -84,6 +103,10 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
   const onSetAccidental = useCallback((v: Accidental) => setAccidental(v), []);
   const onToggleRest = useCallback(() => setRest((prev) => !prev), []);
   const onToggleDotted = useCallback(() => setDotted((prev) => !prev), []);
+  const onToggleShowKeyboard = useCallback(
+    () => setShowKeyboard((prev) => !prev),
+    []
+  );
 
   return {
     currentRhythm: rhythm,
@@ -91,6 +114,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     isBeamed: beamed,
     isRest: rest,
     isDotted: dotted,
+    showKeyboard,
     changeRhythm,
     setBeamed,
     setRenderDiv,
@@ -100,6 +124,7 @@ const useEditor = ({ staffWidth = 300, onChange = () => {} }: Props) => {
     onBackspace,
     onToggleRest,
     onToggleDotted,
+    onToggleShowKeyboard,
     onSetAccidental,
   };
 };

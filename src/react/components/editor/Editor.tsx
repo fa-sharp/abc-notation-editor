@@ -1,4 +1,4 @@
-import { EditorProvider } from "../../context/EditorContext";
+import { EditorProvider, useEditorContext } from "../../context/EditorContext";
 import Score from "../notation/Score";
 import Keyboard from "../piano/Keyboard";
 import EditorControls from "./EditorControls";
@@ -18,11 +18,18 @@ export default function Editor({
 }: Props) {
   return (
     <EditorProvider staffWidth={width - 50} onChange={onChange}>
-      <div className={styles.editor}>
-        <Score width={width} height={height} />
-        <EditorControls />
-        <Keyboard startKey={60} endKey={84} />
-      </div>
+      <InnerEditor width={width} height={height} />
     </EditorProvider>
+  );
+}
+
+function InnerEditor({ width, height }: { width: number; height: number }) {
+  const { showKeyboard } = useEditorContext();
+  return (
+    <div className={styles.editor}>
+      <Score width={width} height={height} />
+      <EditorControls />
+      {showKeyboard && <Keyboard startKey={60} endKey={84} />}
+    </div>
   );
 }
