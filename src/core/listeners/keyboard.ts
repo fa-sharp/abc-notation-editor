@@ -12,10 +12,13 @@ const kbdKeyToCommandMap = new Map<string, EditorCommandAction | "backspace">([
   ["r", { type: "toggleRest" }],
   ["f", { type: "toggleAccidental", accidental: Accidental.Flat }],
   ["s", { type: "toggleAccidental", accidental: Accidental.Sharp }],
+  ["t", { type: "toggleTriplet" }],
+  ["b", { type: "toggleBeamed" }],
 
   ["Backspace", "backspace"],
 ]);
 
+/** Setup keyboard shortcuts listener for the notation editor. Returns a cleanup function. */
 export function setupKeyboardListeners(
   dispatchEditorCommand: (command: EditorCommandAction) => void,
   onBackspace: () => void

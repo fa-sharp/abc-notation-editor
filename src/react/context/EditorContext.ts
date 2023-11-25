@@ -1,4 +1,4 @@
-import { renderAbc } from "abcjs";
+import { TuneObject, renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,
@@ -27,6 +27,7 @@ const useEditor = ({
 }: Props) => {
   const editorState = useRef<EditorState>(new EditorState(initialAbc));
   const [abc, setAbc] = useState(() => editorState.current.abc);
+  const [tuneObject, setTuneObject] = useState<TuneObject | null>(null);
 
   const renderDiv = useRef<HTMLDivElement | null>(null);
   const setRenderDiv = useCallback(
@@ -46,6 +47,16 @@ const useEditor = ({
       beamed: false,
     }
   );
+
+  const restRef = useRef(editorCommands.rest);
+  useEffect(() => {
+    restRef.current = editorCommands.rest;
+  }, [editorCommands.rest]);
+
+  const rhythmRef = useRef(editorCommands.rhythm);
+  useEffect(() => {
+    rhythmRef.current = editorCommands.rhythm;
+  }, [editorCommands.rhythm]);
 
   const dottedRef = useRef(editorCommands.dotted);
   useEffect(() => {
@@ -67,21 +78,18 @@ const useEditor = ({
     tripletRef.current = editorCommands.triplet;
   }, [editorCommands.triplet]);
 
-  const onAddNote = useCallback(
-    (noteName: string | number) => {
-      editorState.current.addNote(noteName, editorCommands.rhythm, {
-        beamed: beamedRef.current,
-        dotted: dottedRef.current,
-        rest: editorCommands.rest,
-        accidental: accidentalRef.current,
-        triplet: tripletRef.current,
-      });
-      setAbc(editorState.current.abc);
-    },
-    [editorCommands.rest, editorCommands.rhythm]
-  );
+  const onAddNote = useCallback((noteName: string | number) => {
+    editorState.current.addNote(noteName, rhythmRef.current, {
+      beamed: beamedRef.current,
+      dotted: dottedRef.current,
+      rest: restRef.current,
+      accidental: accidentalRef.current,
+      triplet: tripletRef.current,
+    });
+    setAbc(editorState.current.abc);
+  }, []);
 
-  // Render the ABC notation, update editor state, and setup staff listeners
+  // Render the ABC notation, update editor state
   useEffect(() => {
     onChange(abc);
     if (!renderDiv.current) return;
@@ -92,7 +100,10 @@ const useEditor = ({
       viewportHorizontal: true,
       wrap: { minSpacing: 1.8, maxSpacing: 2.7, preferredMeasuresPerLine: 5 },
     });
+    setTuneObject(tuneObject);
     editorState.current.updateTuneData(tuneObject.lines);
+
+    // Reset editor commands
     dispatchEditorCommand({
       type: "setAccidental",
       accidental: Accidental.None,
@@ -103,16 +114,7 @@ const useEditor = ({
     });
     dispatchEditorCommand({ type: "setDotted", dotted: false });
     console.debug(editorState.current);
-    const cleanUpStaffListeners = setupStaffMouseListeners(
-      renderDiv.current,
-      tuneObject.lines.length,
-      editorCommands.rhythm,
-      onAddNote
-    );
-    return () => {
-      if (cleanUpStaffListeners) cleanUpStaffListeners();
-    };
-  }, [abc, editorCommands.rhythm, staffWidth, onAddNote, onChange]);
+  }, [abc, editorCommands.rhythm, onChange, staffWidth]);
 
   const onAddBarline = useCallback(() => {
     setAbc((prev) => prev + " | ");
@@ -126,6 +128,20 @@ const useEditor = ({
     editorState.current.backspace();
     setAbc(editorState.current.abc);
   }, []);
+
+  // Setup mouse listeners
+  useEffect(() => {
+    if (!renderDiv.current || !tuneObject) return;
+
+    const cleanUpStaffListeners = setupStaffMouseListeners({
+      renderDiv: renderDiv.current,
+      numTuneLines: tuneObject.lines.length,
+      rhythm: editorCommands.rhythm,
+      rest: editorCommands.rest,
+      onAddNote,
+    });
+    return () => cleanUpStaffListeners();
+  }, [editorCommands.rest, editorCommands.rhythm, onAddNote, tuneObject]);
 
   // Setup keyboard listener
   useEffect(() => {

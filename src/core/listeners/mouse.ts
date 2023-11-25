@@ -6,6 +6,11 @@ import HalfNoteIcon from "bundle-text:~icons/HalfNote.svg";
 import QuarterNoteIcon from "bundle-text:~icons/QuarterNote.svg";
 import SixteenthNoteIcon from "bundle-text:~icons/SixteenthNote.svg";
 
+import EighthRestIcon from "bundle-text:~icons/EighthRest.svg";
+import HalfRestIcon from "bundle-text:~icons/HalfRest.svg";
+import QuarterRestIcon from "bundle-text:~icons/QuarterRest.svg";
+import SixteenthRestIcon from "bundle-text:~icons/SixteenthRest.svg";
+
 const ledgerLineStyle = Object.freeze({
   position: "fixed",
   height: "1px",
@@ -13,21 +18,34 @@ const ledgerLineStyle = Object.freeze({
   backgroundColor: "#000",
 });
 
+/** Last known mouse position inside staff */
+let lastMousePos: {
+  clientX: number;
+  clientY: number;
+} | null = null;
+
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
  * on the staff. Returns a cleanup function to remove the listeners.
  */
-export const setupStaffMouseListeners = (
-  renderDiv: HTMLDivElement,
-  numTuneLines: number,
-  rhythm: Rhythm,
-  onAddNote: (note: string) => void
-) => {
+export const setupStaffMouseListeners = ({
+  renderDiv,
+  numTuneLines,
+  rhythm,
+  rest = false,
+  onAddNote,
+}: {
+  renderDiv: HTMLDivElement;
+  numTuneLines: number;
+  rhythm: Rhythm;
+  rest?: boolean;
+  onAddNote: (note: string) => void;
+}) => {
   const topStaffLine = renderDiv.querySelector<SVGPathElement>(
     `.abcjs-l${numTuneLines - 1} .abcjs-top-line`
   );
   const secondStaffLine = topStaffLine?.nextSibling as SVGPathElement;
-  if (!topStaffLine || !secondStaffLine) return;
+  if (!topStaffLine || !secondStaffLine) return () => {};
 
   /** Click listener for adding notes with the mouse */
   const staffClickListener = (e: PointerEvent) => {
@@ -45,9 +63,20 @@ export const setupStaffMouseListeners = (
   // Setup the cursor icon for the staff
   let showingCursor = false;
   const iconSize = 32;
-  const cursorIconDiv = getCursorIcon(rhythm, iconSize);
+  const cursorIconDiv = getCursorIcon({ rhythm, rest, size: iconSize });
   const staffOuterElement = renderDiv.parentElement!;
   const ledgerLineDivs: HTMLDivElement[] = [];
+
+  // If last known mouse position was inside staff, draw the cursor
+  if (lastMousePos) {
+    showingCursor = true;
+    cursorIconDiv.style.top = `${
+      lastMousePos.clientY - (iconSize - iconSize / 5)
+    }px`;
+    cursorIconDiv.style.left = `${lastMousePos.clientX - iconSize / 2}px`;
+    // TODO need to draw the ledger lines too!
+    renderDiv.appendChild(cursorIconDiv);
+  }
 
   /** Movement listener for showing & moving the cursor */
   const staffCursorListener = (e: PointerEvent) => {
@@ -64,8 +93,9 @@ export const setupStaffMouseListeners = (
       // Move the cursor
       cursorIconDiv.style.top = `${e.clientY - (iconSize - iconSize / 5)}px`;
       cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
+      lastMousePos = { clientX: e.clientX, clientY: e.clientY };
 
-      // Draw ledger lines if needed
+      // Draw ledger lines if needed. TODO refactor into separate function
       const topStaffLineY = topStaffLine.getBoundingClientRect().y;
       const staffLineGap =
         secondStaffLine.getBoundingClientRect().y - topStaffLineY;
@@ -75,6 +105,7 @@ export const setupStaffMouseListeners = (
 
       // Ledger lines above staff
       if (
+        !rest &&
         e.clientY < topStaffLineY &&
         e.clientY > topStaffLineY - maxLedgerDistance
       ) {
@@ -95,6 +126,7 @@ export const setupStaffMouseListeners = (
       }
       // Ledger lines below staff
       if (
+        !rest &&
         e.clientY > bottomStaffLineY &&
         e.clientY < bottomStaffLineY + maxLedgerDistance
       ) {
@@ -113,13 +145,16 @@ export const setupStaffMouseListeners = (
           renderDiv.appendChild(ledgerDiv);
         }
       }
+    } else {
+      lastMousePos = null;
     }
     if (isMouseInsideStaff && !showingCursor) {
       showingCursor = true;
       renderDiv.appendChild(cursorIconDiv);
     } else if (!isMouseInsideStaff && showingCursor) {
       showingCursor = false;
-      renderDiv.removeChild(cursorIconDiv);
+      if (renderDiv.contains(cursorIconDiv))
+        renderDiv.removeChild(cursorIconDiv);
     }
   };
 
@@ -131,6 +166,8 @@ export const setupStaffMouseListeners = (
     console.debug("Tearing down mouse listeners");
     renderDiv.removeEventListener("pointerdown", staffClickListener);
     window.removeEventListener("pointermove", staffCursorListener);
+    cursorIconDiv.remove();
+    ledgerLineDivs.forEach((div) => div.remove());
   };
 };
 
@@ -165,23 +202,31 @@ export function getStaffClickToNoteFn(props: {
   };
 }
 
-function getCursorIcon(rhythm: Rhythm, size = 36) {
+function getCursorIcon({
+  rhythm,
+  size = 36,
+  rest = false,
+}: {
+  rhythm: Rhythm;
+  size?: number;
+  rest?: boolean;
+}) {
   let svg: string | null;
   switch (rhythm) {
     case Rhythm.Eighth:
-      svg = EighthNoteIcon;
+      svg = rest ? EighthRestIcon : EighthNoteIcon;
       break;
     case Rhythm.Whole:
       svg = null;
       break;
     case Rhythm.Half:
-      svg = HalfNoteIcon;
+      svg = rest ? HalfRestIcon : HalfNoteIcon;
       break;
     case Rhythm.Quarter:
-      svg = QuarterNoteIcon;
+      svg = rest ? QuarterRestIcon : QuarterNoteIcon;
       break;
     case Rhythm.Sixteenth:
-      svg = SixteenthNoteIcon;
+      svg = rest ? SixteenthRestIcon : SixteenthNoteIcon;
       break;
   }
   const div = document.createElement("div");

@@ -1,17 +1,20 @@
 import clsx from "clsx";
-import { MdOutlinePiano } from "react-icons/md";
 import { Accidental, Rhythm } from "~src/core/types/constants";
 import { useEditorContext } from "../../context/EditorContext";
 
 import DotIcon from "jsx:~icons/Dot.svg";
 import EighthNoteIcon from "jsx:~icons/EighthNote.svg";
+import EighthRestIcon from "jsx:~icons/EighthRest.svg";
 import FlatIcon from "jsx:~icons/Flat.svg";
 import HalfNoteIcon from "jsx:~icons/HalfNote.svg";
+import HalfRestIcon from "jsx:~icons/HalfRest.svg";
 import QuarterNoteIcon from "jsx:~icons/QuarterNote.svg";
+import QuarterRestIcon from "jsx:~icons/QuarterRest.svg";
 import SharpIcon from "jsx:~icons/Sharp.svg";
 import SixteenthNoteIcon from "jsx:~icons/SixteenthNote.svg";
-import ToggleRestIcon from "jsx:~icons/ToggleRest.svg";
+import SixteenthRestIcon from "jsx:~icons/SixteenthRest.svg";
 import TripletIcon from "jsx:~icons/Triplet.svg";
+import PianoIcon from "jsx:~icons/Piano.svg";
 
 import * as styles from "./EditorControls.module.css";
 
@@ -68,7 +71,11 @@ export default function EditorControls() {
           }
           disabled={currentCommands.rhythm === Rhythm.Half}
         >
-          <HalfNoteIcon height={iconSize} width={iconSize} />
+          {currentCommands.rest ? (
+            <HalfRestIcon height={iconSize} width={iconSize} />
+          ) : (
+            <HalfNoteIcon height={iconSize} width={iconSize} />
+          )}
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -79,7 +86,11 @@ export default function EditorControls() {
           }
           disabled={currentCommands.rhythm === Rhythm.Quarter}
         >
-          <QuarterNoteIcon height={iconSize} width={iconSize} />
+          {currentCommands.rest ? (
+            <QuarterRestIcon height={iconSize} width={iconSize} />
+          ) : (
+            <QuarterNoteIcon height={iconSize} width={iconSize} />
+          )}
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -90,7 +101,11 @@ export default function EditorControls() {
           }
           disabled={currentCommands.rhythm === Rhythm.Eighth}
         >
-          <EighthNoteIcon height={iconSize} width={iconSize} />
+          {currentCommands.rest ? (
+            <EighthRestIcon height={iconSize} width={iconSize} />
+          ) : (
+            <EighthNoteIcon height={iconSize} width={iconSize} />
+          )}
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -101,7 +116,11 @@ export default function EditorControls() {
           }
           disabled={currentCommands.rhythm === Rhythm.Sixteenth}
         >
-          <SixteenthNoteIcon height={iconSize} width={iconSize} />
+          {currentCommands.rest ? (
+            <SixteenthRestIcon height={iconSize} width={iconSize} />
+          ) : (
+            <SixteenthNoteIcon height={iconSize} width={iconSize} />
+          )}
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -120,7 +139,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleRest" })}
         >
-          <ToggleRestIcon height={iconSize} width={iconSize} />
+          <QuarterRestIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -136,7 +155,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
         >
-          <MdOutlinePiano size={iconSize} />
+          <PianoIcon height={iconSize} width={iconSize} />
         </button>
       </fieldset>
       Beamed:{" "}
