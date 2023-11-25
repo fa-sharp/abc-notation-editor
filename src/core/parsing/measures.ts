@@ -26,17 +26,24 @@ export const parseMeasuresFromAbcjs = (
       notes: [],
       duration: 0,
     };
+
     measures.push(currentMeasure);
+    let currentTriplet = false;
 
     for (let i = 0; i < line.length; i++) {
       const item = line[i]!;
       currentMeasure.lineEndIdx++;
+
       if (item.el_type === "note") {
         const note = item as AbcjsNote;
         if (note.rest?.type === "spacer") continue;
 
+        if (note.startTriplet) currentTriplet = true;
+        note.isTriplet = currentTriplet;
+        if (note.endTriplet) currentTriplet = false;
+
         currentMeasure.notes.push(note);
-        currentMeasure.duration += note.duration;
+        currentMeasure.duration += note.duration * (note.isTriplet ? 2 / 3 : 1);
         if (currentMeasure.duration >= fullMeasureDuration) {
           currentMeasure = {
             notes: [],

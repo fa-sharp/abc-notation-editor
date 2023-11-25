@@ -1,10 +1,16 @@
 import type { VoiceItemNote } from "abcjs";
 
 export interface AbcjsNote extends VoiceItemNote {
+  // Properties from abcjs
   duration: number;
   decoration?: Array<"accent" | "staccato">;
   pitches?: Array<Pitch>;
   rest?: { type: "rest" | "spacer" };
+  startTriplet?: number;
+  endTriplet?: boolean;
+
+  // Custom added properties
+  isTriplet?: boolean;
 }
 
 interface Pitch {

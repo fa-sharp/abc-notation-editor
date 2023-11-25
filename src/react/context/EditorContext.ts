@@ -47,6 +47,12 @@ const useEditor = ({
     beamedRef.current = beamed;
   }, [beamed]);
 
+  const [triplet, setTriplet] = useState(false);
+  const tripletRef = useRef(triplet);
+  useEffect(() => {
+    tripletRef.current = triplet;
+  }, [triplet]);
+
   const onAddNote = useCallback(
     (noteName: string | number) => {
       editorState.current.addNote(noteName, rhythm, {
@@ -54,6 +60,7 @@ const useEditor = ({
         dotted: dottedRef.current,
         rest,
         accidental: accidentalRef.current,
+        triplet: tripletRef.current,
       });
       setAbc(editorState.current.abc);
     },
@@ -108,6 +115,8 @@ const useEditor = ({
   const onSetAccidental = useCallback((v: Accidental) => setAccidental(v), []);
   const onToggleRest = useCallback(() => setRest((prev) => !prev), []);
   const onToggleDotted = useCallback(() => setDotted((prev) => !prev), []);
+  const onToggleTriplet = useCallback(() => setTriplet((prev) => !prev), []);
+
   const onToggleShowKeyboard = useCallback(
     () => setShowKeyboard((prev) => !prev),
     []
@@ -119,6 +128,7 @@ const useEditor = ({
     isBeamed: beamed,
     isRest: rest,
     isDotted: dotted,
+    isTriplet: triplet,
     showKeyboard,
     changeRhythm,
     setBeamed,
@@ -129,6 +139,7 @@ const useEditor = ({
     onBackspace,
     onToggleRest,
     onToggleDotted,
+    onToggleTriplet,
     onToggleShowKeyboard,
     onSetAccidental,
   };

@@ -11,6 +11,7 @@ import QuarterNoteIcon from "jsx:~icons/QuarterNote.svg";
 import SharpIcon from "jsx:~icons/Sharp.svg";
 import SixteenthNoteIcon from "jsx:~icons/SixteenthNote.svg";
 import ToggleRestIcon from "jsx:~icons/ToggleRest.svg";
+import TripletIcon from "jsx:~icons/Triplet.svg";
 
 import * as styles from "./EditorControls.module.css";
 
@@ -21,10 +22,12 @@ export default function EditorControls() {
     isBeamed,
     isDotted,
     isRest,
+    isTriplet,
     showKeyboard,
     onToggleShowKeyboard,
     onToggleRest,
     onToggleDotted,
+    onToggleTriplet,
     setBeamed,
     changeRhythm,
     onAddBarline,
@@ -32,6 +35,8 @@ export default function EditorControls() {
     onSetAccidental,
     onBackspace,
   } = useEditorContext();
+
+  const iconSize = 20;
 
   return (
     <div className={styles.controls}>
@@ -49,7 +54,7 @@ export default function EditorControls() {
             )
           }
         >
-          <FlatIcon height={28} width={28} />
+          <FlatIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -63,7 +68,7 @@ export default function EditorControls() {
             )
           }
         >
-          <SharpIcon height={28} width={28} />
+          <SharpIcon height={iconSize} width={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -75,7 +80,7 @@ export default function EditorControls() {
           onClick={() => changeRhythm(2)}
           disabled={currentRhythm === 2}
         >
-          <HalfNoteIcon height={28} width={28} />
+          <HalfNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -84,7 +89,7 @@ export default function EditorControls() {
           onClick={() => changeRhythm(4)}
           disabled={currentRhythm === 4}
         >
-          <QuarterNoteIcon height={28} width={28} />
+          <QuarterNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -93,7 +98,7 @@ export default function EditorControls() {
           onClick={() => changeRhythm(8)}
           disabled={currentRhythm === 8}
         >
-          <EighthNoteIcon height={28} width={28} />
+          <EighthNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -102,7 +107,7 @@ export default function EditorControls() {
           onClick={() => changeRhythm(16)}
           disabled={currentRhythm === 16}
         >
-          <SixteenthNoteIcon height={28} width={28} />
+          <SixteenthNoteIcon height={iconSize} width={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -111,13 +116,19 @@ export default function EditorControls() {
           className={clsx(styles.iconButton, { [styles.selected]: isDotted })}
           onClick={onToggleDotted}
         >
-          <DotIcon height={28} width={28} />
+          <DotIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, { [styles.selected]: isRest })}
           onClick={onToggleRest}
         >
-          <ToggleRestIcon height={28} width={28} />
+          <ToggleRestIcon height={iconSize} width={iconSize} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, { [styles.selected]: isTriplet })}
+          onClick={onToggleTriplet}
+        >
+          <TripletIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -125,7 +136,7 @@ export default function EditorControls() {
           })}
           onClick={onToggleShowKeyboard}
         >
-          <MdOutlinePiano size={28} />
+          <MdOutlinePiano size={iconSize} />
         </button>
       </fieldset>
       Beamed:{" "}

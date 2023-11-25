@@ -38,6 +38,7 @@ export default class EditorState {
       beamed?: boolean;
       rest?: boolean;
       dotted?: boolean;
+      triplet?: boolean;
     }
   ) {
     const abcNote =
@@ -45,19 +46,43 @@ export default class EditorState {
         ? getAbcNoteFromMidiNum(note, options?.accidental)
         : getAbcNoteFromNoteName(note, options?.accidental);
 
-    // Add the note to the ABC score
-    this.abc += `${options?.beamed ? "" : " "}${
-      !options?.rest ? abcNote : "z"
-    }${getAbcRhythm(rhythm, options?.dotted)}`;
+    const currentMeasure = this.measures.at(-1);
+
+    let abcToAdd = "";
+    if (!options?.beamed) abcToAdd += " ";
+
+    // Determine if this is the start of a triplet
+    if (options?.triplet && currentMeasure) {
+      const startTripletIdx = currentMeasure.notes.findLastIndex(
+        (n) => !!n.startTriplet
+      );
+      const endTripletIdx = currentMeasure.notes.findLastIndex(
+        (n) => !!n.endTriplet
+      );
+      if (startTripletIdx === -1 || startTripletIdx < endTripletIdx) {
+        abcToAdd += "(3";
+      }
+    }
+
+    // Add the actual note and rhythm
+    abcToAdd += `${!options?.rest ? abcNote : "z"}${getAbcRhythm(
+      rhythm,
+      options?.dotted
+    )}`;
 
     // Add barline if we're at the end of the measure
-    const currentMeasure = this.measures.at(-1);
     if (
       currentMeasure &&
-      currentMeasure.duration + (1 / rhythm) * (options?.dotted ? 3 / 2 : 1) >=
+      currentMeasure.duration +
+        (1 / rhythm) *
+          (options?.dotted ? 3 / 2 : 1) *
+          (options?.triplet ? 2 / 3 : 1) >=
         TimeSignature[this.timeSig].duration
     )
-      this.abc += " |";
+      abcToAdd += " |";
+
+    // Add the note to the ABC score
+    this.abc += abcToAdd;
   }
 
   backspace() {
@@ -73,17 +98,16 @@ export default class EditorState {
   shouldBeamNextNote(nextRhythm: Rhythm) {
     const lastMeasure = this.measures.at(-1);
     const lastNote = lastMeasure?.notes.at(-1);
-    if (!lastNote || !lastMeasure) return false;
+    if (!lastNote || !lastMeasure || lastNote.endTriplet) return false;
+
     const currentDuration = lastMeasure.notes.reduce(
-      (acc, curr) => acc + curr.duration,
+      (acc, curr) => acc + curr.duration * (curr.isTriplet ? 2 / 3 : 1),
       0
     );
     const currentBeat = currentDuration * 4;
 
     return (
-      ((nextRhythm === Rhythm.Eighth &&
-        currentBeat !== 0 &&
-        currentBeat !== 2) ||
+      ((nextRhythm === Rhythm.Eighth && ![0, 2].includes(currentBeat)) ||
         (nextRhythm === Rhythm.Sixteenth &&
           ![0, 1, 2, 3].includes(currentBeat))) &&
       [0.125, 0.0625]
