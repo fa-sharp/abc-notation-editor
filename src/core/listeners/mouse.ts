@@ -6,11 +6,18 @@ import HalfNoteIcon from "bundle-text:~icons/HalfNote.svg";
 import QuarterNoteIcon from "bundle-text:~icons/QuarterNote.svg";
 import SixteenthNoteIcon from "bundle-text:~icons/SixteenthNote.svg";
 
+const ledgerLineStyle = Object.freeze({
+  position: "fixed",
+  height: "1px",
+  width: "16px",
+  backgroundColor: "#000",
+});
+
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
  * on the staff. Returns a cleanup function to remove the listeners.
  */
-export const setupStaffListeners = (
+export const setupStaffMouseListeners = (
   renderDiv: HTMLDivElement,
   numTuneLines: number,
   rhythm: Rhythm,
@@ -78,12 +85,9 @@ export const setupStaffListeners = (
         ) {
           const ledgerDiv = document.createElement("div");
           Object.assign(ledgerDiv.style, {
-            position: "fixed",
+            ...ledgerLineStyle,
             top: `${y}px`,
             left: `${e.clientX - 10}px`,
-            height: "1px",
-            width: "16px",
-            backgroundColor: "#000",
           });
           ledgerLineDivs.push(ledgerDiv);
           renderDiv.appendChild(ledgerDiv);
@@ -101,12 +105,9 @@ export const setupStaffListeners = (
         ) {
           const ledgerDiv = document.createElement("div");
           Object.assign(ledgerDiv.style, {
-            position: "fixed",
+            ...ledgerLineStyle,
             top: `${y}px`,
             left: `${e.clientX - 10}px`,
-            height: "1px",
-            width: "16px",
-            backgroundColor: "#000",
           });
           ledgerLineDivs.push(ledgerDiv);
           renderDiv.appendChild(ledgerDiv);
@@ -122,12 +123,12 @@ export const setupStaffListeners = (
     }
   };
 
-  console.debug("Setting up mouse click listeners");
+  console.debug("Setting up mouse listeners");
   renderDiv.addEventListener("pointerdown", staffClickListener);
   window.addEventListener("pointermove", staffCursorListener);
 
   return () => {
-    console.debug("Tearing down mouse click listeners");
+    console.debug("Tearing down mouse listeners");
     renderDiv.removeEventListener("pointerdown", staffClickListener);
     window.removeEventListener("pointermove", staffCursorListener);
   };

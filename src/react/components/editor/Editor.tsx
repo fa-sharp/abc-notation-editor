@@ -24,12 +24,12 @@ export default function Editor({
 }
 
 function InnerEditor({ width, height }: { width: number; height: number }) {
-  const { showKeyboard } = useEditorContext();
+  const { currentCommands } = useEditorContext();
   return (
     <div className={styles.editor}>
       <Score width={width} height={height} />
       <EditorControls />
-      {showKeyboard && <Keyboard startKey={60} endKey={84} />}
+      {currentCommands.showKeyboard && <Keyboard startKey={60} endKey={84} />}
     </div>
   );
 }

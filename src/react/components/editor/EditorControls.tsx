@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { MdOutlinePiano } from "react-icons/md";
-import { Accidental } from "~src/core/types/constants";
+import { Accidental, Rhythm } from "~src/core/types/constants";
 import { useEditorContext } from "../../context/EditorContext";
 
 import DotIcon from "jsx:~icons/Dot.svg";
@@ -17,22 +17,10 @@ import * as styles from "./EditorControls.module.css";
 
 export default function EditorControls() {
   const {
-    currentRhythm,
-    currentAccidental,
-    isBeamed,
-    isDotted,
-    isRest,
-    isTriplet,
-    showKeyboard,
-    onToggleShowKeyboard,
-    onToggleRest,
-    onToggleDotted,
-    onToggleTriplet,
-    setBeamed,
-    changeRhythm,
+    currentCommands,
+    dispatchCommand,
     onAddBarline,
     onAddLineBreak,
-    onSetAccidental,
     onBackspace,
   } = useEditorContext();
 
@@ -44,28 +32,26 @@ export default function EditorControls() {
         <legend>Accidentals</legend>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentAccidental === Accidental.Flat,
+            [styles.selected]: currentCommands.accidental === Accidental.Flat,
           })}
           onClick={() =>
-            onSetAccidental(
-              currentAccidental === Accidental.Flat
-                ? Accidental.None
-                : Accidental.Flat
-            )
+            dispatchCommand({
+              type: "toggleAccidental",
+              accidental: Accidental.Flat,
+            })
           }
         >
           <FlatIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentAccidental === Accidental.Sharp,
+            [styles.selected]: currentCommands.accidental === Accidental.Sharp,
           })}
           onClick={() =>
-            onSetAccidental(
-              currentAccidental === Accidental.Sharp
-                ? Accidental.None
-                : Accidental.Sharp
-            )
+            dispatchCommand({
+              type: "toggleAccidental",
+              accidental: Accidental.Sharp,
+            })
           }
         >
           <SharpIcon height={iconSize} width={iconSize} />
@@ -75,37 +61,45 @@ export default function EditorControls() {
         <legend>Rhythms</legend>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentRhythm === 2,
+            [styles.selected]: currentCommands.rhythm === Rhythm.Half,
           })}
-          onClick={() => changeRhythm(2)}
-          disabled={currentRhythm === 2}
+          onClick={() =>
+            dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Half })
+          }
+          disabled={currentCommands.rhythm === Rhythm.Half}
         >
           <HalfNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentRhythm === 4,
+            [styles.selected]: currentCommands.rhythm === Rhythm.Quarter,
           })}
-          onClick={() => changeRhythm(4)}
-          disabled={currentRhythm === 4}
+          onClick={() =>
+            dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Quarter })
+          }
+          disabled={currentCommands.rhythm === Rhythm.Quarter}
         >
           <QuarterNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentRhythm === 8,
+            [styles.selected]: currentCommands.rhythm === Rhythm.Eighth,
           })}
-          onClick={() => changeRhythm(8)}
-          disabled={currentRhythm === 8}
+          onClick={() =>
+            dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Eighth })
+          }
+          disabled={currentCommands.rhythm === Rhythm.Eighth}
         >
           <EighthNoteIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: currentRhythm === 16,
+            [styles.selected]: currentCommands.rhythm === Rhythm.Sixteenth,
           })}
-          onClick={() => changeRhythm(16)}
-          disabled={currentRhythm === 16}
+          onClick={() =>
+            dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Sixteenth })
+          }
+          disabled={currentCommands.rhythm === Rhythm.Sixteenth}
         >
           <SixteenthNoteIcon height={iconSize} width={iconSize} />
         </button>
@@ -113,28 +107,34 @@ export default function EditorControls() {
       <fieldset className={styles.controlGroup}>
         <legend>Toggles</legend>
         <button
-          className={clsx(styles.iconButton, { [styles.selected]: isDotted })}
-          onClick={onToggleDotted}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.dotted,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleDotted" })}
         >
           <DotIcon height={iconSize} width={iconSize} />
         </button>
         <button
-          className={clsx(styles.iconButton, { [styles.selected]: isRest })}
-          onClick={onToggleRest}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.rest,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleRest" })}
         >
           <ToggleRestIcon height={iconSize} width={iconSize} />
         </button>
         <button
-          className={clsx(styles.iconButton, { [styles.selected]: isTriplet })}
-          onClick={onToggleTriplet}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.triplet,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleTriplet" })}
         >
           <TripletIcon height={iconSize} width={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
-            [styles.selected]: showKeyboard,
+            [styles.selected]: currentCommands.showKeyboard,
           })}
-          onClick={onToggleShowKeyboard}
+          onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
         >
           <MdOutlinePiano size={iconSize} />
         </button>
@@ -142,9 +142,9 @@ export default function EditorControls() {
       Beamed:{" "}
       <input
         type="checkbox"
-        checked={isBeamed}
-        onChange={() => setBeamed((prev) => !prev)}
-        disabled={![8, 16].includes(currentRhythm)}
+        checked={currentCommands.beamed}
+        onChange={() => dispatchCommand({ type: "toggleBeamed" })}
+        disabled={![8, 16].includes(currentCommands.rhythm)}
       />
       <button onClick={onAddBarline}>Add bar</button>
       <button onClick={onAddLineBreak}>Add line</button>
