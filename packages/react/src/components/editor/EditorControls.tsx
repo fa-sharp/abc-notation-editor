@@ -158,6 +158,14 @@ export default function EditorControls() {
         >
           <EditorControlIcon src={PianoIcon} size={iconSize} />
         </button>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.midiEnabled,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleMidi" })}
+        >
+          MIDI
+        </button>
       </fieldset>
       Beamed:{" "}
       <input

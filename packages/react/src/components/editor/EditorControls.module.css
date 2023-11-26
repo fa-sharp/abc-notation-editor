@@ -1,6 +1,8 @@
 .controls {
   display: flex;
   gap: 1rem;
+
+  font-size: 0.9em;
 }
 
 .controls > .controlGroup {
@@ -14,8 +16,13 @@
   background: none;
   border: solid 1px black;
   border-radius: 50%;
+  font-size: 0.9em;
 
-  /* height: 30px; */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 2.5em;
   aspect-ratio: 1;
 }
 

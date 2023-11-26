@@ -1,6 +1,6 @@
 import { Accidental, Rhythm } from "../types/constants";
 
-interface EditorCommandState {
+export interface EditorCommandState {
   rhythm: Rhythm;
   rest: boolean;
   accidental: Accidental;
@@ -8,6 +8,7 @@ interface EditorCommandState {
   beamed: boolean;
   triplet: boolean;
   showKeyboard: boolean;
+  midiEnabled: boolean;
 }
 
 export type EditorCommandAction =
@@ -23,7 +24,8 @@ export type EditorCommandAction =
   | { type: "toggleTriplet" }
   | { type: "toggleShowKeyboard" }
   | { type: "toggleDotted" }
-  | { type: "toggleBeamed" };
+  | { type: "toggleBeamed" }
+  | { type: "toggleMidi" };
 
 export function editorCommandReducer(
   state: EditorCommandState,
@@ -63,6 +65,9 @@ export function editorCommandReducer(
       break;
     case "setDotted":
       newState.dotted = action.dotted;
+      break;
+    case "toggleMidi":
+      newState.midiEnabled = !newState.midiEnabled;
       break;
   }
   return newState;

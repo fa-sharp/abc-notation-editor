@@ -1,4 +1,4 @@
-import { TuneObject, renderAbc } from "abcjs";
+import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,
@@ -13,8 +13,10 @@ import {
   setupStaffMouseListeners,
   editorCommandReducer,
   EditorState,
+  EditorCommandState,
   Accidental,
   Rhythm,
+  setupMIDIListener,
 } from "@abc-editor/core";
 
 interface EditorProviderProps {
@@ -30,7 +32,6 @@ const useEditor = ({
 }: EditorProviderProps) => {
   const editorState = useRef<EditorState>(new EditorState(initialAbc));
   const [abc, setAbc] = useState(() => editorState.current.abc);
-  const [tuneObject, setTuneObject] = useState<TuneObject | null>(null);
 
   const renderDiv = useRef<HTMLDivElement | null>(null);
   const setRenderDiv = useCallback(
@@ -48,7 +49,8 @@ const useEditor = ({
       triplet: false,
       showKeyboard: false,
       beamed: false,
-    }
+      midiEnabled: false,
+    } satisfies EditorCommandState
   );
 
   const restRef = useRef(editorCommands.rest);
@@ -103,21 +105,24 @@ const useEditor = ({
       viewportHorizontal: true,
       wrap: { minSpacing: 1.8, maxSpacing: 2.7, preferredMeasuresPerLine: 5 },
     });
-    setTuneObject(tuneObject);
     editorState.current.updateTuneData(tuneObject.lines);
 
-    // Reset editor commands
-    dispatchEditorCommand({
-      type: "setAccidental",
-      accidental: Accidental.None,
-    });
+    // Determine beaming depending on next note
     dispatchEditorCommand({
       type: "setBeamed",
       beamed: editorState.current.shouldBeamNextNote(editorCommands.rhythm),
     });
-    dispatchEditorCommand({ type: "setDotted", dotted: false });
     console.debug(editorState.current);
   }, [abc, editorCommands.rhythm, onChange, staffWidth]);
+
+  // Reset editor commands if abc changed
+  useEffect(() => {
+    dispatchEditorCommand({
+      type: "setAccidental",
+      accidental: Accidental.None,
+    });
+    dispatchEditorCommand({ type: "setDotted", dotted: false });
+  }, [abc]);
 
   const onAddBarline = useCallback(() => {
     setAbc((prev) => prev + " | ");
@@ -133,18 +138,21 @@ const useEditor = ({
   }, []);
 
   // Setup mouse listeners
+  const lastKnownMousePos = useRef<{ x: number; y: number } | null>(null);
   useEffect(() => {
-    if (!renderDiv.current || !tuneObject) return;
+    if (!renderDiv.current) return;
 
     const cleanUpStaffListeners = setupStaffMouseListeners({
       renderDiv: renderDiv.current,
-      numTuneLines: tuneObject.lines.length,
+      numTuneLines: editorState.current.tuneLines.length,
       rhythm: editorCommands.rhythm,
       rest: editorCommands.rest,
       onAddNote,
+      lastMousePos: lastKnownMousePos.current,
+      updateLastMousePos: (pos) => (lastKnownMousePos.current = pos),
     });
     return () => cleanUpStaffListeners();
-  }, [editorCommands.rest, editorCommands.rhythm, onAddNote, tuneObject]);
+  }, [abc, editorCommands.rest, editorCommands.rhythm, onAddNote]);
 
   // Setup keyboard listener
   useEffect(() => {
@@ -155,6 +163,14 @@ const useEditor = ({
     );
     return () => cleanUpKbdListener();
   }, [onBackspace]);
+
+  // Setup MIDI listener
+  useEffect(() => {
+    if (!editorCommands.midiEnabled) return;
+    console.debug("Setting up MIDI listener");
+    const cleanUpMidiListener = setupMIDIListener(onAddNote);
+    return () => cleanUpMidiListener();
+  }, [editorCommands.midiEnabled, onAddNote]);
 
   return {
     currentCommands: editorCommands,

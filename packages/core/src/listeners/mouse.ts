@@ -11,12 +11,6 @@ import HalfRestIcon from "@icons/HalfRest.svg";
 import QuarterRestIcon from "@icons/QuarterRest.svg";
 import SixteenthRestIcon from "@icons/SixteenthRest.svg";
 
-/** Last known mouse position inside staff */
-let lastMousePos: {
-  clientX: number;
-  clientY: number;
-} | null = null;
-
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
  * on the staff. Returns a cleanup function to remove the listeners.
@@ -27,12 +21,21 @@ export const setupStaffMouseListeners = ({
   rhythm,
   rest = false,
   onAddNote,
+  lastMousePos,
+  updateLastMousePos,
 }: {
   renderDiv: HTMLDivElement;
   numTuneLines: number;
   rhythm: Rhythm;
   rest?: boolean;
   onAddNote: (note: string) => void;
+
+  /** Last known mouse position inside staff */
+  lastMousePos?: {
+    x: number;
+    y: number;
+  } | null;
+  updateLastMousePos?: (pos: { x: number; y: number } | null) => void;
 }) => {
   const topStaffLine = renderDiv.querySelector<SVGPathElement>(
     `.abcjs-l${numTuneLines - 1} .abcjs-top-line`
@@ -45,12 +48,12 @@ export const setupStaffMouseListeners = ({
     const topStaffLineY = topStaffLine.getBoundingClientRect().y;
     const staffLineGap =
       secondStaffLine.getBoundingClientRect().y - topStaffLineY;
-    const convertStaffClickToNote = getStaffClickToNoteFn({
+    const note = getStaffClickToNoteFn({
       clef: "treble",
       topLineY: topStaffLineY,
       lineGap: staffLineGap,
-    });
-    onAddNote(convertStaffClickToNote(e.clientY));
+    })(e.clientY);
+    if (note) onAddNote(note);
   };
 
   // Setup the cursor icon for the staff
@@ -58,12 +61,10 @@ export const setupStaffMouseListeners = ({
   const cursorIconDiv = getCursorIcon({ rhythm, rest, size: iconSize });
   let ledgerLineDivs: HTMLDivElement[] = [];
 
-  // If last known mouse position was inside staff, draw the cursor (and ledger lines if needed)
+  // If there is a last known mouse position inside staff, re-draw the cursor (and ledger lines if needed)
   if (lastMousePos) {
-    cursorIconDiv.style.top = `${
-      lastMousePos.clientY - (iconSize - iconSize / 5)
-    }px`;
-    cursorIconDiv.style.left = `${lastMousePos.clientX - iconSize / 2}px`;
+    cursorIconDiv.style.top = `${lastMousePos.y - iconSize * (4 / 5)}px`;
+    cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2}px`;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
       const topStaffLineY = topStaffLine.getBoundingClientRect().y;
@@ -86,7 +87,7 @@ export const setupStaffMouseListeners = ({
     if (renderDiv.contains(cursorIconDiv)) renderDiv.removeChild(cursorIconDiv);
     ledgerLineDivs.forEach((div) => div.remove());
     ledgerLineDivs = [];
-    lastMousePos = null;
+    if (updateLastMousePos) updateLastMousePos(null);
   };
 
   const staffMoveListener = (e: PointerEvent) => {
@@ -94,9 +95,9 @@ export const setupStaffMouseListeners = ({
     ledgerLineDivs.forEach((div) => div.remove());
 
     // Move the cursor icon
-    cursorIconDiv.style.top = `${e.clientY - (iconSize - iconSize / 5)}px`;
+    cursorIconDiv.style.top = `${e.clientY - iconSize * (4 / 5)}px`;
     cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
-    lastMousePos = { clientX: e.clientX, clientY: e.clientY };
+    if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
     // Draw ledger lines if needed.
     if (!rest) {
@@ -106,7 +107,7 @@ export const setupStaffMouseListeners = ({
       ledgerLineDivs = drawLedgerLines({
         topStaffLineY,
         staffLineGap,
-        mousePos: e,
+        mousePos: { x: e.clientX, y: e.clientY },
         renderDiv,
       });
     } else {
@@ -130,73 +131,6 @@ export const setupStaffMouseListeners = ({
     ledgerLineDivs.forEach((div) => div.remove());
   };
 };
-
-const ledgerLineStyle = Object.freeze({
-  position: "fixed",
-  height: "1px",
-  width: "16px",
-  backgroundColor: "#000",
-});
-
-/** Draw the ledger lines above/below the staff according to the mouse position */
-function drawLedgerLines({
-  mousePos,
-  topStaffLineY,
-  staffLineGap,
-  renderDiv,
-}: {
-  mousePos: { clientY: number; clientX: number };
-  topStaffLineY: number;
-  staffLineGap: number;
-  renderDiv: HTMLDivElement;
-}) {
-  const ledgerLineDivs: HTMLDivElement[] = [];
-  const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
-  const maxLedgerDistance = staffLineGap * 6;
-  const drawLedgerAnticipation = 4;
-
-  // Above staff
-  if (
-    mousePos.clientY < topStaffLineY &&
-    mousePos.clientY > topStaffLineY - maxLedgerDistance
-  ) {
-    for (
-      let y = topStaffLineY - staffLineGap;
-      y >= mousePos.clientY - drawLedgerAnticipation;
-      y -= staffLineGap
-    ) {
-      const ledgerDiv = document.createElement("div");
-      Object.assign(ledgerDiv.style, {
-        ...ledgerLineStyle,
-        top: `${y}px`,
-        left: `${mousePos.clientX - 10}px`,
-      });
-      ledgerLineDivs.push(ledgerDiv);
-      renderDiv.appendChild(ledgerDiv);
-    }
-  }
-  // Below staff
-  if (
-    mousePos.clientY > bottomStaffLineY &&
-    mousePos.clientY < bottomStaffLineY + maxLedgerDistance
-  ) {
-    for (
-      let y = bottomStaffLineY + staffLineGap;
-      y <= mousePos.clientY + drawLedgerAnticipation;
-      y += staffLineGap
-    ) {
-      const ledgerDiv = document.createElement("div");
-      Object.assign(ledgerDiv.style, {
-        ...ledgerLineStyle,
-        top: `${y}px`,
-        left: `${mousePos.clientX - 10}px`,
-      });
-      ledgerLineDivs.push(ledgerDiv);
-      renderDiv.appendChild(ledgerDiv);
-    }
-  }
-  return ledgerLineDivs;
-}
 
 const getNoteFromC4MajorDegree = Scale.degrees("C4 major");
 
@@ -227,6 +161,73 @@ export function getStaffClickToNoteFn(props: {
     );
     return getNoteFromDegrees(estimatedDegreesFromTopLine);
   };
+}
+
+const ledgerLineStyle = Object.freeze({
+  position: "fixed",
+  height: "1px",
+  width: "16px",
+  backgroundColor: "#000",
+});
+
+/** Draw the ledger lines above/below the staff according to the mouse position */
+function drawLedgerLines({
+  mousePos,
+  topStaffLineY,
+  staffLineGap,
+  renderDiv,
+}: {
+  mousePos: { y: number; x: number };
+  topStaffLineY: number;
+  staffLineGap: number;
+  renderDiv: HTMLDivElement;
+}) {
+  const ledgerLineDivs: HTMLDivElement[] = [];
+  const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+  const maxLedgerDistance = staffLineGap * 6;
+  const drawLedgerAnticipation = 4;
+
+  // Above staff
+  if (
+    mousePos.y < topStaffLineY &&
+    mousePos.y > topStaffLineY - maxLedgerDistance
+  ) {
+    for (
+      let y = topStaffLineY - staffLineGap;
+      y >= mousePos.y - drawLedgerAnticipation;
+      y -= staffLineGap
+    ) {
+      const ledgerDiv = document.createElement("div");
+      Object.assign(ledgerDiv.style, {
+        ...ledgerLineStyle,
+        top: `${y}px`,
+        left: `${mousePos.x - 10}px`,
+      });
+      ledgerLineDivs.push(ledgerDiv);
+      renderDiv.appendChild(ledgerDiv);
+    }
+  }
+  // Below staff
+  if (
+    mousePos.y > bottomStaffLineY &&
+    mousePos.y < bottomStaffLineY + maxLedgerDistance
+  ) {
+    for (
+      let y = bottomStaffLineY + staffLineGap;
+      y <= mousePos.y + drawLedgerAnticipation;
+      y += staffLineGap
+    ) {
+      const ledgerDiv = document.createElement("div");
+      Object.assign(ledgerDiv.style, {
+        ...ledgerLineStyle,
+        top: `${y}px`,
+        left: `${mousePos.x - 10}px`,
+      });
+      ledgerLineDivs.push(ledgerDiv);
+      renderDiv.appendChild(ledgerDiv);
+    }
+  }
+  return ledgerLineDivs;
 }
 
 function getCursorIcon({
@@ -268,16 +269,4 @@ function getCursorIcon({
     }
   }
   return div;
-}
-
-function getBoundingRectMinusPadding(element: HTMLElement) {
-  const rect = element.getBoundingClientRect();
-  const computedStyle = getComputedStyle(element);
-
-  const top = rect.top + parseFloat(computedStyle.paddingTop);
-  const bottom = rect.bottom - parseFloat(computedStyle.paddingBottom);
-  const left = rect.left + parseFloat(computedStyle.paddingLeft);
-  const right = rect.right - parseFloat(computedStyle.paddingRight);
-
-  return { top, bottom, left, right };
 }
