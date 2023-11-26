@@ -1,34 +1,7 @@
 {
-  "name": "abc-visual-editor",
+  "name": "abc-notation-editor",
   "version": "0.0.1",
   "description": "A visual music notation editor component, built on top of abcjs",
-  "source": "src/react/index.ts",
-  "types": "dist/types.d.ts",
-  "targets": {
-    "types": {},
-    "react": {
-      "source": "src/react/index.ts",
-      "distDir": "./dist/react",
-      "isLibrary": true,
-      "includeNodeModules": false,
-      "outputFormat": "esmodule"
-    },
-    "examples": {
-      "distDir": "./dist-examples"
-    }
-  },
-  "exports": {
-    "./react": {
-      "default": "./dist/react",
-      "types": "./dist/types.d.ts"
-    }
-  },
-  "scripts": {
-    "dev:examples": "rimraf dist && parcel 'examples/**/*.html'",
-    "test:lib": "vitest",
-    "build:lib": "rimraf dist && parcel build --target types --target react",
-    "build:examples": "rimraf dist-examples && parcel build --target examples 'examples/**/*.html'"
-  },
   "keywords": [
     "music",
     "notation",
@@ -38,46 +11,8 @@
     "react"
   ],
   "author": "fa-sharp",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
-    "@parcel/config-default": "^2.10.3",
-    "@parcel/packager-ts": "2.10.3",
-    "@parcel/transformer-inline-string": "2.10.3",
-    "@parcel/transformer-sass": "2.10.3",
-    "@parcel/transformer-svg-react": "^2.10.3",
-    "@parcel/transformer-typescript-types": "2.10.3",
-    "@types/react": "^18.2.38",
-    "@types/react-dom": "^18.2.17",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "abcjs": "^6.2.3",
-    "eslint": "^8.54.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "parcel": "^2.10.3",
-    "prettier": "^3.1.0",
-    "process": "^0.11.10",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "rimraf": "^5.0.5",
-    "typescript": "^5.3.2",
-    "typescript-plugin-css-modules": "^5.0.2",
-    "vite": "^5.0.2",
-    "vite-tsconfig-paths": "^4.2.1",
-    "vitest": "^0.34.6"
-  },
-  "peerDependencies": {
-    "abcjs": "^6.2",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "dependencies": {
-    "clsx": "^2.0.0",
-    "puro": "^0.8.4",
-    "react-icons": "^4.12.0",
-    "tonal": "^5.0.0"
-  },
-  "@parcel/resolver-default": {
-    "packageExports": true
+    "prettier": "^3.1.0"
   }
 }

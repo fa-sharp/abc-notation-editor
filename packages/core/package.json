@@ -1,0 +1,30 @@
+{
+  "name": "@abc-editor/core",
+  "version": "0.0.1",
+  "description": "ABC notation visual editor - core functions",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsup src/index.ts --sourcemap --dts --loader '.svg=text' --format esm,cjs",
+    "test": "vitest"
+  },
+  "keywords": [],
+  "author": "fa-sharp",
+  "license": "MIT",
+  "devDependencies": {
+    "abcjs": "^6.2.3",
+    "rimraf": "^5.0.5",
+    "tsup": "^8.0.1",
+    "vite": "^5.0.2",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^0.34.6"
+  },
+  "dependencies": {
+    "tonal": "^5.0.0"
+  }
+}
