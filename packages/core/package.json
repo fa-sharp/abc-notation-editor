@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "description": "ABC notation visual editor - core functions",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -18,7 +18,6 @@
   "license": "MIT",
   "devDependencies": {
     "abcjs": "^6.2.3",
-    "rimraf": "^5.0.5",
     "tsup": "^8.0.1",
     "vite": "^5.0.2",
     "vite-tsconfig-paths": "^4.2.1",

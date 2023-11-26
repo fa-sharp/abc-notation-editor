@@ -22,7 +22,7 @@ jobs:
         run: pnpm install
 
       - name: Test library
-        run: pnpm test:lib
+        run: pnpm -r test
 
       - name: Build library
-        run: pnpm build:lib
+        run: pnpm -r build

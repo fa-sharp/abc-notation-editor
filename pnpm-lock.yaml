@@ -11,6 +11,9 @@ importers:
       prettier:
         specifier: ^3.1.0
         version: 3.1.0
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.5
 
   packages/core:
     dependencies:
@@ -21,9 +24,6 @@ importers:
       abcjs:
         specifier: ^6.2.3
         version: 6.2.3
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.5
       tsup:
         specifier: ^8.0.1
         version: 8.0.1
@@ -85,9 +85,6 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.4
         version: 0.4.4(eslint@8.54.0)
-      rimraf:
-        specifier: ^5.0.5
-        version: 5.0.5
       typescript:
         specifier: ^5.2.2
         version: 5.3.2

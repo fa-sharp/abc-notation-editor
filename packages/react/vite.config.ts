@@ -25,5 +25,10 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react(), tsconfigPaths(), dts(), libInjectCss()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    dts({ entryRoot: "./src" }),
+    libInjectCss(),
+  ],
 });
