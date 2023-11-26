@@ -14,13 +14,14 @@ export default defineConfig({
       fileName: "abc-editor",
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "react-dom", "abcjs"],
+      external: ["react", "react/jsx-runtime", "react-dom", "tonal", "abcjs"],
       output: {
         globals: {
           react: "React",
           "react/jsx-runtime": "react/jsx-runtime",
           "react-dom": "ReactDOM",
           abcjs: "ABCJS",
+          tonal: "Tonal",
         },
       },
     },
@@ -28,7 +29,7 @@ export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths(),
-    dts({ entryRoot: "./src" }),
+    dts({ entryRoot: "./src", rollupTypes: true }),
     libInjectCss(),
   ],
 });

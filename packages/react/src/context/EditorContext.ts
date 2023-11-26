@@ -17,7 +17,7 @@ import {
   Rhythm,
 } from "@abc-editor/core";
 
-interface Props {
+interface EditorProviderProps {
   initialAbc?: string;
   staffWidth?: number;
   onChange?: (abc: string) => void;
@@ -27,7 +27,7 @@ const useEditor = ({
   initialAbc,
   staffWidth = 300,
   onChange = () => {},
-}: Props) => {
+}: EditorProviderProps) => {
   const editorState = useRef<EditorState>(new EditorState(initialAbc));
   const [abc, setAbc] = useState(() => editorState.current.abc);
   const [tuneObject, setTuneObject] = useState<TuneObject | null>(null);

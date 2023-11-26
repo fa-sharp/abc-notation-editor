@@ -39,18 +39,9 @@ importers:
 
   packages/react:
     dependencies:
-      '@abc-editor/core':
-        specifier: workspace:^
-        version: link:../core
       abcjs:
         specifier: ^6.2
         version: 6.2.3
-      clsx:
-        specifier: ^2.0.0
-        version: 2.0.0
-      puro:
-        specifier: ^0.8.4
-        version: 0.8.4(react@18.2.0)
       react:
         specifier: ^18
         version: 18.2.0
@@ -61,6 +52,9 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
+      '@abc-editor/core':
+        specifier: workspace:^
+        version: link:../core
       '@types/react':
         specifier: ^18.2.37
         version: 18.2.38
@@ -76,6 +70,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.2.0
         version: 4.2.0(vite@5.0.2)
+      clsx:
+        specifier: ^2.0.0
+        version: 2.0.0
       eslint:
         specifier: ^8.53.0
         version: 8.54.0
@@ -85,6 +82,9 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.4
         version: 0.4.4(eslint@8.54.0)
+      puro:
+        specifier: ^0.8.4
+        version: 0.8.4(react@18.2.0)
       typescript:
         specifier: ^5.2.2
         version: 5.3.2
@@ -1554,7 +1554,7 @@ packages:
   /clsx@2.0.0:
     resolution: {integrity: sha512-rQ1+kcj+ttHG0MKVGBUXwayCCF1oh39BF5COIpRzuCEv8Mwjv0XucrI2ExNTOn9IlLifGClWQcU9BrZORvtw6Q==}
     engines: {node: '>=6'}
-    dev: false
+    dev: true
 
   /color-convert@1.9.3:
     resolution: {integrity: sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg==}
@@ -2394,7 +2394,6 @@ packages:
     hasBin: true
     dependencies:
       js-tokens: 4.0.0
-    dev: false
 
   /loupe@2.3.7:
     resolution: {integrity: sha512-zSMINGVYkdpYSOBmLi0D1Uo7JU9nVdQKrHxC8eYlV+9YKK9WePqAlL7lSlorG/U2Fw1w0hTBmaa/jrQ3UbPHtA==}
@@ -2819,7 +2818,7 @@ packages:
       react: '>=17 || >=18'
     dependencies:
       react: 18.2.0
-    dev: false
+    dev: true
 
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -2849,7 +2848,6 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       loose-envify: 1.4.0
-    dev: false
 
   /readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}

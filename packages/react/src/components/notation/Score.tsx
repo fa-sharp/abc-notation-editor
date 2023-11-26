@@ -1,15 +1,16 @@
 import { useEditorContext } from "../../context/EditorContext";
 
-type Props = {
+type ScoreProps = {
   width?: number;
-  height?: number;
+  maxHeight?: number;
 };
 
-export default function Score({ width = 400, height = 300 }: Props) {
+/** The ABC score display. */
+export default function Score({ width = 400, maxHeight = 300 }: ScoreProps) {
   const { setRenderDiv } = useEditorContext();
 
   return (
-    <div style={{ width, height, padding: 20, overflow: "auto" }}>
+    <div style={{ width, maxHeight, padding: 20, overflow: "auto" }}>
       <div ref={setRenderDiv} />
     </div>
   );

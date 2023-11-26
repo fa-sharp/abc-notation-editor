@@ -4,12 +4,12 @@ import Key from "./Key";
 
 import styles from "./Keyboard.module.scss";
 
-type Props = {
+type KeyboardProps = {
   startKey: number;
   endKey: number;
 };
 
-export default function Keyboard({ startKey, endKey }: Props) {
+export default function Keyboard({ startKey, endKey }: KeyboardProps) {
   const { onAddNote } = useEditorContext();
 
   const [keys, setKeys] = useState(

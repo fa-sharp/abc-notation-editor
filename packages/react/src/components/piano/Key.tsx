@@ -8,7 +8,7 @@ const BLACK_KEY_HALF_STEPS = [1, 3, 6, 8, 10];
 const BLACK_KEY_SHIFT_LEFT = [1, 6];
 const BLACK_KEY_SHIFT_RIGHT = [3, 10];
 
-interface Props {
+interface KeyProps {
   midiNum: number;
   played: boolean;
   onKeyPlayed: () => void;
@@ -20,7 +20,7 @@ export default function Key({
   played,
   onKeyPlayed,
   onKeyReleased,
-}: Props) {
+}: KeyProps) {
   const halfSteps = midiNum % 12;
   const isBlackKey = BLACK_KEY_HALF_STEPS.includes(halfSteps);
 
