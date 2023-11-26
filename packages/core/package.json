@@ -10,6 +10,7 @@
     "dist"
   ],
   "scripts": {
+    "dev": "rimraf dist && tsup src/index.ts --watch --sourcemap --dts --loader '.svg=text' --format esm",
     "build": "rimraf dist && tsup src/index.ts --sourcemap --dts --loader '.svg=text' --format esm,cjs",
     "test": "vitest"
   },

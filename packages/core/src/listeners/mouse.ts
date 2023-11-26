@@ -11,13 +11,6 @@ import HalfRestIcon from "@icons/HalfRest.svg";
 import QuarterRestIcon from "@icons/QuarterRest.svg";
 import SixteenthRestIcon from "@icons/SixteenthRest.svg";
 
-const ledgerLineStyle = Object.freeze({
-  position: "fixed",
-  height: "1px",
-  width: "16px",
-  backgroundColor: "#000",
-});
-
 /** Last known mouse position inside staff */
 let lastMousePos: {
   clientX: number;
@@ -61,115 +54,149 @@ export const setupStaffMouseListeners = ({
   };
 
   // Setup the cursor icon for the staff
-  let showingCursor = false;
   const iconSize = 32;
   const cursorIconDiv = getCursorIcon({ rhythm, rest, size: iconSize });
-  const staffOuterElement = renderDiv.parentElement!;
-  const ledgerLineDivs: HTMLDivElement[] = [];
+  let ledgerLineDivs: HTMLDivElement[] = [];
 
-  // If last known mouse position was inside staff, draw the cursor
+  // If last known mouse position was inside staff, draw the cursor (and ledger lines if needed)
   if (lastMousePos) {
-    showingCursor = true;
     cursorIconDiv.style.top = `${
       lastMousePos.clientY - (iconSize - iconSize / 5)
     }px`;
     cursorIconDiv.style.left = `${lastMousePos.clientX - iconSize / 2}px`;
-    // TODO need to draw the ledger lines too!
     renderDiv.appendChild(cursorIconDiv);
-  }
-
-  /** Movement listener for showing & moving the cursor */
-  const staffCursorListener = (e: PointerEvent) => {
-    ledgerLineDivs.forEach((div) => div.remove());
-
-    const cursorTargetRect = getBoundingRectMinusPadding(staffOuterElement);
-    const isMouseInsideStaff =
-      e.clientX >= cursorTargetRect.left &&
-      e.clientX <= cursorTargetRect.right &&
-      e.clientY >= cursorTargetRect.top &&
-      e.clientY <= cursorTargetRect.bottom;
-
-    if (isMouseInsideStaff) {
-      // Move the cursor
-      cursorIconDiv.style.top = `${e.clientY - (iconSize - iconSize / 5)}px`;
-      cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
-      lastMousePos = { clientX: e.clientX, clientY: e.clientY };
-
-      // Draw ledger lines if needed. TODO refactor into separate function
+    if (!rest) {
       const topStaffLineY = topStaffLine.getBoundingClientRect().y;
       const staffLineGap =
         secondStaffLine.getBoundingClientRect().y - topStaffLineY;
-      const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
-      const maxLedgerDistance = staffLineGap * 6;
-      const drawLedgerAnticipation = 3;
-
-      // Ledger lines above staff
-      if (
-        !rest &&
-        e.clientY < topStaffLineY &&
-        e.clientY > topStaffLineY - maxLedgerDistance
-      ) {
-        for (
-          let y = topStaffLineY - staffLineGap;
-          y >= e.clientY - drawLedgerAnticipation;
-          y -= staffLineGap
-        ) {
-          const ledgerDiv = document.createElement("div");
-          Object.assign(ledgerDiv.style, {
-            ...ledgerLineStyle,
-            top: `${y}px`,
-            left: `${e.clientX - 10}px`,
-          });
-          ledgerLineDivs.push(ledgerDiv);
-          renderDiv.appendChild(ledgerDiv);
-        }
-      }
-      // Ledger lines below staff
-      if (
-        !rest &&
-        e.clientY > bottomStaffLineY &&
-        e.clientY < bottomStaffLineY + maxLedgerDistance
-      ) {
-        for (
-          let y = bottomStaffLineY + staffLineGap;
-          y <= e.clientY + drawLedgerAnticipation;
-          y += staffLineGap
-        ) {
-          const ledgerDiv = document.createElement("div");
-          Object.assign(ledgerDiv.style, {
-            ...ledgerLineStyle,
-            top: `${y}px`,
-            left: `${e.clientX - 10}px`,
-          });
-          ledgerLineDivs.push(ledgerDiv);
-          renderDiv.appendChild(ledgerDiv);
-        }
-      }
-    } else {
-      lastMousePos = null;
+      ledgerLineDivs = drawLedgerLines({
+        mousePos: lastMousePos,
+        topStaffLineY,
+        staffLineGap,
+        renderDiv,
+      });
     }
-    if (isMouseInsideStaff && !showingCursor) {
-      showingCursor = true;
-      renderDiv.appendChild(cursorIconDiv);
-    } else if (!isMouseInsideStaff && showingCursor) {
-      showingCursor = false;
-      if (renderDiv.contains(cursorIconDiv))
-        renderDiv.removeChild(cursorIconDiv);
+  }
+
+  const staffEnterListener = () => {
+    renderDiv.appendChild(cursorIconDiv);
+  };
+
+  const staffLeaveListener = () => {
+    if (renderDiv.contains(cursorIconDiv)) renderDiv.removeChild(cursorIconDiv);
+    ledgerLineDivs.forEach((div) => div.remove());
+    ledgerLineDivs = [];
+    lastMousePos = null;
+  };
+
+  const staffMoveListener = (e: PointerEvent) => {
+    // Remove previous ledger lines
+    ledgerLineDivs.forEach((div) => div.remove());
+
+    // Move the cursor icon
+    cursorIconDiv.style.top = `${e.clientY - (iconSize - iconSize / 5)}px`;
+    cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
+    lastMousePos = { clientX: e.clientX, clientY: e.clientY };
+
+    // Draw ledger lines if needed.
+    if (!rest) {
+      const topStaffLineY = topStaffLine.getBoundingClientRect().y;
+      const staffLineGap =
+        secondStaffLine.getBoundingClientRect().y - topStaffLineY;
+      ledgerLineDivs = drawLedgerLines({
+        topStaffLineY,
+        staffLineGap,
+        mousePos: e,
+        renderDiv,
+      });
+    } else {
+      ledgerLineDivs = [];
     }
   };
 
   console.debug("Setting up mouse listeners");
   renderDiv.addEventListener("pointerdown", staffClickListener);
-  window.addEventListener("pointermove", staffCursorListener);
+  renderDiv.addEventListener("pointerenter", staffEnterListener);
+  renderDiv.addEventListener("pointerleave", staffLeaveListener);
+  renderDiv.addEventListener("pointermove", staffMoveListener);
 
   return () => {
     console.debug("Tearing down mouse listeners");
     renderDiv.removeEventListener("pointerdown", staffClickListener);
-    window.removeEventListener("pointermove", staffCursorListener);
+    renderDiv.removeEventListener("pointerenter", staffEnterListener);
+    renderDiv.removeEventListener("pointerleave", staffLeaveListener);
+    renderDiv.removeEventListener("pointermove", staffMoveListener);
     cursorIconDiv.remove();
     ledgerLineDivs.forEach((div) => div.remove());
   };
 };
+
+const ledgerLineStyle = Object.freeze({
+  position: "fixed",
+  height: "1px",
+  width: "16px",
+  backgroundColor: "#000",
+});
+
+/** Draw the ledger lines above/below the staff according to the mouse position */
+function drawLedgerLines({
+  mousePos,
+  topStaffLineY,
+  staffLineGap,
+  renderDiv,
+}: {
+  mousePos: { clientY: number; clientX: number };
+  topStaffLineY: number;
+  staffLineGap: number;
+  renderDiv: HTMLDivElement;
+}) {
+  const ledgerLineDivs: HTMLDivElement[] = [];
+  const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+  const maxLedgerDistance = staffLineGap * 6;
+  const drawLedgerAnticipation = 4;
+
+  // Above staff
+  if (
+    mousePos.clientY < topStaffLineY &&
+    mousePos.clientY > topStaffLineY - maxLedgerDistance
+  ) {
+    for (
+      let y = topStaffLineY - staffLineGap;
+      y >= mousePos.clientY - drawLedgerAnticipation;
+      y -= staffLineGap
+    ) {
+      const ledgerDiv = document.createElement("div");
+      Object.assign(ledgerDiv.style, {
+        ...ledgerLineStyle,
+        top: `${y}px`,
+        left: `${mousePos.clientX - 10}px`,
+      });
+      ledgerLineDivs.push(ledgerDiv);
+      renderDiv.appendChild(ledgerDiv);
+    }
+  }
+  // Below staff
+  if (
+    mousePos.clientY > bottomStaffLineY &&
+    mousePos.clientY < bottomStaffLineY + maxLedgerDistance
+  ) {
+    for (
+      let y = bottomStaffLineY + staffLineGap;
+      y <= mousePos.clientY + drawLedgerAnticipation;
+      y += staffLineGap
+    ) {
+      const ledgerDiv = document.createElement("div");
+      Object.assign(ledgerDiv.style, {
+        ...ledgerLineStyle,
+        top: `${y}px`,
+        left: `${mousePos.clientX - 10}px`,
+      });
+      ledgerLineDivs.push(ledgerDiv);
+      renderDiv.appendChild(ledgerDiv);
+    }
+  }
+  return ledgerLineDivs;
+}
 
 const getNoteFromC4MajorDegree = Scale.degrees("C4 major");
 
@@ -231,6 +258,7 @@ function getCursorIcon({
   }
   const div = document.createElement("div");
   div.style.position = "fixed";
+  div.style.pointerEvents = "none";
   if (svg) {
     div.innerHTML = svg;
     const svgEl = div.querySelector("svg");
