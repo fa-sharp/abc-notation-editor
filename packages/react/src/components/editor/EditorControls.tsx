@@ -2,38 +2,33 @@ import clsx from "clsx";
 import { Accidental, Rhythm } from "@abc-editor/core";
 import { useEditorContext } from "../../context/EditorContext";
 
-import DotIcon from "@icons/Dot.svg";
-import EighthNoteIcon from "@icons/EighthNote.svg";
-import EighthRestIcon from "@icons/EighthRest.svg";
-import FlatIcon from "@icons/Flat.svg";
-import HalfNoteIcon from "@icons/HalfNote.svg";
-import HalfRestIcon from "@icons/HalfRest.svg";
-import QuarterNoteIcon from "@icons/QuarterNote.svg";
-import QuarterRestIcon from "@icons/QuarterRest.svg";
-import SharpIcon from "@icons/Sharp.svg";
-import SixteenthNoteIcon from "@icons/SixteenthNote.svg";
-import SixteenthRestIcon from "@icons/SixteenthRest.svg";
-import TripletIcon from "@icons/Triplet.svg";
-import PianoIcon from "@icons/Piano.svg";
+import BeamingIcon from "@icons/Beaming.svg?raw";
+import DotIcon from "@icons/Dot.svg?raw";
+import EighthNoteIcon from "@icons/EighthNote.svg?raw";
+import EighthRestIcon from "@icons/EighthRest.svg?raw";
+import FlatIcon from "@icons/Flat.svg?raw";
+import HalfNoteIcon from "@icons/HalfNote.svg?raw";
+import HalfRestIcon from "@icons/HalfRest.svg?raw";
+import QuarterNoteIcon from "@icons/QuarterNote.svg?raw";
+import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
+import SharpIcon from "@icons/Sharp.svg?raw";
+import SixteenthNoteIcon from "@icons/SixteenthNote.svg?raw";
+import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
+import TripletIcon from "@icons/Triplet.svg?raw";
+import PianoIcon from "@icons/Piano.svg?raw";
 
 import styles from "./EditorControls.module.css";
 import EditorControlIcon from "./EditorControlIcon";
 
 export default function EditorControls() {
-  const {
-    currentCommands,
-    dispatchCommand,
-    onAddBarline,
-    onAddLineBreak,
-    onBackspace,
-  } = useEditorContext();
+  const { currentCommands, dispatchCommand, onBackspace } = useEditorContext();
 
   const iconSize = 20;
 
   return (
     <div className={styles.controls}>
       <fieldset className={styles.controlGroup}>
-        <legend>Accidentals</legend>
+        <legend>Accidental</legend>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.accidental === Accidental.Flat,
@@ -62,7 +57,7 @@ export default function EditorControls() {
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
-        <legend>Rhythms</legend>
+        <legend>Rhythm</legend>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Half,
@@ -123,9 +118,7 @@ export default function EditorControls() {
             <EditorControlIcon src={SixteenthNoteIcon} size={iconSize} />
           )}
         </button>
-      </fieldset>
-      <fieldset className={styles.controlGroup}>
-        <legend>Toggles</legend>
+        <div className={styles.spacer}></div>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.dotted,
@@ -152,6 +145,19 @@ export default function EditorControls() {
         </button>
         <button
           className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.beamed,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleBeamed" })}
+          disabled={![8, 16].includes(currentCommands.rhythm)}
+        >
+          <EditorControlIcon src={BeamingIcon} size={iconSize} />
+        </button>
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Toggles</legend>
+
+        <button
+          className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.showKeyboard,
           })}
           onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
@@ -167,15 +173,6 @@ export default function EditorControls() {
           MIDI
         </button>
       </fieldset>
-      Beamed:{" "}
-      <input
-        type="checkbox"
-        checked={currentCommands.beamed}
-        onChange={() => dispatchCommand({ type: "toggleBeamed" })}
-        disabled={![8, 16].includes(currentCommands.rhythm)}
-      />
-      <button onClick={onAddBarline}>Add bar</button>
-      <button onClick={onAddLineBreak}>Add line</button>
       <button onClick={onBackspace}>Backspace</button>
     </div>
   );

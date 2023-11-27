@@ -169,7 +169,7 @@ const ledgerLineStyle = Object.freeze({
   position: "fixed",
   height: "1px",
   width: "16px",
-  backgroundColor: "#000",
+  backgroundColor: "currentColor",
 });
 
 /** Draw the ledger lines above/below the staff according to the mouse position */

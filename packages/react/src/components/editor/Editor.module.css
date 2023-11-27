@@ -4,4 +4,16 @@
   align-items: center;
 
   font-size: 0.9em;
+
+  background-color: white;
+  color: black;
+}
+
+/* Try to reset any global styles as much as possible */
+.editor,
+.editor * {
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+  box-sizing: border-box;
 }

@@ -22,10 +22,10 @@ jobs:
         run: pnpm install
 
       - name: Lint packages
-        run: pnpm -r lint
+        run: pnpm --filter "./packages/**" -r lint
 
       - name: Test packages
-        run: pnpm -r test
+        run: pnpm --filter "./packages/**" -r test
 
       - name: Build packages
-        run: pnpm -r build
+        run: pnpm --filter "./packages/**" -r build
