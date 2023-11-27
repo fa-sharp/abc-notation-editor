@@ -12,13 +12,17 @@
   "scripts": {
     "dev": "rimraf dist && tsup src/index.ts --watch --sourcemap --dts --loader '.svg=text' --format esm",
     "build": "rimraf dist && tsup src/index.ts --sourcemap --dts --loader '.svg=text' --format esm,cjs",
+    "lint": "eslint . --ext ts --report-unused-disable-directives",
     "test": "vitest"
   },
   "keywords": [],
   "author": "fa-sharp",
   "license": "MIT",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
     "abcjs": "^6.2.3",
+    "eslint": "^8.53.0",
     "tsup": "^8.0.1",
     "vite": "^5.0.2",
     "vite-tsconfig-paths": "^4.2.1",
