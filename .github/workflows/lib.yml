@@ -1,9 +1,9 @@
-name: "Test and build library"
+name: "Lint/test/build library"
 on:
   push:
 
 jobs:
-  test:
+  main:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,8 +21,11 @@ jobs:
       - name: Install deps
         run: pnpm install
 
-      - name: Test library
+      - name: Lint packages
+        run: pnpm -r lint
+
+      - name: Test packages
         run: pnpm -r test
 
-      - name: Build library
+      - name: Build packages
         run: pnpm -r build
