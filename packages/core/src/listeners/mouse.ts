@@ -152,7 +152,9 @@ export function getStaffClickToNoteFn(props: {
         ? degrees > -11
           ? degrees + 11
           : degrees + 10
-        : degrees - 2 // TODO fix bass clef here
+        : degrees < 2
+          ? degrees - 2
+          : degrees - 1
     );
   return (y: number) => {
     const distanceFromTopLine = props.topLineY - y;
