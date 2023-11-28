@@ -21,11 +21,11 @@ jobs:
       - name: Install deps
         run: pnpm install
 
+      - name: Build packages
+        run: pnpm --filter "./packages/**" -r build
+
       - name: Lint packages
         run: pnpm --filter "./packages/**" -r lint
 
       - name: Test packages
         run: pnpm --filter "./packages/**" -r test
-
-      - name: Build packages
-        run: pnpm --filter "./packages/**" -r build
