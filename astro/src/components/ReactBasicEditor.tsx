@@ -8,7 +8,7 @@ export default function BasicExample() {
       className="not-content"
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <ABCEditor width={600} maxHeight={400} onChange={setAbc} />
+      <ABCEditor minWidth={600} maxHeight={400} onChange={setAbc} />
       <br />
       Generated ABC:
       <textarea readOnly rows={6} cols={50} value={abc} />
