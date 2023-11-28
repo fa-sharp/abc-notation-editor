@@ -7,7 +7,12 @@ export default function BasicExample() {
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <Editor width={800} maxHeight={200} onChange={setAbc} />
+      <Editor
+        autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 600 }}
+        minWidth={600}
+        maxHeight={200}
+        onChange={setAbc}
+      />
       <br />
       Generated ABC:
       <textarea readOnly rows={10} cols={50} value={abc} />

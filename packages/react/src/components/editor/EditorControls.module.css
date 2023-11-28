@@ -34,7 +34,7 @@
 
 .controls button:disabled {
   background-color: rgb(201, 201, 201);
-  color: rgb(85, 85, 85);
+  color: rgb(62, 62, 62);
 }
 
 .controls button.selected {

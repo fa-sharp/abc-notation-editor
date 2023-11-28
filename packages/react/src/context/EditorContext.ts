@@ -1,4 +1,4 @@
-import { renderAbc } from "abcjs";
+import { renderAbc, AbcVisualParams, TuneObject } from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,
@@ -21,13 +21,13 @@ import {
 
 interface EditorProviderProps {
   initialAbc?: string;
-  staffWidth?: number;
-  onChange?: (abc: string) => void;
+  abcjsOptions?: AbcVisualParams;
+  onChange?: (abc: string, tuneObject: TuneObject) => void;
 }
 
 const useEditor = ({
   initialAbc,
-  staffWidth = 300,
+  abcjsOptions,
   onChange = () => {},
 }: EditorProviderProps) => {
   const editorState = useRef<EditorState>(new EditorState(initialAbc));
@@ -96,16 +96,13 @@ const useEditor = ({
 
   // Render the ABC notation, update editor state
   useEffect(() => {
-    onChange(abc);
     if (!renderDiv.current) return;
     const [tuneObject] = renderAbc(renderDiv.current, abc + "yy", {
+      ...abcjsOptions,
       add_classes: true,
-      scale: 1,
-      staffwidth: staffWidth,
-      viewportHorizontal: true,
-      wrap: { minSpacing: 1.8, maxSpacing: 2.7, preferredMeasuresPerLine: 5 },
     });
     editorState.current.updateTuneData(tuneObject.lines);
+    onChange(abc, tuneObject);
 
     // Determine beaming depending on next note
     dispatchEditorCommand({
@@ -113,7 +110,7 @@ const useEditor = ({
       beamed: editorState.current.shouldBeamNextNote(editorCommands.rhythm),
     });
     console.debug(editorState.current);
-  }, [abc, editorCommands.rhythm, onChange, staffWidth]);
+  }, [abc, abcjsOptions, editorCommands.rhythm, onChange]);
 
   // Reset editor commands if abc changed
   useEffect(() => {
@@ -152,7 +149,13 @@ const useEditor = ({
       updateLastMousePos: (pos) => (lastKnownMousePos.current = pos),
     });
     return () => cleanUpStaffListeners();
-  }, [abc, editorCommands.rest, editorCommands.rhythm, onAddNote]);
+  }, [
+    abc,
+    abcjsOptions,
+    editorCommands.rest,
+    editorCommands.rhythm,
+    onAddNote,
+  ]);
 
   // Setup keyboard listener
   useEffect(() => {

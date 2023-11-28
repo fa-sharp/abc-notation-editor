@@ -13,6 +13,7 @@ export default defineConfig({
       name: "ReactABCEditor",
       fileName: "abc-editor",
     },
+    minify: false,
     rollupOptions: {
       external: ["react", "react/jsx-runtime", "react-dom", "tonal", "abcjs"],
       output: {
