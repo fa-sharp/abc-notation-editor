@@ -1,15 +1,15 @@
 import { Scale } from "tonal";
 import { Rhythm } from "../types/constants";
 
-import EighthNoteIcon from "@icons/EighthNote.svg";
-import HalfNoteIcon from "@icons/HalfNote.svg";
-import QuarterNoteIcon from "@icons/QuarterNote.svg";
-import SixteenthNoteIcon from "@icons/SixteenthNote.svg";
+import EighthNoteIcon from "@icons/EighthNote.svg?raw";
+import HalfNoteIcon from "@icons/HalfNote.svg?raw";
+import QuarterNoteIcon from "@icons/QuarterNote.svg?raw";
+import SixteenthNoteIcon from "@icons/SixteenthNote.svg?raw";
 
-import EighthRestIcon from "@icons/EighthRest.svg";
-import HalfRestIcon from "@icons/HalfRest.svg";
-import QuarterRestIcon from "@icons/QuarterRest.svg";
-import SixteenthRestIcon from "@icons/SixteenthRest.svg";
+import EighthRestIcon from "@icons/EighthRest.svg?raw";
+import HalfRestIcon from "@icons/HalfRest.svg?raw";
+import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
+import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
 
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
@@ -241,7 +241,7 @@ function getCursorIcon({
   size?: number;
   rest?: boolean;
 }) {
-  let svg: string | null;
+  let svg: string | null = null;
   switch (rhythm) {
     case Rhythm.Eighth:
       svg = rest ? EighthRestIcon : EighthNoteIcon;

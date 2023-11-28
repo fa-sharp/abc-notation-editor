@@ -8,16 +8,24 @@ import { libInjectCss } from "vite-plugin-lib-inject-css";
 // https://vitejs.dev/config/
 export default defineConfig({
   build: {
+    minify: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
       name: "ReactABCEditor",
       fileName: "abc-editor",
     },
-    minify: false,
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "react-dom", "tonal", "abcjs"],
+      external: [
+        "react",
+        "react/jsx-runtime",
+        "react-dom",
+        "tonal",
+        "abcjs",
+        "@abc-editor/core",
+      ],
       output: {
         globals: {
+          "@abc-editor/core": "ABCEditorCore",
           react: "React",
           "react/jsx-runtime": "react/jsx-runtime",
           "react-dom": "ReactDOM",

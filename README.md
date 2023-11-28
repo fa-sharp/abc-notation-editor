@@ -18,13 +18,13 @@ pnpm add @abc-editor/react abcjs
 ### React
 
 ```jsx
-"use client"; // if using Next.js, etc. see https://react.dev/reference/react/use-client
+"use client"; // if needed - see https://react.dev/reference/react/use-client
 
 import { ABCEditor } from "@abc-editor/react";
 
 function AbcNotationEditor() {
-  return <ABCEditor width={600} onChange={(abc) => console.log(abc)} />;
+  return <ABCEditor minWidth={600} onChange={(abc) => console.log(abc)} />;
 }
 ```
 
-Keep in mind that rendering and editing sheet music relies heavily on browser APIs, so this needs to be a client-only component. Don't try to render/pre-render this component on the server-side, or your server might explode :)
+Keep in mind that rendering and editing sheet music relies heavily on browser APIs, so this should be be a client-side-only component.

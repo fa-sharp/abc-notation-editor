@@ -3,15 +3,15 @@
   "version": "0.0.1",
   "description": "ABC notation visual editor - core functions",
   "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "main": "dist/abc-editor-core.umd.cjs",
+  "module": "dist/abc-editor-core.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "tsup src/index.ts --watch --sourcemap --dts --loader '.svg=text' --format esm",
-    "build": "rimraf dist && tsup src/index.ts --sourcemap --dts --loader '.svg=text' --format esm,cjs",
+    "dev": "vite build -w",
+    "build": "vite build",
     "lint": "eslint . --ext ts --report-unused-disable-directives",
     "test": "vitest"
   },
@@ -23,8 +23,8 @@
     "@typescript-eslint/parser": "^6.10.0",
     "abcjs": "^6.2.3",
     "eslint": "^8.53.0",
-    "tsup": "^8.0.1",
     "vite": "^5.0.2",
+    "vite-plugin-dts": "^3.6.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^0.34.6"
   },

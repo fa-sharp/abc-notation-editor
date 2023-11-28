@@ -1,6 +1,6 @@
 {
   "name": "abc-notation-editor",
-  "version": "0.0.1",
+  "private": true,
   "description": "A visual music notation editor component, built on top of abcjs",
   "keywords": [
     "music",

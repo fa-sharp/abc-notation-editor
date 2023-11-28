@@ -1,4 +1,5 @@
 import { AbcVisualParams, TuneObject } from "abcjs";
+import { useMemo } from "react";
 import { EditorProvider, useEditorContext } from "../../context/EditorContext";
 import Score from "../notation/Score";
 import Keyboard from "../piano/Keyboard";
@@ -46,21 +47,30 @@ export default function Editor({
   maxHeight = 600,
   onChange = () => {},
 }: EditorProps) {
-  const abcjsOptions: AbcVisualParams = {
-    scale,
-    ...(autoLineBreaks
-      ? {
-          staffwidth: autoLineBreaks.staffWidth,
-          wrap: {
-            minSpacing: autoLineBreaks.minSpacing || 1.8,
-            maxSpacing: autoLineBreaks.maxSpacing || 2.2,
-            preferredMeasuresPerLine: autoLineBreaks.preferredMeasuresPerLine,
-          },
-        }
-      : {
-          responsive: "resize",
-        }),
-  };
+  const abcjsOptions: AbcVisualParams = useMemo(
+    () => ({
+      scale,
+      ...(autoLineBreaks?.staffWidth
+        ? {
+            staffwidth: autoLineBreaks.staffWidth,
+            wrap: {
+              minSpacing: autoLineBreaks.minSpacing || 1.8,
+              maxSpacing: autoLineBreaks.maxSpacing || 2.2,
+              preferredMeasuresPerLine: autoLineBreaks.preferredMeasuresPerLine,
+            },
+          }
+        : {
+            responsive: "resize",
+          }),
+    }),
+    [
+      autoLineBreaks?.maxSpacing,
+      autoLineBreaks?.minSpacing,
+      autoLineBreaks?.preferredMeasuresPerLine,
+      autoLineBreaks?.staffWidth,
+      scale,
+    ]
+  );
 
   return (
     <EditorProvider abcjsOptions={abcjsOptions} onChange={onChange}>

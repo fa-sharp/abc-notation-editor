@@ -1,6 +1,6 @@
 import {
-  EditorCommandAction,
-  EditorCommandState,
+  type EditorCommandAction,
+  type EditorCommandState,
   editorCommandReducer,
 } from "./EditorCommand";
 import EditorState from "./EditorState";
