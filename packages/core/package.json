@@ -19,6 +19,8 @@
   "author": "fa-sharp",
   "license": "MIT",
   "devDependencies": {
+    "@tonaljs/key": "^4.9.1",
+    "@tonaljs/time-signature": "^4.8.0",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "abcjs": "^6.2.3",

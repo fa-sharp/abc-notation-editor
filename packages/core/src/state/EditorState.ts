@@ -4,7 +4,11 @@ import { Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Clef, Rhythm } from "../types/constants";
 import { getAbcRhythm } from "../utils/rhythm";
 import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
-import { ABCHeaders, parseAbcHeaders } from "~src/parsing/headers";
+import {
+  KeySignatureType,
+  TimeSignatureType,
+  parseAbcHeaders,
+} from "~src/parsing/headers";
 import { Key, TimeSignature } from "tonal";
 import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
 
@@ -13,8 +17,8 @@ export default class EditorState {
   tuneLines: VoiceItem[][] = [];
   measures: Measure[] = [];
 
-  keySig: ABCHeaders["keySig"];
-  timeSig: ABCHeaders["timeSig"];
+  keySig: KeySignatureType;
+  timeSig: TimeSignatureType;
   clef: Clef;
 
   constructor(initialAbc?: string) {

@@ -58,6 +58,12 @@ importers:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
+      '@tonaljs/key':
+        specifier: ^4.9.1
+        version: 4.9.1
+      '@tonaljs/time-signature':
+        specifier: ^4.8.0
+        version: 4.8.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.10.0
         version: 6.12.0(@typescript-eslint/parser@6.12.0)(eslint@8.54.0)(typescript@5.3.2)
@@ -1354,7 +1360,6 @@ packages:
 
   /@tonaljs/core@4.10.0:
     resolution: {integrity: sha512-+AH7NP9iiAGil+X7NlKGlQvls/KByQmxR51d5O+y6IjHltOkVUXk74oZuxW7zF0IsKchFn8Okr0sxqFmgsQmpA==}
-    dev: false
 
   /@tonaljs/duration-value@4.8.0:
     resolution: {integrity: sha512-ewWVKtYCzNkSNaFoEn6NqL5vCmHTqoN+qngoUG2Sy2ZvGCk1pwx3ckJVUkJmYrkxP4PbQASPgJi0y+0fjgVJug==}
@@ -1372,13 +1377,11 @@ packages:
       '@tonaljs/core': 4.10.0
       '@tonaljs/note': 4.10.0
       '@tonaljs/roman-numeral': 4.8.0
-    dev: false
 
   /@tonaljs/midi@4.9.0:
     resolution: {integrity: sha512-zi6lK2OC2EA8E1Nl011erWAZgOSlrfstJMgnrbm4/nLDegotg5ALbMnfX/s+SIfSSFcXn/Og1d8xwPeAwoaUyg==}
     dependencies:
       '@tonaljs/core': 4.10.0
-    dev: false
 
   /@tonaljs/mode@4.8.1:
     resolution: {integrity: sha512-mzGQz3T+DMjWgOHlt7ZKyoRL6rGOKeOn1BXZdDFU0Bng+WQwHOhoBF/0eA+7l+1QxXBntjGiESO6aq2ktODF/w==}
@@ -1395,7 +1398,6 @@ packages:
     dependencies:
       '@tonaljs/core': 4.10.0
       '@tonaljs/midi': 4.9.0
-    dev: false
 
   /@tonaljs/pcset@4.8.2:
     resolution: {integrity: sha512-AiNnswKlNSix84uMZrkUtTe7T+GqqHMsEt6oaIyjJa3bP7WqPbm0dWKDeLMb3JL5+6or1huew99epR9rqxkzvw==}
@@ -1423,7 +1425,6 @@ packages:
     resolution: {integrity: sha512-jktwfGXcs4qp5A0jy5pyWxgYkeGDcaldV9tiv7XnNR5yLwDm0D6S9rRlNlSo3n0wyDo3+Kh80hd3Mps+Gsf81w==}
     dependencies:
       '@tonaljs/core': 4.10.0
-    dev: false
 
   /@tonaljs/scale-type@4.8.2:
     resolution: {integrity: sha512-egvHD8I7EMTJ1RaqK5LVKBXvY0eOY49utzP1QSideahLxS/zyq9ydu7CovKOa6+iic+ab6XomesEExZCCc63Zw==}
@@ -1445,7 +1446,6 @@ packages:
 
   /@tonaljs/time-signature@4.8.0:
     resolution: {integrity: sha512-ES5WoBC3aA5qQcVxh3GUc/Z1XAlnul/PCdlYrmTNAAJ4hgv4H5WHu15fWk7xRcCC6LZz6chfQNbSIXl9sNRdZQ==}
-    dev: false
 
   /@types/acorn@4.0.6:
     resolution: {integrity: sha512-veQTnWP+1D/xbxVrPC3zHnCZRjSrKfhbMUlEA43iMZLu7EsnTtkJklIuwrCPbOi8YkvDQAiW05VQQFvvz9oieQ==}

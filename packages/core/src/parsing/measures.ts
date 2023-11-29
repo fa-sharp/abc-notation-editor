@@ -1,8 +1,8 @@
 import { VoiceItem } from "abcjs";
-import { AbcjsNote } from "../types/abcjs";
-import { ABCHeaders } from "./headers";
-import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
 import { roundToN } from "~src/utils/numbers";
+import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
+import { AbcjsNote } from "../types/abcjs";
+import { TimeSignatureType } from "./headers";
 
 export interface Measure {
   notes: AbcjsNote[];
@@ -15,7 +15,7 @@ export interface Measure {
 /** Turn the tune data returned from ABCJS into a useful array of measures */
 export const parseMeasuresFromAbcjs = (
   tuneLines: VoiceItem[][],
-  timeSig: ABCHeaders["timeSig"]
+  timeSig: TimeSignatureType
 ) => {
   const measures: Measure[] = [];
   const fullMeasureDuration = getMeasureDurationFromTimeSig(timeSig);
