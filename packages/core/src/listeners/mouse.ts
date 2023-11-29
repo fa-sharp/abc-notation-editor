@@ -132,7 +132,7 @@ export const setupStaffMouseListeners = ({
   };
 };
 
-const getNoteFromC4MajorDegree = Scale.degrees("C4 major");
+const getNoteFromC4MajorDegree = Scale.steps("C4 major");
 
 /**
  * Generate a function which will turn the mouse click's Y coordinate into a note. It estimates
@@ -148,13 +148,7 @@ export function getStaffClickToNoteFn(props: {
 }) {
   const getNoteFromDegrees = (degrees: number) =>
     getNoteFromC4MajorDegree(
-      props.clef === "treble"
-        ? degrees > -11
-          ? degrees + 11
-          : degrees + 10
-        : degrees < 2
-          ? degrees - 2
-          : degrees - 1
+      props.clef === "treble" ? degrees + 10 : degrees - 2
     );
   return (y: number) => {
     const distanceFromTopLine = props.topLineY - y;

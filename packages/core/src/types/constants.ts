@@ -12,6 +12,11 @@ export enum Rhythm {
   Sixteenth = 16,
 }
 
+export enum Clef {
+  Treble = "treble",
+  Bass = "bass",
+}
+
 export const TimeSignature = Object.freeze({
   "4/4": {
     duration: 1,

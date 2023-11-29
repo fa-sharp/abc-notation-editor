@@ -31,3 +31,15 @@ test<TestCtx>("Still adds barlines if measure is too long", ({ state }) => {
   state.addNote("B3", Rhythm.Half);
   expect(state.abc.trim().at(-1)).toBe("|");
 });
+
+test<TestCtx>("Correctly adds barlines when adding triplets", ({ state }) => {
+  state.addNote("A4", Rhythm.Quarter, { triplet: true });
+  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.addNote("A4", Rhythm.Quarter, { triplet: true });
+  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.addNote("A4", Rhythm.Quarter, { triplet: true });
+  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.addNote("B3", Rhythm.Quarter);
+  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  expect(state.abc.trim().at(-1)).toBe("|");
+});

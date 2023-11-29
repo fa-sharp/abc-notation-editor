@@ -1,23 +1,35 @@
 import type { TuneLine, VoiceItem } from "abcjs";
 import { AbcjsNote } from "../types/abcjs";
 import { Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
-import { Accidental, Rhythm, TimeSignature } from "../types/constants";
+import { Accidental, Clef, Rhythm } from "../types/constants";
 import { getAbcRhythm } from "../utils/rhythm";
 import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
+import { ABCHeaders, parseAbcHeaders } from "~src/parsing/headers";
+import { Key, TimeSignature } from "tonal";
+import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
 
 export default class EditorState {
   abc: string;
   tuneLines: VoiceItem[][] = [];
   measures: Measure[] = [];
 
-  keySig = "C";
-  timeSig: keyof typeof TimeSignature = "4/4";
-  clef: "bass" | "treble" = "treble";
+  keySig: ABCHeaders["keySig"];
+  timeSig: ABCHeaders["timeSig"];
+  clef: Clef;
 
-  constructor(template?: string) {
-    this.abc =
-      template ||
-      `X:1\nK:${this.keySig} clef=${this.clef}\nL:1/8\nM:${this.timeSig}\n`;
+  constructor(initialAbc?: string) {
+    if (initialAbc) {
+      this.abc = initialAbc;
+      const { clef, keySig, timeSig } = parseAbcHeaders(initialAbc);
+      this.clef = clef;
+      this.keySig = keySig;
+      this.timeSig = timeSig;
+    } else {
+      this.clef = Clef.Treble;
+      this.keySig = Key.majorKey("C");
+      this.timeSig = TimeSignature.get("4/4");
+      this.abc = `X:1\nL:1/8\nM:4/4\nK:C clef=treble\n`;
+    }
   }
 
   updateTuneData(lines: TuneLine[]) {
@@ -71,13 +83,14 @@ export default class EditorState {
     )}`;
 
     // Add barline if we're at the end of the measure
+    const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
     if (
       currentMeasure &&
       currentMeasure.duration +
         (1 / rhythm) *
           (options?.dotted ? 3 / 2 : 1) *
           (options?.triplet ? 2 / 3 : 1) >=
-        TimeSignature[this.timeSig].duration
+        measureTotalDuration
     )
       abcToAdd += " |";
 

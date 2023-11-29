@@ -11,7 +11,7 @@ export default defineConfig({
     minify: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      name: "ReactABCEditor",
+      name: "ABCEditorReact",
       fileName: "abc-editor",
     },
     rollupOptions: {

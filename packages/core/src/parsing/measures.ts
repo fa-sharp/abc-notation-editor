@@ -1,6 +1,8 @@
 import { VoiceItem } from "abcjs";
 import { AbcjsNote } from "../types/abcjs";
-import { TimeSignature } from "../types/constants";
+import { ABCHeaders } from "./headers";
+import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
+import { roundToN } from "~src/utils/numbers";
 
 export interface Measure {
   notes: AbcjsNote[];
@@ -13,10 +15,10 @@ export interface Measure {
 /** Turn the tune data returned from ABCJS into a useful array of measures */
 export const parseMeasuresFromAbcjs = (
   tuneLines: VoiceItem[][],
-  timeSig: keyof typeof TimeSignature
+  timeSig: ABCHeaders["timeSig"]
 ) => {
   const measures: Measure[] = [];
-  const fullMeasureDuration = TimeSignature[timeSig].duration;
+  const fullMeasureDuration = getMeasureDurationFromTimeSig(timeSig);
 
   tuneLines.forEach((line, lineIdx) => {
     let currentMeasure: Measure = {
@@ -43,7 +45,9 @@ export const parseMeasuresFromAbcjs = (
         if (note.endTriplet) currentTriplet = false;
 
         currentMeasure.notes.push(note);
-        currentMeasure.duration += note.duration * (note.isTriplet ? 2 / 3 : 1);
+        currentMeasure.duration = roundToN(
+          currentMeasure.duration + note.duration * (note.isTriplet ? 2 / 3 : 1)
+        );
         if (currentMeasure.duration >= fullMeasureDuration) {
           currentMeasure = {
             notes: [],
