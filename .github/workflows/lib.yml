@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: packages/**/dist
+          path: packages/*/dist/
 
   lint:
     runs-on: ubuntu-latest
