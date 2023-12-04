@@ -1,6 +1,13 @@
 {
   "name": "@abc-editor/core",
   "version": "0.0.1",
+  "author": "fa-sharp",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fa-sharp/abc-notation-editor",
+    "directory": "packages/core"
+  },
   "description": "ABC notation visual editor - core functions",
   "type": "module",
   "main": "dist/abc-editor-core.umd.cjs",
@@ -11,13 +18,19 @@
   ],
   "scripts": {
     "dev": "vite build -w",
-    "build": "vite build",
+    "build": "rimraf dist && vite build",
     "lint": "eslint . --ext ts --report-unused-disable-directives",
     "test": "vitest"
   },
-  "keywords": [],
-  "author": "fa-sharp",
-  "license": "MIT",
+  "keywords": [
+    "music",
+    "notation",
+    "editor",
+    "abc",
+    "abcjs",
+    "typescript",
+    "react"
+  ],
   "devDependencies": {
     "@tonaljs/key": "^4.9.1",
     "@tonaljs/time-signature": "^4.8.0",
