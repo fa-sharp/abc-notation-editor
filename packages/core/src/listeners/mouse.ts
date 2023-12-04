@@ -1,5 +1,5 @@
 import { Scale } from "tonal";
-import { Rhythm } from "../types/constants";
+import { Accidental, Rhythm } from "../types/constants";
 
 import EighthNoteIcon from "@icons/EighthNote.svg?raw";
 import HalfNoteIcon from "@icons/HalfNote.svg?raw";
@@ -11,6 +11,11 @@ import HalfRestIcon from "@icons/HalfRest.svg?raw";
 import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
 import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
 
+import DotIcon from "@icons/Dot.svg?raw";
+import FlatIcon from "@icons/Flat.svg?raw";
+import SharpIcon from "@icons/Sharp.svg?raw";
+import NaturalIcon from "@icons/Natural.svg?raw";
+
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
  * on the staff. Returns a cleanup function to remove the listeners.
@@ -19,6 +24,8 @@ export const setupStaffMouseListeners = ({
   renderDiv,
   numTuneLines,
   rhythm,
+  dotted = false,
+  accidental = Accidental.None,
   rest = false,
   onAddNote,
   lastMousePos,
@@ -27,6 +34,8 @@ export const setupStaffMouseListeners = ({
   renderDiv: HTMLDivElement;
   numTuneLines: number;
   rhythm: Rhythm;
+  dotted?: boolean;
+  accidental?: Accidental;
   rest?: boolean;
   onAddNote: (note: string) => void;
 
@@ -58,7 +67,13 @@ export const setupStaffMouseListeners = ({
 
   // Setup the cursor icon for the staff
   const iconSize = 32;
-  const cursorIconDiv = getCursorIcon({ rhythm, rest, size: iconSize });
+  const cursorIconDiv = getCursorIcon({
+    rhythm,
+    rest,
+    size: iconSize,
+    accidental,
+    dotted,
+  });
   let ledgerLineDivs: HTMLDivElement[] = [];
 
   // If there is a last known mouse position inside staff, re-draw the cursor (and ledger lines if needed)
@@ -230,29 +245,29 @@ function getCursorIcon({
   rhythm,
   size = 36,
   rest = false,
+  dotted = false,
+  accidental = Accidental.None,
 }: {
   rhythm: Rhythm;
   size?: number;
   rest?: boolean;
+  dotted?: boolean;
+  accidental?: Accidental;
 }) {
-  let svg: string | null = null;
-  switch (rhythm) {
-    case Rhythm.Eighth:
-      svg = rest ? EighthRestIcon : EighthNoteIcon;
-      break;
-    case Rhythm.Whole:
-      svg = null;
-      break;
-    case Rhythm.Half:
-      svg = rest ? HalfRestIcon : HalfNoteIcon;
-      break;
-    case Rhythm.Quarter:
-      svg = rest ? QuarterRestIcon : QuarterNoteIcon;
-      break;
-    case Rhythm.Sixteenth:
-      svg = rest ? SixteenthRestIcon : SixteenthNoteIcon;
-      break;
-  }
+  const svg = (() => {
+    switch (rhythm) {
+      case Rhythm.Eighth:
+        return rest ? EighthRestIcon : EighthNoteIcon;
+      case Rhythm.Whole:
+        return null;
+      case Rhythm.Half:
+        return rest ? HalfRestIcon : HalfNoteIcon;
+      case Rhythm.Quarter:
+        return rest ? QuarterRestIcon : QuarterNoteIcon;
+      case Rhythm.Sixteenth:
+        return rest ? SixteenthRestIcon : SixteenthNoteIcon;
+    }
+  })();
   const div = document.createElement("div");
   div.style.position = "fixed";
   div.style.pointerEvents = "none";
@@ -263,6 +278,30 @@ function getCursorIcon({
       svgEl.style.height = `${size}px`;
       svgEl.style.width = `${size}px`;
     }
+  }
+  if (!rest && accidental !== Accidental.None) {
+    const accidentalSvg = (() => {
+      switch (accidental) {
+        case Accidental.Sharp:
+          return SharpIcon;
+        case Accidental.Flat:
+          return FlatIcon;
+        case Accidental.Natural:
+          return NaturalIcon;
+      }
+    })();
+    const accidentalDiv = document.createElement("div");
+    accidentalDiv.innerHTML = accidentalSvg;
+    const svgEl = accidentalDiv.querySelector("svg");
+    if (svgEl)
+      Object.assign(svgEl.style, {
+        position: "absolute",
+        right: `${size * 0.65}px`,
+        top: `${size * 0.35}px`,
+        height: `${size * 0.7}px`,
+        width: `${size * 0.7}px`,
+      });
+    div.appendChild(accidentalDiv);
   }
   return div;
 }

@@ -12,6 +12,7 @@ const kbdKeyToCommandMap = new Map<string, EditorCommandAction | "backspace">([
   ["r", { type: "toggleRest" }],
   ["f", { type: "toggleAccidental", accidental: Accidental.Flat }],
   ["s", { type: "toggleAccidental", accidental: Accidental.Sharp }],
+  ["n", { type: "toggleAccidental", accidental: Accidental.Natural }],
   ["t", { type: "toggleTriplet" }],
   ["b", { type: "toggleBeamed" }],
 

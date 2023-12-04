@@ -147,6 +147,8 @@ const useEditor = ({
       numTuneLines: editorState.current.tuneLines.length,
       rhythm: editorCommands.rhythm,
       rest: editorCommands.rest,
+      accidental: editorCommands.accidental,
+      dotted: editorCommands.dotted,
       onAddNote,
       lastMousePos: lastKnownMousePos.current,
       updateLastMousePos: (pos) => (lastKnownMousePos.current = pos),
@@ -155,6 +157,8 @@ const useEditor = ({
   }, [
     abc,
     abcjsOptions,
+    editorCommands.accidental,
+    editorCommands.dotted,
     editorCommands.rest,
     editorCommands.rhythm,
     onAddNote,

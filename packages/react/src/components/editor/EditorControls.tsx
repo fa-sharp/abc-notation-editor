@@ -1,5 +1,5 @@
-import clsx from "clsx";
 import { Accidental, Rhythm } from "@abc-editor/core";
+import clsx from "clsx";
 import { useEditorContext } from "../../context/EditorContext";
 
 import BeamingIcon from "@icons/Beaming.svg?raw";
@@ -9,16 +9,17 @@ import EighthRestIcon from "@icons/EighthRest.svg?raw";
 import FlatIcon from "@icons/Flat.svg?raw";
 import HalfNoteIcon from "@icons/HalfNote.svg?raw";
 import HalfRestIcon from "@icons/HalfRest.svg?raw";
+import NaturalIcon from "@icons/Natural.svg?raw";
+import PianoIcon from "@icons/Piano.svg?raw";
 import QuarterNoteIcon from "@icons/QuarterNote.svg?raw";
 import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
 import SharpIcon from "@icons/Sharp.svg?raw";
 import SixteenthNoteIcon from "@icons/SixteenthNote.svg?raw";
 import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
 import TripletIcon from "@icons/Triplet.svg?raw";
-import PianoIcon from "@icons/Piano.svg?raw";
 
-import styles from "./EditorControls.module.css";
 import EditorControlIcon from "./EditorControlIcon";
+import styles from "./EditorControls.module.css";
 
 export default function EditorControls() {
   const { currentCommands, dispatchCommand, onBackspace } = useEditorContext();
@@ -54,6 +55,20 @@ export default function EditorControls() {
           }
         >
           <EditorControlIcon src={SharpIcon} size={iconSize} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
+            [styles.selected]:
+              currentCommands.accidental === Accidental.Natural,
+          })}
+          onClick={() =>
+            dispatchCommand({
+              type: "toggleAccidental",
+              accidental: Accidental.Natural,
+            })
+          }
+        >
+          <EditorControlIcon src={NaturalIcon} size={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>

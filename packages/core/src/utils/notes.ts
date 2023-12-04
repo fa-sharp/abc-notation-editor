@@ -6,6 +6,8 @@ export function getAbcNoteFromMidiNum(
   midiNum: number,
   accidental: Accidental = Accidental.None
 ) {
+  if (accidental === Accidental.Natural)
+    return "=" + Midi.midiToNoteName(midiNum);
   return AbcNotation.scientificToAbcNotation(
     Midi.midiToNoteName(midiNum, {
       sharps: accidental === Accidental.Sharp,
@@ -20,6 +22,8 @@ export function getAbcNoteFromNoteName(
 ) {
   if (accidental === Accidental.None)
     return AbcNotation.scientificToAbcNotation(noteName);
+  if (accidental === Accidental.Natural)
+    return "=" + AbcNotation.scientificToAbcNotation(noteName);
   const note = Note.get(noteName);
   const wantedPitchClass =
     note.letter + (accidental === Accidental.Sharp ? "#" : "b");
