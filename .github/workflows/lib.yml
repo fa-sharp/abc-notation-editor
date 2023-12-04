@@ -27,7 +27,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: dist
-          path: packages/*/dist/
+          path: packages/*/dist*/
 
   lint:
     runs-on: ubuntu-latest
@@ -49,6 +49,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          path: packages
 
       - name: Lint packages
         run: pnpm --filter "./packages/**" -r lint
@@ -73,6 +74,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: dist
+          path: packages
 
       - name: Test packages
         run: pnpm --filter "./packages/**" -r test
