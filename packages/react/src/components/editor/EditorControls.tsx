@@ -1,24 +1,8 @@
-import { Accidental, Rhythm } from "@abc-editor/core";
+import { Accidental, Icon, Rhythm } from "@abc-editor/core";
 import clsx from "clsx";
 import { useEditorContext } from "../../context/EditorContext";
-
-import BeamingIcon from "@icons/Beaming.svg?raw";
-import DotIcon from "@icons/Dot.svg?raw";
-import EighthNoteIcon from "@icons/EighthNote.svg?raw";
-import EighthRestIcon from "@icons/EighthRest.svg?raw";
-import FlatIcon from "@icons/Flat.svg?raw";
-import HalfNoteIcon from "@icons/HalfNote.svg?raw";
-import HalfRestIcon from "@icons/HalfRest.svg?raw";
-import NaturalIcon from "@icons/Natural.svg?raw";
-import PianoIcon from "@icons/Piano.svg?raw";
-import QuarterNoteIcon from "@icons/QuarterNote.svg?raw";
-import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
-import SharpIcon from "@icons/Sharp.svg?raw";
-import SixteenthNoteIcon from "@icons/SixteenthNote.svg?raw";
-import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
-import TripletIcon from "@icons/Triplet.svg?raw";
-
 import EditorControlIcon from "./EditorControlIcon";
+
 import styles from "./EditorControls.module.css";
 
 export default function EditorControls() {
@@ -41,7 +25,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon src={FlatIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Flat} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -54,7 +38,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon src={SharpIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -68,7 +52,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon src={NaturalIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Natural} size={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -83,9 +67,9 @@ export default function EditorControls() {
           disabled={currentCommands.rhythm === Rhythm.Half}
         >
           {currentCommands.rest ? (
-            <EditorControlIcon src={HalfRestIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.HalfRest} size={iconSize} />
           ) : (
-            <EditorControlIcon src={HalfNoteIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.HalfNote} size={iconSize} />
           )}
         </button>
         <button
@@ -98,9 +82,9 @@ export default function EditorControls() {
           disabled={currentCommands.rhythm === Rhythm.Quarter}
         >
           {currentCommands.rest ? (
-            <EditorControlIcon src={QuarterRestIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
           ) : (
-            <EditorControlIcon src={QuarterNoteIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.QuarterNote} size={iconSize} />
           )}
         </button>
         <button
@@ -113,9 +97,9 @@ export default function EditorControls() {
           disabled={currentCommands.rhythm === Rhythm.Eighth}
         >
           {currentCommands.rest ? (
-            <EditorControlIcon src={EighthRestIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.EighthRest} size={iconSize} />
           ) : (
-            <EditorControlIcon src={EighthNoteIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.EighthNote} size={iconSize} />
           )}
         </button>
         <button
@@ -128,9 +112,9 @@ export default function EditorControls() {
           disabled={currentCommands.rhythm === Rhythm.Sixteenth}
         >
           {currentCommands.rest ? (
-            <EditorControlIcon src={SixteenthRestIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.SixteenthRest} size={iconSize} />
           ) : (
-            <EditorControlIcon src={SixteenthNoteIcon} size={iconSize} />
+            <EditorControlIcon icon={Icon.SixteenthNote} size={iconSize} />
           )}
         </button>
         <div className={styles.spacer}></div>
@@ -140,7 +124,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleDotted" })}
         >
-          <EditorControlIcon src={DotIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Dot} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -148,7 +132,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleRest" })}
         >
-          <EditorControlIcon src={QuarterRestIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -156,7 +140,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleTriplet" })}
         >
-          <EditorControlIcon src={TripletIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Triplet} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {
@@ -165,7 +149,7 @@ export default function EditorControls() {
           onClick={() => dispatchCommand({ type: "toggleBeamed" })}
           disabled={![8, 16].includes(currentCommands.rhythm)}
         >
-          <EditorControlIcon src={BeamingIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -177,7 +161,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
         >
-          <EditorControlIcon src={PianoIcon} size={iconSize} />
+          <EditorControlIcon icon={Icon.Piano} size={iconSize} />
         </button>
         <button
           className={clsx(styles.iconButton, {

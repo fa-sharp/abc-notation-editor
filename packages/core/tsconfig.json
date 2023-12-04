@@ -12,8 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~*": ["./*"],
-      "@icons/*": ["../../icons/*"]
+      "~*": ["./*"]
     }
   },
   "include": ["./**/*.ts"]

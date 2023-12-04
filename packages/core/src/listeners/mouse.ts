@@ -1,20 +1,6 @@
 import { Scale } from "tonal";
+import { Icon, getIcon } from "../icons";
 import { Accidental, Rhythm } from "../types/constants";
-
-import EighthNoteIcon from "@icons/EighthNote.svg?raw";
-import HalfNoteIcon from "@icons/HalfNote.svg?raw";
-import QuarterNoteIcon from "@icons/QuarterNote.svg?raw";
-import SixteenthNoteIcon from "@icons/SixteenthNote.svg?raw";
-
-import EighthRestIcon from "@icons/EighthRest.svg?raw";
-import HalfRestIcon from "@icons/HalfRest.svg?raw";
-import QuarterRestIcon from "@icons/QuarterRest.svg?raw";
-import SixteenthRestIcon from "@icons/SixteenthRest.svg?raw";
-
-import DotIcon from "@icons/Dot.svg?raw";
-import FlatIcon from "@icons/Flat.svg?raw";
-import SharpIcon from "@icons/Sharp.svg?raw";
-import NaturalIcon from "@icons/Natural.svg?raw";
 
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
@@ -258,15 +244,15 @@ function getCursorIcon({
   const svg = (() => {
     switch (rhythm) {
       case Rhythm.Eighth:
-        return rest ? EighthRestIcon : EighthNoteIcon;
+        return getIcon(rest ? Icon.EighthRest : Icon.EighthNote);
       case Rhythm.Whole:
         return null;
       case Rhythm.Half:
-        return rest ? HalfRestIcon : HalfNoteIcon;
+        return getIcon(rest ? Icon.HalfRest : Icon.HalfNote);
       case Rhythm.Quarter:
-        return rest ? QuarterRestIcon : QuarterNoteIcon;
+        return getIcon(rest ? Icon.QuarterRest : Icon.QuarterNote);
       case Rhythm.Sixteenth:
-        return rest ? SixteenthRestIcon : SixteenthNoteIcon;
+        return getIcon(rest ? Icon.SixteenthRest : Icon.SixteenthNote);
     }
   })();
   const div = document.createElement("div");
@@ -284,11 +270,11 @@ function getCursorIcon({
     const accidentalSvg = (() => {
       switch (accidental) {
         case Accidental.Sharp:
-          return SharpIcon;
+          return getIcon(Icon.Sharp);
         case Accidental.Flat:
-          return FlatIcon;
+          return getIcon(Icon.Flat);
         case Accidental.Natural:
-          return NaturalIcon;
+          return getIcon(Icon.Natural);
       }
     })();
     const accidentalDiv = document.createElement("div");
@@ -306,7 +292,7 @@ function getCursorIcon({
   }
   if (dotted) {
     const dotDiv = document.createElement("div");
-    dotDiv.innerHTML = DotIcon;
+    dotDiv.innerHTML = getIcon(Icon.Dot);
     const svgEl = dotDiv.querySelector("svg");
     if (svgEl)
       Object.assign(svgEl.style, {

@@ -18,7 +18,8 @@
   ],
   "scripts": {
     "dev": "vite build -w",
-    "build": "rimraf dist && vite build",
+    "build": "pnpm run build-icons && rimraf dist && vite build",
+    "build-icons": "rimraf dist-icons && svgo -q -f icons -o dist-icons",
     "lint": "eslint . --ext ts --report-unused-disable-directives",
     "test": "vitest"
   },
@@ -38,6 +39,7 @@
     "@typescript-eslint/parser": "^6.10.0",
     "abcjs": "^6.2.3",
     "eslint": "^8.53.0",
+    "svgo": "^3.0.5",
     "vite": "^5.0.2",
     "vite-plugin-dts": "^3.6.3",
     "vite-tsconfig-paths": "^4.2.1",

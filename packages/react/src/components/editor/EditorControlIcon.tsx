@@ -1,21 +1,27 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useMemo } from "react";
+import { Icon, getIcon } from "@abc-editor/core";
 
 type Props = {
-  src: string;
+  icon: Icon;
   size?: number;
 };
 
-const EditorControlIcon = ({ src, size }: Props) => {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const svg = ref.current?.querySelector("svg");
-    if (svg && src && size) {
-      svg.style.height = `${size}px`;
-      svg.style.width = `${size}px`;
-    }
-  }, [size, src]);
+const EditorControlIcon = ({ icon, size }: Props) => {
+  const rawSvg = useMemo(() => getIcon(icon), [icon]);
 
-  return <div ref={ref} dangerouslySetInnerHTML={{ __html: src }} />;
+  const refCallback = useCallback(
+    (ref: HTMLDivElement | null) => {
+      if (!ref) return;
+      const svg = ref.querySelector("svg");
+      if (svg && size) {
+        svg.style.height = `${size}px`;
+        svg.style.width = `${size}px`;
+      }
+    },
+    [size]
+  );
+
+  return <div ref={refCallback} dangerouslySetInnerHTML={{ __html: rawSvg }} />;
 };
 
 export default EditorControlIcon;
