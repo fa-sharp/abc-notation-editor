@@ -48,7 +48,7 @@ export const parseMeasuresFromAbcjs = (
         currentMeasure.duration = roundToN(
           currentMeasure.duration + note.duration * (note.isTriplet ? 2 / 3 : 1)
         );
-        if (currentMeasure.duration >= fullMeasureDuration) {
+        if (currentMeasure.duration >= fullMeasureDuration - 0.001) {
           currentMeasure = {
             notes: [],
             duration: 0,

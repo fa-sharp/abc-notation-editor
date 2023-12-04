@@ -109,6 +109,9 @@ const useEditor = ({
       type: "setBeamed",
       beamed: editorState.current.shouldBeamNextNote(editorCommands.rhythm),
     });
+    // Reset triplet command if needed
+    if (editorState.current.isEndOfTriplet && tripletRef.current === true)
+      dispatchEditorCommand({ type: "toggleTriplet" });
     console.debug(editorState.current);
   }, [abc, abcjsOptions, editorCommands.rhythm, onChange]);
 

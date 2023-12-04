@@ -87,16 +87,16 @@ export default class EditorState {
     )}`;
 
     // Add barline if we're at the end of the measure
-    const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
-    if (
-      currentMeasure &&
-      currentMeasure.duration +
+    if (currentMeasure) {
+      const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
+      const durationWithAddedNote =
+        currentMeasure.duration +
         (1 / rhythm) *
           (options?.dotted ? 3 / 2 : 1) *
-          (options?.triplet ? 2 / 3 : 1) >=
-        measureTotalDuration
-    )
-      abcToAdd += " |";
+          (options?.triplet ? 2 / 3 : 1);
+      if (durationWithAddedNote >= measureTotalDuration - 0.001)
+        abcToAdd += " |";
+    }
 
     // Add the note to the ABC score
     this.abc += abcToAdd;
@@ -131,5 +131,11 @@ export default class EditorState {
         .concat([0.125, 0.0625].map((v) => v * 1.5))
         .includes(lastNote.duration)
     );
+  }
+
+  get isEndOfTriplet() {
+    const lastMeasure = this.measures.at(-1);
+    const lastNote = lastMeasure?.notes.at(-1);
+    return !!lastNote && !!lastNote.endTriplet;
   }
 }
