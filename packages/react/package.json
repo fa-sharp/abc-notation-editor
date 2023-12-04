@@ -3,6 +3,11 @@
   "version": "0.0.1",
   "author": "fa-sharp",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fa-sharp/abc-notation-editor",
+    "directory": "packages/react"
+  },
   "description": "ABC notation visual editor - React components",
   "type": "module",
   "files": [
@@ -20,6 +25,15 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "preview": "vite preview"
   },
+  "keywords": [
+    "music",
+    "notation",
+    "editor",
+    "abc",
+    "abcjs",
+    "typescript",
+    "react"
+  ],
   "peerDependencies": {
     "abcjs": "^6.2",
     "react": "^18",
