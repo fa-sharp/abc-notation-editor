@@ -35,17 +35,17 @@
   "devDependencies": {
     "@tonaljs/key": "^4.9.1",
     "@tonaljs/time-signature": "^4.8.0",
-    "@typescript-eslint/eslint-plugin": "^6.10.0",
-    "@typescript-eslint/parser": "^6.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
     "abcjs": "^6.2.3",
-    "eslint": "^8.53.0",
+    "eslint": "^8.55.0",
     "svgo": "^3.0.5",
-    "vite": "^5.0.2",
-    "vite-plugin-dts": "^3.6.3",
+    "vite": "^5.0.5",
+    "vite-plugin-dts": "^3.6.4",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^0.34.6"
   },
   "dependencies": {
-    "tonal": "^5.0.0"
+    "tonal": "^5.1.2"
   }
 }
