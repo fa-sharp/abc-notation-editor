@@ -11,7 +11,7 @@ export default function BasicExample() {
         // autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 600 }}
         minWidth={600}
         maxHeight={200}
-        // scale={1.3}
+        // scale={1.5}
         onChange={setAbc}
       />
       <br />

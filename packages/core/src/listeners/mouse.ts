@@ -76,6 +76,7 @@ export const setupStaffMouseListeners = ({
         topStaffLineY,
         staffLineGap,
         renderDiv,
+        cursorSize: iconSize,
       });
     }
   }
@@ -110,6 +111,7 @@ export const setupStaffMouseListeners = ({
         staffLineGap,
         mousePos: { x: e.clientX, y: e.clientY },
         renderDiv,
+        cursorSize: iconSize,
       });
     } else {
       ledgerLineDivs = [];
@@ -163,17 +165,18 @@ export function getStaffClickToNoteFn(props: {
 const ledgerLineStyle = Object.freeze({
   position: "fixed",
   height: "1px",
-  width: "16px",
   backgroundColor: "currentColor",
 });
 
 /** Draw the ledger lines above/below the staff according to the mouse position */
 function drawLedgerLines({
+  cursorSize,
   mousePos,
   topStaffLineY,
   staffLineGap,
   renderDiv,
 }: {
+  cursorSize: number;
   mousePos: { y: number; x: number };
   topStaffLineY: number;
   staffLineGap: number;
@@ -198,7 +201,8 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - 10}px`,
+        left: `${mousePos.x - cursorSize / 2.9}px`,
+        width: `${cursorSize / 1.8}px`,
       });
       ledgerLineDivs.push(ledgerDiv);
       renderDiv.appendChild(ledgerDiv);
@@ -218,7 +222,8 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - 10}px`,
+        left: `${mousePos.x - cursorSize / 2.9}px`,
+        width: `${cursorSize / 1.8}px`,
       });
       ledgerLineDivs.push(ledgerDiv);
       renderDiv.appendChild(ledgerDiv);
@@ -297,8 +302,8 @@ function getCursorIcon({
     if (svgEl)
       Object.assign(svgEl.style, {
         position: "absolute",
-        left: `${size * 0.4}px`,
-        top: `${size * 0.375}px`,
+        left: `${rest ? size * 0.6 : size * 0.4}px`,
+        top: `${rest ? size * 0.1 : size * 0.375}px`,
         height: `${size * 0.7}px`,
         width: `${size * 0.7}px`,
       });
