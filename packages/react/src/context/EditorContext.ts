@@ -122,6 +122,7 @@ const useEditor = ({
       accidental: Accidental.None,
     });
     dispatchEditorCommand({ type: "setDotted", dotted: false });
+    if (restRef.current === true) dispatchEditorCommand({ type: "toggleRest" });
   }, [abc]);
 
   const onAddBarline = useCallback(() => {

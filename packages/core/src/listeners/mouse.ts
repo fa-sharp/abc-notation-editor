@@ -241,6 +241,7 @@ function drawLedgerLines({
   return ledgerLineDivs;
 }
 
+/** Get the cursor icon with the appropriate SVGs inside */
 function getCursorIcon({
   rhythm,
   size = 36,
@@ -302,6 +303,20 @@ function getCursorIcon({
         width: `${size * 0.7}px`,
       });
     div.appendChild(accidentalDiv);
+  }
+  if (dotted) {
+    const dotDiv = document.createElement("div");
+    dotDiv.innerHTML = DotIcon;
+    const svgEl = dotDiv.querySelector("svg");
+    if (svgEl)
+      Object.assign(svgEl.style, {
+        position: "absolute",
+        left: `${size * 0.4}px`,
+        top: `${size * 0.375}px`,
+        height: `${size * 0.7}px`,
+        width: `${size * 0.7}px`,
+      });
+    div.appendChild(dotDiv);
   }
   return div;
 }
