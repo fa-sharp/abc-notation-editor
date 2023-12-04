@@ -8,9 +8,10 @@ export default function BasicExample() {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <Editor
-        autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 600 }}
+        // autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 600 }}
         minWidth={600}
         maxHeight={200}
+        // scale={1.3}
         onChange={setAbc}
       />
       <br />

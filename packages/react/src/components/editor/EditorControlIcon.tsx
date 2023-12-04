@@ -11,14 +11,14 @@ const EditorControlIcon = ({ icon, size }: Props) => {
 
   const refCallback = useCallback(
     (ref: HTMLDivElement | null) => {
-      if (!ref) return;
+      if (!ref || !rawSvg) return;
       const svg = ref.querySelector("svg");
       if (svg && size) {
         svg.style.height = `${size}px`;
         svg.style.width = `${size}px`;
       }
     },
-    [size]
+    [rawSvg, size]
   );
 
   return <div ref={refCallback} dangerouslySetInnerHTML={{ __html: rawSvg }} />;

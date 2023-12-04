@@ -15,6 +15,8 @@ type EditorProps = {
   minWidth?: number;
   /** Make the printed music visually bigger or smaller @default 1 */
   scale?: number;
+  /** Whether the printed music should grow/shrink according to the available width. Setting this to `true` overrides the `scale` option */
+  responsive?: boolean;
   /**
    * Set this property in order to add line breaks automatically, rather than follow the line breaks in the
    * ABC score. You'll need to provide the available width for the staff, as well as the preferred number of measures in each line.
@@ -42,6 +44,7 @@ type EditorProps = {
 /** The main ABC notation editor. */
 export default function Editor({
   autoLineBreaks,
+  responsive = false,
   scale = 1,
   minWidth = 600,
   maxHeight = 600,
@@ -50,6 +53,7 @@ export default function Editor({
   const abcjsOptions: AbcVisualParams = useMemo(
     () => ({
       scale,
+      responsive: responsive ? "resize" : undefined,
       ...(autoLineBreaks?.staffWidth
         ? {
             staffwidth: autoLineBreaks.staffWidth,
@@ -59,9 +63,7 @@ export default function Editor({
               preferredMeasuresPerLine: autoLineBreaks.preferredMeasuresPerLine,
             },
           }
-        : {
-            responsive: "resize",
-          }),
+        : {}),
     }),
     [
       autoLineBreaks?.maxSpacing,
@@ -69,6 +71,7 @@ export default function Editor({
       autoLineBreaks?.preferredMeasuresPerLine,
       autoLineBreaks?.staffWidth,
       scale,
+      responsive,
     ]
   );
 

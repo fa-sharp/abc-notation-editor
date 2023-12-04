@@ -52,7 +52,10 @@ export const setupStaffMouseListeners = ({
   };
 
   // Setup the cursor icon for the staff
-  const iconSize = 32;
+  const topStaffLineY = topStaffLine.getBoundingClientRect().y;
+  const staffLineGap =
+    secondStaffLine.getBoundingClientRect().y - topStaffLineY;
+  const iconSize = staffLineGap * 4;
   const cursorIconDiv = getCursorIcon({
     rhythm,
     rest,
@@ -68,9 +71,6 @@ export const setupStaffMouseListeners = ({
     cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2}px`;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
-      const topStaffLineY = topStaffLine.getBoundingClientRect().y;
-      const staffLineGap =
-        secondStaffLine.getBoundingClientRect().y - topStaffLineY;
       ledgerLineDivs = drawLedgerLines({
         mousePos: lastMousePos,
         topStaffLineY,
