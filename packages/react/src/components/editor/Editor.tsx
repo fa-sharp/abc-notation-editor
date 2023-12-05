@@ -29,6 +29,8 @@ type EditorProps = {
     minSpacing?: number;
     maxSpacing?: number;
   };
+  /** Whether to enable keyboard shortcuts for the editor. TODO docs @default false */
+  enableKbdShortcuts?: boolean;
   /**
    * Fires after each edit made to the score.
    * @param abc The updated ABC score
@@ -46,6 +48,7 @@ export default function Editor({
   autoLineBreaks,
   responsive = false,
   scale = 1,
+  enableKbdShortcuts = false,
   minWidth = 600,
   maxHeight = 600,
   onChange = () => {},
@@ -76,7 +79,11 @@ export default function Editor({
   );
 
   return (
-    <EditorProvider abcjsOptions={abcjsOptions} onChange={onChange}>
+    <EditorProvider
+      abcjsOptions={abcjsOptions}
+      enableKbdShortcuts={enableKbdShortcuts}
+      onChange={onChange}
+    >
       <InnerEditor minWidth={minWidth} maxHeight={maxHeight} />
     </EditorProvider>
   );

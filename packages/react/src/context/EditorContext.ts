@@ -22,12 +22,14 @@ import {
 interface EditorProviderProps {
   initialAbc?: string;
   abcjsOptions?: AbcVisualParams;
+  enableKbdShortcuts?: boolean;
   onChange?: (abc: string, tuneObject: TuneObject) => void;
 }
 
 const useEditor = ({
   initialAbc,
   abcjsOptions,
+  enableKbdShortcuts,
   onChange = () => {},
 }: EditorProviderProps) => {
   const editorState = useRef<EditorState>(new EditorState(initialAbc));
@@ -112,7 +114,8 @@ const useEditor = ({
     // Reset triplet command if needed
     if (editorState.current.isEndOfTriplet && tripletRef.current === true)
       dispatchEditorCommand({ type: "toggleTriplet" });
-    console.debug(editorState.current);
+
+    process.env.NODE_ENV !== "production" && console.debug(editorState.current);
   }, [abc, abcjsOptions, editorCommands.rhythm, onChange]);
 
   // Reset editor commands if abc changed
@@ -167,13 +170,14 @@ const useEditor = ({
 
   // Setup keyboard listener
   useEffect(() => {
+    if (!enableKbdShortcuts) return;
     console.debug("Setting up keyboard listener");
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
       onBackspace
     );
     return () => cleanUpKbdListener();
-  }, [onBackspace]);
+  }, [enableKbdShortcuts, onBackspace]);
 
   // Setup MIDI listener
   useEffect(() => {
