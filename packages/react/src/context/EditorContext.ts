@@ -115,7 +115,7 @@ const useEditor = ({
     if (editorState.current.isEndOfTriplet && tripletRef.current === true)
       dispatchEditorCommand({ type: "toggleTriplet" });
 
-    process.env.NODE_ENV !== "production" && console.debug(editorState.current);
+    import.meta.env.DEV && console.debug(editorState.current);
   }, [abc, abcjsOptions, editorCommands.rhythm, onChange]);
 
   // Reset editor commands if abc changed

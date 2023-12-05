@@ -1,6 +1,8 @@
 # ABC Music Notation Editor
 
-⚠️⚠️ In alpha stage and missing a lot of features. Use at your own risk! ⚠️⚠️
+[![npm (scoped)](https://img.shields.io/npm/v/%40abc-editor/react?label=npm%3A%20react)](https://www.npmjs.com/package/@abc-editor/core)
+
+⚠️⚠️⚠️ In alpha stage and missing a lot of features. Use at your own risk! ⚠️⚠️⚠️
 
 A visual music notation editor, using [ABC notation](https://abcnotation.com/) and built on top of the [abcjs](https://github.com/paulrosen/abcjs) rendering library.
 
