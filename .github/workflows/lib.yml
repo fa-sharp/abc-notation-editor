@@ -102,6 +102,6 @@ jobs:
           path: packages
 
       - name: Publish packages
-        run: pnpm --filter "./packages/**" publish -r
+        run: pnpm publish -r --filter "./packages/**"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
