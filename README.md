@@ -1,6 +1,5 @@
 # ABC Music Notation Editor
 
-[![npm react](https://img.shields.io/npm/v/%40abc-editor/react?label=npm%3A%20react)](https://www.npmjs.com/package/@abc-editor/react)
 [![library CI status](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml/badge.svg)](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml)
 
 ⚠️⚠️⚠️ In alpha stage and missing a lot of features. Use at your own risk! ⚠️⚠️⚠️

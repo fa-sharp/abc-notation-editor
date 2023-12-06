@@ -79,30 +79,30 @@ jobs:
       - name: Test packages
         run: pnpm --filter "./packages/**" -r test
 
-  publish:
-    runs-on: ubuntu-latest
-    needs:
-      - lint
-      - test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-        with:
-          version: latest
-          run_install: false
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://registry.npmjs.org
-          cache: pnpm
-      - run: pnpm install
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: dist
-          path: packages
+  # publish:
+  #   runs-on: ubuntu-latest
+  #   needs:
+  #     - lint
+  #     - test
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: pnpm/action-setup@v2
+  #       with:
+  #         version: latest
+  #         run_install: false
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18.x
+  #         registry-url: https://registry.npmjs.org
+  #         cache: pnpm
+  #     - run: pnpm install
+  #     - name: Download build artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: dist
+  #         path: packages
 
-      - name: Publish packages
-        run: pnpm publish -r --filter "./packages/**"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: Publish packages
+  #       run: pnpm publish -r --filter "./packages/**"
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
