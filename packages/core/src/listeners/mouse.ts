@@ -251,7 +251,7 @@ function getCursorIcon({
       case Rhythm.Eighth:
         return getIcon(rest ? Icon.EighthRest : Icon.EighthNote);
       case Rhythm.Whole:
-        return null;
+        return getIcon(rest ? Icon.WholeRest : Icon.WholeNote);
       case Rhythm.Half:
         return getIcon(rest ? Icon.HalfRest : Icon.HalfNote);
       case Rhythm.Quarter:

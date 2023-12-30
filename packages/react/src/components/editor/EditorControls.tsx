@@ -59,6 +59,20 @@ export default function EditorControls() {
         <legend>Rhythm</legend>
         <button
           className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.rhythm === Rhythm.Whole,
+          })}
+          onClick={() =>
+            dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Whole })
+          }
+        >
+          {currentCommands.rest ? (
+            <EditorControlIcon icon={Icon.WholeRest} size={iconSize} />
+          ) : (
+            <EditorControlIcon icon={Icon.WholeNote} size={iconSize} />
+          )}
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Half,
           })}
           onClick={() =>
@@ -168,7 +182,12 @@ export default function EditorControls() {
           MIDI
         </button>
       </fieldset>
-      <button onClick={onBackspace}>Backspace</button>
+      <fieldset className={styles.controlGroup}>
+        <legend>Edit</legend>
+        <button className={clsx(styles.iconButton)} onClick={onBackspace}>
+          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
+        </button>
+      </fieldset>
     </div>
   );
 }
