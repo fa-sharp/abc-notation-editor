@@ -118,14 +118,14 @@ export const setupStaffMouseListeners = ({
     }
   };
 
-  console.debug("Setting up mouse listeners");
+  import.meta.env.DEV && console.debug("Setting up mouse listeners");
   renderDiv.addEventListener("pointerdown", staffClickListener);
   renderDiv.addEventListener("pointerenter", staffEnterListener);
   renderDiv.addEventListener("pointerleave", staffLeaveListener);
   renderDiv.addEventListener("pointermove", staffMoveListener);
 
   return () => {
-    console.debug("Tearing down mouse listeners");
+    import.meta.env.DEV && console.debug("Tearing down mouse listeners");
     renderDiv.removeEventListener("pointerdown", staffClickListener);
     renderDiv.removeEventListener("pointerenter", staffEnterListener);
     renderDiv.removeEventListener("pointerleave", staffLeaveListener);

@@ -171,7 +171,7 @@ const useEditor = ({
   // Setup keyboard listener
   useEffect(() => {
     if (!enableKbdShortcuts) return;
-    console.debug("Setting up keyboard listener");
+    import.meta.env.DEV && console.debug("Setting up keyboard listener");
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
       onBackspace
@@ -182,7 +182,7 @@ const useEditor = ({
   // Setup MIDI listener
   useEffect(() => {
     if (!editorCommands.midiEnabled) return;
-    console.debug("Setting up MIDI listener");
+    import.meta.env.DEV && console.debug("Setting up MIDI listener");
     const cleanUpMidiListener = setupMIDIListener(onAddNote);
     return () => cleanUpMidiListener();
   }, [editorCommands.midiEnabled, onAddNote]);
