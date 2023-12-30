@@ -100,8 +100,8 @@ function InnerEditor({
   return (
     <div className={styles.editor}>
       <EditorControls />
-      <Score minWidth={minWidth} maxHeight={maxHeight} />
       {currentCommands.showKeyboard && <Keyboard startKey={60} endKey={84} />}
+      <Score minWidth={minWidth} maxHeight={maxHeight} />
     </div>
   );
 }

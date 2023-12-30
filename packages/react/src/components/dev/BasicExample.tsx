@@ -8,11 +8,12 @@ export default function BasicExample() {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <Editor
-        // autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 600 }}
-        minWidth={600}
-        maxHeight={200}
-        scale={1.1}
+        autoLineBreaks={{ preferredMeasuresPerLine: 5, staffWidth: 700 }}
+        minWidth={700}
+        maxHeight={300}
+        scale={0.9}
         onChange={setAbc}
+        enableKbdShortcuts
       />
       <br />
       Generated ABC:

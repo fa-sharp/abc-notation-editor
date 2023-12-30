@@ -8,7 +8,7 @@ const kbdKeyToCommandMap = new Map<string, EditorCommandAction | "backspace">([
   ["4", { type: "setRhythm", rhythm: Rhythm.Eighth }],
   ["5", { type: "setRhythm", rhythm: Rhythm.Sixteenth }],
 
-  [".", { type: "toggleDotted" }],
+  ["d", { type: "toggleDotted" }],
   ["r", { type: "toggleRest" }],
   ["f", { type: "toggleAccidental", accidental: Accidental.Flat }],
   ["s", { type: "toggleAccidental", accidental: Accidental.Sharp }],

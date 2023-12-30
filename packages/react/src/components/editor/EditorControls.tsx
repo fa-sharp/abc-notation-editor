@@ -64,7 +64,6 @@ export default function EditorControls() {
           onClick={() =>
             dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Half })
           }
-          disabled={currentCommands.rhythm === Rhythm.Half}
         >
           {currentCommands.rest ? (
             <EditorControlIcon icon={Icon.HalfRest} size={iconSize} />
@@ -79,7 +78,6 @@ export default function EditorControls() {
           onClick={() =>
             dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Quarter })
           }
-          disabled={currentCommands.rhythm === Rhythm.Quarter}
         >
           {currentCommands.rest ? (
             <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
@@ -94,7 +92,6 @@ export default function EditorControls() {
           onClick={() =>
             dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Eighth })
           }
-          disabled={currentCommands.rhythm === Rhythm.Eighth}
         >
           {currentCommands.rest ? (
             <EditorControlIcon icon={Icon.EighthRest} size={iconSize} />
@@ -109,7 +106,6 @@ export default function EditorControls() {
           onClick={() =>
             dispatchCommand({ type: "setRhythm", rhythm: Rhythm.Sixteenth })
           }
-          disabled={currentCommands.rhythm === Rhythm.Sixteenth}
         >
           {currentCommands.rest ? (
             <EditorControlIcon icon={Icon.SixteenthRest} size={iconSize} />
