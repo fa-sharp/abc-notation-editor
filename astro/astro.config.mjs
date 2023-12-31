@@ -5,6 +5,8 @@ import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
+  site: "https://fa-sharp.github.io",
+  base: "abc-notation-editor",
   integrations: [starlight({
     title: '🎶 ABC Editor',
     social: {
@@ -13,7 +15,7 @@ export default defineConfig({
     sidebar: [{
       label: 'Guides',
       autogenerate: {
-        directory: "/guides"
+        directory: "guides"
       }
     }, {
       label: 'Reference',
