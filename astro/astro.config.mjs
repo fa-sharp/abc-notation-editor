@@ -6,18 +6,15 @@ import react from "@astrojs/react";
 // https://astro.build/config
 export default defineConfig({
   integrations: [starlight({
-    title: 'My Docs',
+    title: '🎶 ABC Editor',
     social: {
-      github: 'https://github.com/withastro/starlight'
+      github: 'https://github.com/fa-sharp/abc-notation-editor'
     },
     sidebar: [{
       label: 'Guides',
-      items: [
-        // Each item here is one entry in the navigation menu.
-        {
-          label: 'Example Guide',
-          link: '/guides/example/'
-        }]
+      autogenerate: {
+        directory: "/guides"
+      }
     }, {
       label: 'Reference',
       autogenerate: {

@@ -1,0 +1,39 @@
+---
+title: React
+description: Getting started in React projects
+---
+
+import { Code } from "astro:components";
+import BasicEditor from "../../../components/ReactBasicEditor";
+import BasicEditorCode from "../../../components/ReactBasicEditor?raw";
+
+## Installation & Setup
+
+In your project, add the `@abc-editor/react` package and the `abcjs` rendering library as dependencies:
+
+```bash
+npm install abcjs @abc-editor/react@alpha
+# or yarn add, pnpm install, etc...
+```
+
+If you're using the editor with the built-in toolbar, you'll also need the CSS file located at `/dist/style.css` within the `@abc-editor/react` package. How to include the CSS file depends on the build tool that you're using. If you're using a bundler like Vite or Parcel, you can just import the CSS file:
+
+```js
+import "@abc-editor/react/dist/style.css";
+```
+
+## Basic Editor
+
+This shows a basic setup of the interactive notation editor, using the `ABCEditor` component with the built-in toolbar. We can hook into this component's `onChange` handler to update the [ABC notation](https://abcnotation.com/) in the text field below, as the user writes their melody:
+
+<div class="not-content">
+  <BasicEditor client:idle width={800} />
+</div>
+
+### Code
+
+<Code code={BasicEditorCode} lang="tsx" />
+
+## Further reading
+
+- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework

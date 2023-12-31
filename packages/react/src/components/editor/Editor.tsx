@@ -1,4 +1,4 @@
-import { AbcVisualParams, TuneObject } from "abcjs";
+import type { AbcVisualParams, TuneObject } from "abcjs";
 import { useMemo } from "react";
 import { EditorProvider, useEditorContext } from "../../context/EditorContext";
 import Score from "../notation/Score";

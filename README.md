@@ -2,7 +2,7 @@
 
 [![library CI status](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml/badge.svg)](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml)
 
-⚠️⚠️⚠️ In alpha stage and missing a lot of features. Use at your own risk! ⚠️⚠️⚠️
+⚠️⚠️⚠️ Currently in alpha stage and missing a lot of features. Things can and will break. Use at your own risk! ⚠️⚠️⚠️
 
 A visual music notation editor, using [ABC notation](https://abcnotation.com/) and built on top of the [abcjs](https://github.com/paulrosen/abcjs) rendering library.
 
@@ -11,9 +11,9 @@ A visual music notation editor, using [ABC notation](https://abcnotation.com/) a
 Add the corresponding package for your framework (only React available for now), as well as the [abcjs](https://github.com/paulrosen/abcjs) library, which acts as the rendering engine.
 
 ```bash
-npm install @abc-editor/react abcjs
+npm install @abc-editor/react@alpha abcjs
 # or
-pnpm add @abc-editor/react abcjs
+pnpm add @abc-editor/react@alpha abcjs
 # etc...
 ```
 

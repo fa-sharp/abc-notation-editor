@@ -1,4 +1,15 @@
-import { renderAbc, AbcVisualParams, TuneObject } from "abcjs";
+import {
+  Accidental,
+  EditorCommandState,
+  EditorState,
+  Rhythm,
+  editorCommandReducer,
+  setupKeyboardListener,
+  setupMIDIListener,
+  setupStaffMouseListeners,
+} from "@abc-editor/core";
+import type { AbcVisualParams, TuneObject } from "abcjs";
+import * as abcjs from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,
@@ -8,16 +19,7 @@ import {
   useRef,
   useState,
 } from "react";
-import {
-  setupKeyboardListener,
-  setupStaffMouseListeners,
-  editorCommandReducer,
-  EditorState,
-  EditorCommandState,
-  Accidental,
-  Rhythm,
-  setupMIDIListener,
-} from "@abc-editor/core";
+const { renderAbc } = abcjs;
 
 interface EditorProviderProps {
   initialAbc?: string;
