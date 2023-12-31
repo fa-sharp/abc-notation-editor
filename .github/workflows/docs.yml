@@ -1,9 +1,11 @@
-name: Deploy to GitHub Pages
+name: Docs site
 
 on:
   push:
     branches: [main]
-    paths: "astro/**"
+    paths:
+      - "astro/**"
+      - "packages/**"
   workflow_dispatch:
 
 permissions:

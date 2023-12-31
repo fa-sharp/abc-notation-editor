@@ -1,4 +1,4 @@
-name: "library"
+name: Library
 on:
   push:
     paths: "packages/**"

@@ -1,8 +1,9 @@
 # ABC Music Notation Editor
 
 [![library CI status](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml/badge.svg)](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/lib.yml)
+[![docs site CI status](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/docs.yml/badge.svg)](https://github.com/fa-sharp/abc-notation-editor/actions/workflows/docs.yml)
 
-⚠️⚠️⚠️ Currently in alpha stage and missing a lot of features. Things can and will break. Use at your own risk! ⚠️⚠️⚠️
+⚠️⚠️⚠️ Currently in alpha stage and missing a lot of features. Things _will_ break. Use at your own risk! ⚠️⚠️⚠️
 
 A visual music notation editor, using [ABC notation](https://abcnotation.com/) and built on top of the [abcjs](https://github.com/paulrosen/abcjs) rendering library.
 
