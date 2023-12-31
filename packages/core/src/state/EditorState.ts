@@ -32,7 +32,7 @@ export default class EditorState {
       this.clef = Clef.Treble;
       this.keySig = Key.majorKey("C");
       this.timeSig = TimeSignature.get("4/4");
-      this.abc = `X:1\nL:1/8\nM:4/4\nK:C clef=treble\n`;
+      this.abc = `%%stretchlast false\nX:1\nL:1/8\nM:4/4\nK:C clef=treble\n`;
     }
   }
 
@@ -134,8 +134,12 @@ export default class EditorState {
   }
 
   get isEndOfTriplet() {
-    const lastMeasure = this.measures.at(-1);
-    const lastNote = lastMeasure?.notes.at(-1);
+    let measureIdx = -1;
+    let lastNote: AbcjsNote | undefined;
+    while (!(lastNote = this.measures.at(measureIdx)?.notes.at(-1))) {
+      if (Math.abs(measureIdx) >= this.measures.length) return;
+      measureIdx--;
+    }
     return !!lastNote && !!lastNote.endTriplet;
   }
 }

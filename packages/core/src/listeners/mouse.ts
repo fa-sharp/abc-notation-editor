@@ -1,6 +1,6 @@
 import { Scale } from "tonal";
 import { Icon, getIcon } from "../icons";
-import { Accidental, Rhythm } from "../types/constants";
+import { Accidental, Clef, Rhythm } from "../types/constants";
 
 /**
  * Sets up listeners for tracking and responding to the mouse movements and clicks
@@ -13,6 +13,7 @@ export const setupStaffMouseListeners = ({
   dotted = false,
   accidental = Accidental.None,
   rest = false,
+  clef,
   onAddNote,
   lastMousePos,
   updateLastMousePos,
@@ -20,6 +21,7 @@ export const setupStaffMouseListeners = ({
   renderDiv: HTMLDivElement;
   numTuneLines: number;
   rhythm: Rhythm;
+  clef?: Clef;
   dotted?: boolean;
   accidental?: Accidental;
   rest?: boolean;
@@ -44,7 +46,7 @@ export const setupStaffMouseListeners = ({
     const staffLineGap =
       secondStaffLine.getBoundingClientRect().y - topStaffLineY;
     const note = getStaffClickToNoteFn({
-      clef: "treble",
+      clef: clef || "treble",
       topLineY: topStaffLineY,
       lineGap: staffLineGap,
     })(e.clientY);
@@ -52,6 +54,7 @@ export const setupStaffMouseListeners = ({
   };
 
   // Setup the cursor icon for the staff
+  const CURSOR_TOP_ADJUST = 0.81;
   const topStaffLineY = topStaffLine.getBoundingClientRect().y;
   const staffLineGap =
     secondStaffLine.getBoundingClientRect().y - topStaffLineY;
@@ -67,7 +70,9 @@ export const setupStaffMouseListeners = ({
 
   // If there is a last known mouse position inside staff, re-draw the cursor (and ledger lines if needed)
   if (lastMousePos) {
-    cursorIconDiv.style.top = `${lastMousePos.y - iconSize * (4 / 5)}px`;
+    cursorIconDiv.style.top = `${
+      lastMousePos.y - iconSize * CURSOR_TOP_ADJUST
+    }px`;
     cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2}px`;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
@@ -97,7 +102,7 @@ export const setupStaffMouseListeners = ({
     ledgerLineDivs.forEach((div) => div.remove());
 
     // Move the cursor icon
-    cursorIconDiv.style.top = `${e.clientY - iconSize * (4 / 5)}px`;
+    cursorIconDiv.style.top = `${e.clientY - iconSize * CURSOR_TOP_ADJUST}px`;
     cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
     if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
@@ -185,7 +190,7 @@ function drawLedgerLines({
   const ledgerLineDivs: HTMLDivElement[] = [];
   const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
   const maxLedgerDistance = staffLineGap * 6;
-  const drawLedgerAnticipation = 4;
+  const drawLedgerAnticipation = 3;
 
   // Above staff
   if (
@@ -267,8 +272,8 @@ function getCursorIcon({
     div.innerHTML = svg;
     const svgEl = div.querySelector("svg");
     if (svgEl) {
-      svgEl.style.height = `${size}px`;
-      svgEl.style.width = `${size}px`;
+      svgEl.setAttribute("height", size.toString());
+      svgEl.setAttribute("width", size.toString());
     }
   }
   if (!rest && accidental !== Accidental.None) {

@@ -14,8 +14,8 @@ const EditorControlIcon = ({ icon, size }: Props) => {
       if (!ref || !rawSvg) return;
       const svg = ref.querySelector("svg");
       if (svg && size) {
-        svg.style.height = `${size}px`;
-        svg.style.width = `${size}px`;
+        svg.setAttribute("height", size.toString());
+        svg.setAttribute("width", size.toString());
       }
     },
     [rawSvg, size]

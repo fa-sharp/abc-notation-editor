@@ -8,7 +8,7 @@ import styles from "./EditorControls.module.css";
 export default function EditorControls() {
   const { currentCommands, dispatchCommand, onBackspace } = useEditorContext();
 
-  const iconSize = 20;
+  const iconSize = 18;
 
   return (
     <div className={styles.controls}>
