@@ -21,7 +21,8 @@
     "build": "pnpm run build-icons && rimraf dist && vite build",
     "build-icons": "rimraf dist-icons && svgo -q -f icons -o dist-icons",
     "lint": "eslint . --ext ts --report-unused-disable-directives",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [
     "music",
@@ -33,19 +34,19 @@
     "react"
   ],
   "devDependencies": {
-    "@tonaljs/key": "^4.9.1",
-    "@tonaljs/time-signature": "^4.8.0",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
-    "abcjs": "^6.2.3",
-    "eslint": "^8.56.0",
-    "svgo": "^3.1.0",
-    "vite": "^5.0.10",
-    "vite-plugin-dts": "^3.7.0",
-    "vite-tsconfig-paths": "^4.2.3",
+    "@tonaljs/key": "^4.9.4",
+    "@tonaljs/time-signature": "^4.8.1",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "abcjs": "^6.3.0",
+    "eslint": "^8.57.0",
+    "svgo": "^3.2.0",
+    "vite": "^5.2.8",
+    "vite-plugin-dts": "^3.8.2",
+    "vite-tsconfig-paths": "^4.3.2",
     "vitest": "^0.34.6"
   },
   "dependencies": {
-    "tonal": "^5.1.2"
+    "tonal": "^5.2.1"
   }
 }
