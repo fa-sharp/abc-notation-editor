@@ -7,17 +7,7 @@ export default function BasicExample() {
     <div
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <Editor
-        // autoLineBreaks={{
-        //   preferredMeasuresPerLine: 5,
-        //   staffWidth: 700,
-        // }}
-        minWidth={700}
-        maxHeight={300}
-        scale={1.1}
-        onChange={setAbc}
-        enableKbdShortcuts
-      />
+      <Editor scale={1.1} onChange={setAbc} enableKbdShortcuts />
       <br />
       Generated ABC:
       <textarea readOnly rows={10} cols={50} value={abc} />
