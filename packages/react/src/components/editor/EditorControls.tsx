@@ -164,8 +164,16 @@ export default function EditorControls() {
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
-        <legend>Toggles</legend>
-
+        <legend>Edit</legend>
+        <button className={clsx(styles.iconButton)} onClick={onBackspace}>
+          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
+        </button>
+        <button className={clsx(styles.iconButton)} onClick={onNewLine}>
+          <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
+        </button>
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Input</legend>
         <button
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.showKeyboard,
@@ -181,15 +189,6 @@ export default function EditorControls() {
           onClick={() => dispatchCommand({ type: "toggleMidi" })}
         >
           MIDI
-        </button>
-      </fieldset>
-      <fieldset className={styles.controlGroup}>
-        <legend>Edit</legend>
-        <button className={clsx(styles.iconButton)} onClick={onBackspace}>
-          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
-        </button>
-        <button className={clsx(styles.iconButton)} onClick={onNewLine}>
-          <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
         </button>
       </fieldset>
     </div>
