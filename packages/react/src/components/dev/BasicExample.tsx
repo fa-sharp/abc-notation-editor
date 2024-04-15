@@ -8,10 +8,10 @@ export default function BasicExample() {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <Editor
-        autoLineBreaks={{
-          preferredMeasuresPerLine: 5,
-          staffWidth: 700,
-        }}
+        // autoLineBreaks={{
+        //   preferredMeasuresPerLine: 5,
+        //   staffWidth: 700,
+        // }}
         minWidth={700}
         maxHeight={300}
         scale={1.1}

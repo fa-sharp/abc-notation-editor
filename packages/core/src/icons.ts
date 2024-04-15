@@ -19,6 +19,7 @@ import SharpIcon from "~dist-icons/Sharp.svg?raw";
 import TripletIcon from "~dist-icons/Triplet.svg?raw";
 
 import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
+import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 
 enum Icon {
   Backspace,
@@ -30,6 +31,7 @@ enum Icon {
   HalfNote,
   HalfRest,
   Natural,
+  NewLine,
   Piano,
   QuarterNote,
   QuarterRest,
@@ -62,6 +64,8 @@ function getIcon(icon: Icon): string {
       return HalfRestIcon;
     case Icon.Natural:
       return NaturalIcon;
+    case Icon.NewLine:
+      return NewLineIcon;
     case Icon.Piano:
       return PianoIcon;
     case Icon.QuarterNote:

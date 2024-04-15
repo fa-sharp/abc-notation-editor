@@ -143,6 +143,11 @@ const useEditor = ({
     setAbc(editorState.current.abc);
   }, []);
 
+  const onNewLine = useCallback(() => {
+    editorState.current.newLine();
+    setAbc(editorState.current.abc);
+  }, []);
+
   // Setup mouse listeners
   const lastKnownMousePos = useRef<{ x: number; y: number } | null>(null);
   useEffect(() => {
@@ -197,6 +202,7 @@ const useEditor = ({
     onAddBarline,
     onAddLineBreak,
     onBackspace,
+    onNewLine,
   };
 };
 

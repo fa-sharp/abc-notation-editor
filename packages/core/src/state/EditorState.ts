@@ -112,6 +112,10 @@ export default class EditorState {
     this.abc = this.abc.slice(0, lastItem.startChar);
   }
 
+  newLine() {
+    if (this.abc.at(-1) !== "\n") this.abc = this.abc + "\n";
+  }
+
   shouldBeamNextNote(nextRhythm: Rhythm) {
     const lastMeasure = this.measures.at(-1);
     const lastNote = lastMeasure?.notes.at(-1);

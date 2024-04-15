@@ -6,7 +6,8 @@ import EditorControlIcon from "./EditorControlIcon";
 import styles from "./EditorControls.module.css";
 
 export default function EditorControls() {
-  const { currentCommands, dispatchCommand, onBackspace } = useEditorContext();
+  const { currentCommands, dispatchCommand, onBackspace, onNewLine } =
+    useEditorContext();
 
   const iconSize = 18;
 
@@ -186,6 +187,9 @@ export default function EditorControls() {
         <legend>Edit</legend>
         <button className={clsx(styles.iconButton)} onClick={onBackspace}>
           <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
+        </button>
+        <button className={clsx(styles.iconButton)} onClick={onNewLine}>
+          <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
         </button>
       </fieldset>
     </div>
