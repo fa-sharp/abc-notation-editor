@@ -8,12 +8,7 @@ import EditorControls from "./EditorControls";
 import styles from "./Editor.module.css";
 
 type EditorProps = {
-  /** Maximum height of the score, in pixels. If the score needs more space than
-   * this, it will scroll. @default 600 */
-  maxHeight?: number;
-  /** Minimum width of the score, in pixels. @default 600 */
-  minWidth?: number;
-  /** Make the printed music visually bigger or smaller @default 1 */
+  /** Make the printed music visually bigger or smaller. Will be overridden if `responsive` is set to `true`. @default 1 */
   scale?: number;
   /** Whether the printed music should grow/shrink according to the available width. Setting this to `true` overrides the `scale` option */
   responsive?: boolean;
