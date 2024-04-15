@@ -55,7 +55,7 @@ export default function Editor({
     () => ({
       scale,
       responsive: responsive ? "resize" : undefined,
-      ...(autoLineBreaks?.staffWidth
+      ...(autoLineBreaks
         ? {
             staffwidth: autoLineBreaks.staffWidth,
             wrap: {

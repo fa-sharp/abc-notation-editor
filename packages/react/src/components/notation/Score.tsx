@@ -9,6 +9,7 @@ export default function Score() {
       style={{
         padding: 20,
         overflow: "auto",
+        width: "100%",
       }}
     >
       <div ref={setRenderDiv} />

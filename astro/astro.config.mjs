@@ -6,7 +6,7 @@ import react from "@astrojs/react";
 // https://astro.build/config
 export default defineConfig({
   site: "https://fa-sharp.github.io",
-  base: "abc-notation-editor",
+  base: import.meta.env.DEV ? "" : "abc-notation-editor",
   integrations: [starlight({
     title: '🎶 ABC Editor',
     social: {
