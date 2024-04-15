@@ -14,7 +14,7 @@ export default function BasicExample() {
         }}
         minWidth={700}
         maxHeight={300}
-        scale={0.9}
+        scale={1.1}
         onChange={setAbc}
         enableKbdShortcuts
       />

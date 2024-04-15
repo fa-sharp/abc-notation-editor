@@ -1,19 +1,12 @@
 import { useEditorContext } from "../../context/EditorContext";
 
-type ScoreProps = {
-  minWidth?: number;
-  maxHeight?: number;
-};
-
 /** The ABC score display. */
-export default function Score({ minWidth = 600, maxHeight = 300 }: ScoreProps) {
+export default function Score() {
   const { setRenderDiv } = useEditorContext();
 
   return (
     <div
       style={{
-        minWidth,
-        maxHeight,
         padding: 20,
         overflow: "auto",
       }}

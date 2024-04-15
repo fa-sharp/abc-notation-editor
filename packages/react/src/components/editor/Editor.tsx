@@ -49,8 +49,6 @@ export default function Editor({
   responsive = false,
   scale = 1,
   enableKbdShortcuts = false,
-  minWidth = 600,
-  maxHeight = 600,
   onChange = () => {},
 }: EditorProps) {
   const abcjsOptions: AbcVisualParams = useMemo(
@@ -84,24 +82,18 @@ export default function Editor({
       enableKbdShortcuts={enableKbdShortcuts}
       onChange={onChange}
     >
-      <InnerEditor minWidth={minWidth} maxHeight={maxHeight} />
+      <InnerEditor />
     </EditorProvider>
   );
 }
 
-function InnerEditor({
-  minWidth,
-  maxHeight,
-}: {
-  minWidth: number;
-  maxHeight: number;
-}) {
+function InnerEditor() {
   const { currentCommands } = useEditorContext();
   return (
     <div className={styles.editor}>
       <EditorControls />
       {currentCommands.showKeyboard && <Keyboard startKey={60} endKey={84} />}
-      <Score minWidth={minWidth} maxHeight={maxHeight} />
+      <Score />
     </div>
   );
 }
