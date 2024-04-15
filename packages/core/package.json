@@ -1,6 +1,6 @@
 {
   "name": "@abc-editor/core",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "fa-sharp",
   "license": "MIT",
   "repository": {
@@ -8,7 +8,7 @@
     "url": "https://github.com/fa-sharp/abc-notation-editor",
     "directory": "packages/core"
   },
-  "description": "ABC notation visual editor - core functions",
+  "description": "ABC notation visual editor - core library",
   "type": "module",
   "main": "dist/abc-editor-core.umd.cjs",
   "module": "dist/abc-editor-core.js",
