@@ -7,6 +7,8 @@
 
 A visual music notation editor, using [ABC notation](https://abcnotation.com/) and built on top of the [abcjs](https://github.com/paulrosen/abcjs) rendering library.
 
+![Preview](astro/src/assets/preview.gif)
+
 ## Installation
 
 Add the corresponding package for your framework (only React available for now), as well as the [abcjs](https://github.com/paulrosen/abcjs) library, which acts as the rendering engine.
