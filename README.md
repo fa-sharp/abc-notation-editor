@@ -7,7 +7,7 @@
 
 A visual music notation editor, using [ABC notation](https://abcnotation.com/) and built on top of the [abcjs](https://github.com/paulrosen/abcjs) rendering library.
 
-<img src="https://github.com/fa-sharp/abc-notation-editor/tree/main/astro/src/assets/preview.gif" alt="Preview" width="330" />
+<img src="https://github.com/fa-sharp/abc-notation-editor/raw/main/astro/src/assets/preview.gif" alt="Preview" width="400" />
 
 ## Installation
 
