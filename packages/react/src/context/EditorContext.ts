@@ -24,6 +24,7 @@ const { renderAbc } = abcjs;
 interface EditorProviderProps {
   initialAbc?: string;
   abcjsOptions?: AbcVisualParams;
+  chordTemplate?: string;
   enableKbdShortcuts?: boolean;
   onChange?: (abc: string, tuneObject: TuneObject) => void;
 }
@@ -32,9 +33,14 @@ const useEditor = ({
   initialAbc,
   abcjsOptions,
   enableKbdShortcuts,
+  chordTemplate,
   onChange = () => {},
 }: EditorProviderProps) => {
-  const editorState = useRef<EditorState>(new EditorState(initialAbc));
+  const editorState = useRef<EditorState>(
+    new EditorState(initialAbc, {
+      chordTemplate,
+    })
+  );
   const [abc, setAbc] = useState(() => editorState.current.abc);
 
   const renderDiv = useRef<HTMLDivElement | null>(null);

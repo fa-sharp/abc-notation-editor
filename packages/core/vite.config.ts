@@ -12,10 +12,11 @@ export default defineConfig({
       fileName: "abc-editor-core",
     },
     rollupOptions: {
-      external: ["tonal"],
+      external: ["tonal", "abcjs"],
       output: {
         globals: {
           tonal: "Tonal",
+          abcjs: "ABCJS",
         },
       },
     },

@@ -8,6 +8,7 @@ export interface AbcjsNote extends VoiceItemNote {
   rest?: { type: "rest" | "spacer" };
   startTriplet?: number;
   endTriplet?: boolean;
+  chord?: Array<{ name: string }>;
 
   // Custom added properties
   isTriplet?: boolean;

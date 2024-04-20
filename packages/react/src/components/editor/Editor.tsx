@@ -8,6 +8,8 @@ import EditorControls from "./EditorControls";
 import styles from "./Editor.module.css";
 
 type EditorProps = {
+  initialAbc?: string;
+  chordTemplate?: string;
   /** Make the printed music visually bigger or smaller. Will be overridden if `responsive` is set to `true`. @default 1 */
   scale?: number;
   /** Whether the printed music should grow/shrink according to the available width. Setting this to `true` overrides the `scale` option */
@@ -40,6 +42,8 @@ type EditorProps = {
 
 /** The main ABC notation editor. */
 export default function Editor({
+  initialAbc,
+  chordTemplate,
   autoLineBreaks,
   responsive = false,
   scale = 1,
@@ -50,7 +54,7 @@ export default function Editor({
     () => ({
       scale,
       responsive: responsive ? "resize" : undefined,
-      ...(autoLineBreaks
+      ...(autoLineBreaks?.staffWidth
         ? {
             staffwidth: autoLineBreaks.staffWidth,
             wrap: {
@@ -73,6 +77,8 @@ export default function Editor({
 
   return (
     <EditorProvider
+      initialAbc={initialAbc}
+      chordTemplate={chordTemplate}
       abcjsOptions={abcjsOptions}
       enableKbdShortcuts={enableKbdShortcuts}
       onChange={onChange}

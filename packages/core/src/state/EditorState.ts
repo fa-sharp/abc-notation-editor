@@ -1,4 +1,4 @@
-import type { TuneLine, VoiceItem } from "abcjs";
+import { type TuneLine, type VoiceItem } from "abcjs";
 import { AbcjsNote } from "../types/abcjs";
 import { Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Clef, Rhythm } from "../types/constants";
@@ -11,6 +11,10 @@ import {
 } from "~src/parsing/headers";
 import { Key, TimeSignature } from "tonal";
 import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
+import {
+  type ChordTemplateMeasure,
+  parseChordTemplate,
+} from "~src/parsing/chordTemplate";
 
 export default class EditorState {
   abc: string;
@@ -21,18 +25,36 @@ export default class EditorState {
   timeSig: TimeSignatureType;
   clef: Clef;
 
-  constructor(initialAbc?: string) {
+  chordTemplate?: ChordTemplateMeasure[];
+
+  constructor(initialAbc?: string, options?: { chordTemplate?: string }) {
     if (initialAbc) {
       this.abc = initialAbc;
       const { clef, keySig, timeSig } = parseAbcHeaders(initialAbc);
       this.clef = clef;
       this.keySig = keySig;
       this.timeSig = timeSig;
+      if (options?.chordTemplate) {
+        this.chordTemplate = parseChordTemplate(
+          options.chordTemplate,
+          this.timeSig
+        );
+      }
     } else {
       this.clef = Clef.Treble;
       this.keySig = Key.majorKey("C");
       this.timeSig = TimeSignature.get("4/4");
       this.abc = `%%stretchlast false\nX:1\nL:1/8\nM:4/4\nK:C clef=treble\n`;
+      if (options?.chordTemplate) {
+        this.chordTemplate = parseChordTemplate(
+          options.chordTemplate,
+          this.timeSig
+        );
+        const chordToAdd = this.chordTemplate?.[0]?.find(
+          (chord) => chord.fractionalBeat === 0
+        );
+        if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
+      }
     }
   }
 
@@ -94,8 +116,20 @@ export default class EditorState {
         (1 / rhythm) *
           (options?.dotted ? 3 / 2 : 1) *
           (options?.triplet ? 2 / 3 : 1);
-      if (durationWithAddedNote >= measureTotalDuration - 0.001)
+
+      // Are we at end of measure?
+      if (durationWithAddedNote >= measureTotalDuration - 0.001) {
         abcToAdd += " |";
+        const chordToAdd = this.chordTemplate
+          ?.at(this.measures.length)
+          ?.find((chord) => chord.fractionalBeat === 0);
+        if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
+      } else {
+        const chordToAdd = this.chordTemplate
+          ?.at(this.measures.length - 1)
+          ?.find((chord) => chord.fractionalBeat === durationWithAddedNote);
+        if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
+      }
     }
 
     // Add the note to the ABC score
@@ -113,7 +147,15 @@ export default class EditorState {
   }
 
   newLine() {
-    if (this.abc.at(-1) !== "\n") this.abc = this.abc + "\n";
+    if (this.abc.at(-1) === "\n") return;
+
+    this.abc = this.abc + "\n";
+    if (this.chordTemplate) {
+      const chordToAdd = this.chordTemplate
+        ?.at(this.measures.length - 1)
+        ?.find((chord) => chord.fractionalBeat === 0);
+      if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
+    }
   }
 
   shouldBeamNextNote(nextRhythm: Rhythm) {
@@ -134,6 +176,16 @@ export default class EditorState {
       [0.125, 0.0625]
         .concat([0.125, 0.0625].map((v) => v * 1.5))
         .includes(lastNote.duration)
+    );
+  }
+
+  get currentDuration() {
+    const lastMeasure = this.measures.at(-1);
+    if (!lastMeasure) return -1;
+
+    return lastMeasure.notes.reduce(
+      (acc, curr) => acc + curr.duration * (curr.isTriplet ? 2 / 3 : 1),
+      0
     );
   }
 
