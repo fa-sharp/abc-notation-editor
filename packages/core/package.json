@@ -33,12 +33,14 @@
     "typescript",
     "react"
   ],
+  "peerDependencies": {
+    "abcjs": "^6.2"
+  },
   "devDependencies": {
     "@tonaljs/key": "^4.9.4",
     "@tonaljs/time-signature": "^4.8.1",
     "@typescript-eslint/eslint-plugin": "^7.6.0",
     "@typescript-eslint/parser": "^7.6.0",
-    "abcjs": "^6.3.0",
     "eslint": "^8.57.0",
     "svgo": "^3.2.0",
     "vite": "^5.2.8",

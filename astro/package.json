@@ -14,9 +14,9 @@
     "@astrojs/check": "^0.5.10",
     "@astrojs/react": "^3.3.0",
     "@astrojs/starlight": "^0.21.5",
-    "@types/react": "^18.2.78",
+    "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.25",
-    "astro": "^4.6.1",
+    "astro": "^4.6.3",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "sharp": "^0.33.3",
@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "@abc-editor/react": "workspace:^",
-    "abcjs": "^6.3.0"
+    "abcjs": "^6.2"
   }
 }
