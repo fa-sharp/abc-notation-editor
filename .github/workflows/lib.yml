@@ -1,7 +1,7 @@
 name: Library
 on:
   push:
-    # paths: "packages/**"
+    paths: "packages/**"
 
 jobs:
   build:
@@ -101,8 +101,6 @@ jobs:
         with:
           name: dist
           path: packages
-      - name: Git status (debug)
-        run: git status
 
       - name: Publish packages
         run: pnpm publish -r --filter "./packages/**" --tag alpha --access public
