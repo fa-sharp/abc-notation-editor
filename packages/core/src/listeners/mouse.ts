@@ -58,7 +58,7 @@ export const setupStaffMouseListeners = ({
   const topStaffLineY = topStaffLine.getBoundingClientRect().y;
   const staffLineGap =
     secondStaffLine.getBoundingClientRect().y - topStaffLineY;
-  const iconSize = staffLineGap * 4;
+  const iconSize = staffLineGap * 3.5;
   const cursorIconDiv = getCursorIcon({
     rhythm,
     rest,
@@ -73,7 +73,7 @@ export const setupStaffMouseListeners = ({
     cursorIconDiv.style.top = `${
       lastMousePos.y - iconSize * CURSOR_TOP_ADJUST
     }px`;
-    cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2}px`;
+    cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2.5}px`;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
       ledgerLineDivs = drawLedgerLines({
@@ -103,7 +103,7 @@ export const setupStaffMouseListeners = ({
 
     // Move the cursor icon
     cursorIconDiv.style.top = `${e.clientY - iconSize * CURSOR_TOP_ADJUST}px`;
-    cursorIconDiv.style.left = `${e.clientX - iconSize / 2}px`;
+    cursorIconDiv.style.left = `${e.clientX - iconSize / 2.5}px`;
     if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
     // Draw ledger lines if needed.
@@ -167,6 +167,8 @@ export function getStaffClickToNoteFn(props: {
   };
 }
 
+const cursorIconColor = "rgba(0, 0, 0, 0.7)";
+
 const ledgerLineStyle = Object.freeze({
   position: "fixed",
   height: "1px",
@@ -206,8 +208,9 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - cursorSize / 2.9}px`,
+        left: `${mousePos.x - cursorSize / 3.5}px`,
         width: `${cursorSize / 1.8}px`,
+        color: cursorIconColor,
       });
       ledgerLineDivs.push(ledgerDiv);
       renderDiv.appendChild(ledgerDiv);
@@ -227,8 +230,9 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - cursorSize / 2.9}px`,
+        left: `${mousePos.x - cursorSize / 3.5}px`,
         width: `${cursorSize / 1.8}px`,
+        color: cursorIconColor,
       });
       ledgerLineDivs.push(ledgerDiv);
       renderDiv.appendChild(ledgerDiv);
@@ -274,6 +278,7 @@ function getCursorIcon({
     if (svgEl) {
       svgEl.setAttribute("height", size.toString());
       svgEl.setAttribute("width", size.toString());
+      svgEl.style.color = cursorIconColor;
     }
   }
   if (!rest && accidental !== Accidental.None) {
@@ -297,6 +302,7 @@ function getCursorIcon({
         top: `${size * 0.35}px`,
         height: `${size * 0.7}px`,
         width: `${size * 0.7}px`,
+        color: cursorIconColor,
       });
     div.appendChild(accidentalDiv);
   }
@@ -311,6 +317,7 @@ function getCursorIcon({
         top: `${rest ? size * 0.1 : size * 0.375}px`,
         height: `${size * 0.7}px`,
         width: `${size * 0.7}px`,
+        color: cursorIconColor,
       });
     div.appendChild(dotDiv);
   }
