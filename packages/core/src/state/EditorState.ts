@@ -15,6 +15,7 @@ import {
   type ChordTemplateMeasure,
   parseChordTemplate,
 } from "~src/parsing/chordTemplate";
+import { equalUpToN } from "~src/utils/numbers";
 
 export default class EditorState {
   abc: string;
@@ -50,8 +51,8 @@ export default class EditorState {
           options.chordTemplate,
           this.timeSig
         );
-        const chordToAdd = this.chordTemplate?.[0]?.find(
-          (chord) => chord.fractionalBeat === 0
+        const chordToAdd = this.chordTemplate?.[0]?.find((chord) =>
+          equalUpToN(chord.fractionalBeat, 0)
         );
         if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
       }
@@ -122,12 +123,14 @@ export default class EditorState {
         abcToAdd += " |";
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length)
-          ?.find((chord) => chord.fractionalBeat === 0);
+          ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
         if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
       } else {
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)
-          ?.find((chord) => chord.fractionalBeat === durationWithAddedNote);
+          ?.find((chord) =>
+            equalUpToN(chord.fractionalBeat, durationWithAddedNote)
+          );
         if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
       }
     }
@@ -153,7 +156,9 @@ export default class EditorState {
         lastItem.duration * (lastItem.isTriplet ? 2 / 3 : 1);
       const chordToAdd = this.chordTemplate
         ?.at(this.measures.length - 1)
-        ?.find((chord) => chord.fractionalBeat === durationWithRemovedNote);
+        ?.find((chord) =>
+          equalUpToN(chord.fractionalBeat, durationWithRemovedNote)
+        );
       if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
     }
   }
@@ -168,7 +173,7 @@ export default class EditorState {
     if (this.chordTemplate) {
       const chordToAdd = this.chordTemplate
         ?.at(this.measures.length - 1)
-        ?.find((chord) => chord.fractionalBeat === 0);
+        ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
       if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
     }
   }
