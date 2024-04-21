@@ -44,7 +44,7 @@ type EditorProps = {
   onChange?: (abc: string, tuneObject: TuneObject) => void;
 };
 
-/** The main ABC notation editor. */
+/** The main ABC notation editor with a built-in toolbar. */
 export default function Editor({
   initialAbc,
   chordTemplate,

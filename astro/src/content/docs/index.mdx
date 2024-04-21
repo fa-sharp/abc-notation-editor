@@ -4,7 +4,8 @@ description: Get started building your docs site with Starlight.
 template: splash
 hero:
   tagline: An open-source notation editor for the browser, built on
-    top of the abcjs rendering library
+    top of the abcjs rendering library. 🚧 Under development and not
+    for production!! 🚧
   image:
     file: ../../assets/preview.gif
   actions:
@@ -21,6 +22,10 @@ hero:
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
+import BasicEditor from "../../components/ReactBasicEditor";
 
-## In development! 
-Follow along here 😁
+### Try it:
+
+<div class="not-content">
+  <BasicEditor client:idle />
+</div>
