@@ -10,6 +10,10 @@ import styles from "./Editor.module.css";
 type EditorProps = {
   initialAbc?: string;
   chordTemplate?: string;
+  jazzChords?: boolean;
+  selectTypes?: boolean;
+  format?: AbcVisualParams["format"];
+  visualTranspose?: AbcVisualParams["visualTranspose"];
   /** Make the printed music visually bigger or smaller. Will be overridden if `responsive` is set to `true`. @default 1 */
   scale?: number;
   /** Whether the printed music should grow/shrink according to the available width. Setting this to `true` overrides the `scale` option */
@@ -44,6 +48,10 @@ type EditorProps = {
 export default function Editor({
   initialAbc,
   chordTemplate,
+  jazzChords,
+  format,
+  selectTypes,
+  visualTranspose,
   autoLineBreaks,
   responsive = false,
   scale = 1,
@@ -54,6 +62,10 @@ export default function Editor({
     () => ({
       scale,
       responsive: responsive ? "resize" : undefined,
+      jazzchords: jazzChords,
+      format,
+      selectTypes,
+      visualTranspose,
       ...(autoLineBreaks?.staffWidth
         ? {
             staffwidth: autoLineBreaks.staffWidth,
@@ -66,12 +78,16 @@ export default function Editor({
         : {}),
     }),
     [
-      autoLineBreaks?.maxSpacing,
-      autoLineBreaks?.minSpacing,
-      autoLineBreaks?.preferredMeasuresPerLine,
-      autoLineBreaks?.staffWidth,
       scale,
       responsive,
+      jazzChords,
+      format,
+      visualTranspose,
+      selectTypes,
+      autoLineBreaks?.staffWidth,
+      autoLineBreaks?.minSpacing,
+      autoLineBreaks?.maxSpacing,
+      autoLineBreaks?.preferredMeasuresPerLine,
     ]
   );
 
