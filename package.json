@@ -2,6 +2,7 @@
   "name": "abc-notation-editor",
   "private": true,
   "description": "A visual music notation editor component, built on top of abcjs",
+  "packageManager": "pnpm@8.15.4",
   "keywords": [
     "music",
     "notation",

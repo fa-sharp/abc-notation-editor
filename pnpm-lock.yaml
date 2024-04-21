@@ -2727,10 +2727,6 @@ packages:
     resolution: {integrity: sha512-rIwlkkP1n4uKrRzivAKPZIEkHiuwY5mmhMJ2nZKCBLz8lTUlE73rQh4n1OnnMurXt1vcUNyH4ZPfdh8QweTjpQ==}
     dev: true
 
-  /abcjs@6.2.3:
-    resolution: {integrity: sha512-epu8C1yRkxV7Ss9hS0Bu72rairl1p2sR3hviVowjtdDJvb5GRE0SrB4TtN4HBbaoYhvxGnSZQxGULfQlW3o3RQ==}
-    dev: false
-
   /abcjs@6.3.0:
     resolution: {integrity: sha512-cXYvACLCJ/PGMh2LLtRB8Ks+tDbDySTaNNPXFsChBIFoscZFoTE4Ks4JIYru2nELjZujZBnfN0Syk5VLtzJuMQ==}
 
