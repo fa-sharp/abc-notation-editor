@@ -144,12 +144,27 @@ export default class EditorState {
       measureIdx--;
     }
     this.abc = this.abc.slice(0, lastItem.startChar);
+
+    if (this.chordTemplate) {
+      const currentMeasure = this.measures.at(-1);
+      if (!currentMeasure) return;
+      const durationWithRemovedNote =
+        currentMeasure.duration -
+        lastItem.duration * (lastItem.isTriplet ? 2 / 3 : 1);
+      const chordToAdd = this.chordTemplate
+        ?.at(this.measures.length - 1)
+        ?.find((chord) => chord.fractionalBeat === durationWithRemovedNote);
+      if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
+    }
   }
 
   newLine() {
     if (this.abc.at(-1) === "\n") return;
 
+    const lastBarlineIndex = this.abc.lastIndexOf("|");
+    if (lastBarlineIndex) this.abc = this.abc.slice(0, lastBarlineIndex + 1);
     this.abc = this.abc + "\n";
+
     if (this.chordTemplate) {
       const chordToAdd = this.chordTemplate
         ?.at(this.measures.length - 1)
