@@ -1,7 +1,10 @@
 import type { EditorCommandAction } from "../state/EditorCommand";
 import { Accidental, Rhythm } from "../types/constants";
 
-const kbdKeyToCommandMap = new Map<string, EditorCommandAction | "backspace">([
+const kbdKeyToCommandMap = new Map<
+  string,
+  EditorCommandAction | "backspace" | "newLine"
+>([
   ["1", { type: "setRhythm", rhythm: Rhythm.Whole }],
   ["2", { type: "setRhythm", rhythm: Rhythm.Half }],
   ["3", { type: "setRhythm", rhythm: Rhythm.Quarter }],
@@ -17,16 +20,19 @@ const kbdKeyToCommandMap = new Map<string, EditorCommandAction | "backspace">([
   ["b", { type: "toggleBeamed" }],
 
   ["Backspace", "backspace"],
+  ["Enter", "newLine"],
 ]);
 
 /** Setup keyboard shortcuts listener for the notation editor. Returns a cleanup function. */
 export function setupKeyboardListener(
   dispatchEditorCommand: (command: EditorCommandAction) => void,
-  onBackspace: () => void
+  onBackspace: () => void,
+  onNewLine: () => void
 ) {
   const listener = (e: KeyboardEvent) => {
     const command = kbdKeyToCommandMap.get(e.key);
     if (command === "backspace") onBackspace();
+    else if (command === "newLine") onNewLine();
     else if (command !== undefined) dispatchEditorCommand(command);
   };
 

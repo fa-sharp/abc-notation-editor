@@ -136,14 +136,6 @@ const useEditor = ({
     if (restRef.current === true) dispatchEditorCommand({ type: "toggleRest" });
   }, [abc]);
 
-  const onAddBarline = useCallback(() => {
-    setAbc((prev) => prev + " | ");
-  }, []);
-
-  const onAddLineBreak = useCallback(() => {
-    setAbc((prev) => prev + "\n");
-  }, []);
-
   const onBackspace = useCallback(() => {
     editorState.current.backspace();
     setAbc(editorState.current.abc);
@@ -187,10 +179,11 @@ const useEditor = ({
     import.meta.env.DEV && console.debug("Setting up keyboard listener");
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
-      onBackspace
+      onBackspace,
+      onNewLine
     );
     return () => cleanUpKbdListener();
-  }, [enableKbdShortcuts, onBackspace]);
+  }, [enableKbdShortcuts, onBackspace, onNewLine]);
 
   // Setup MIDI listener
   useEffect(() => {
@@ -205,8 +198,6 @@ const useEditor = ({
     dispatchCommand: dispatchEditorCommand,
     setRenderDiv,
     onAddNote,
-    onAddBarline,
-    onAddLineBreak,
     onBackspace,
     onNewLine,
   };
