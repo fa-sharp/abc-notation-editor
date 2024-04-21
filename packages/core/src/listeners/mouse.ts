@@ -55,6 +55,7 @@ export const setupStaffMouseListeners = ({
 
   // Setup the cursor icon for the staff
   const CURSOR_TOP_ADJUST = 0.81;
+  const CURSOR_LEFT_ADJUST = 0.5;
   const topStaffLineY = topStaffLine.getBoundingClientRect().y;
   const staffLineGap =
     secondStaffLine.getBoundingClientRect().y - topStaffLineY;
@@ -73,7 +74,7 @@ export const setupStaffMouseListeners = ({
     cursorIconDiv.style.top = `${
       lastMousePos.y - iconSize * CURSOR_TOP_ADJUST
     }px`;
-    cursorIconDiv.style.left = `${lastMousePos.x - iconSize / 2.5}px`;
+    cursorIconDiv.style.left = `${lastMousePos.x - iconSize * CURSOR_LEFT_ADJUST}px`;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
       ledgerLineDivs = drawLedgerLines({
@@ -103,7 +104,7 @@ export const setupStaffMouseListeners = ({
 
     // Move the cursor icon
     cursorIconDiv.style.top = `${e.clientY - iconSize * CURSOR_TOP_ADJUST}px`;
-    cursorIconDiv.style.left = `${e.clientX - iconSize / 2.5}px`;
+    cursorIconDiv.style.left = `${e.clientX - iconSize * CURSOR_LEFT_ADJUST}px`;
     if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
     // Draw ledger lines if needed.
@@ -208,7 +209,7 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - cursorSize / 3.5}px`,
+        left: `${mousePos.x - cursorSize / 3}px`,
         width: `${cursorSize / 1.8}px`,
         color: cursorIconColor,
       });
@@ -230,7 +231,7 @@ function drawLedgerLines({
       Object.assign(ledgerDiv.style, {
         ...ledgerLineStyle,
         top: `${y}px`,
-        left: `${mousePos.x - cursorSize / 3.5}px`,
+        left: `${mousePos.x - cursorSize / 3}px`,
         width: `${cursorSize / 1.8}px`,
         color: cursorIconColor,
       });
