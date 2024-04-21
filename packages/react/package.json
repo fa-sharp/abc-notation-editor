@@ -1,6 +1,6 @@
 {
   "name": "@abc-editor/react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "fa-sharp",
   "license": "MIT",
   "repository": {
@@ -13,9 +13,9 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/abc-editor.umd.cjs",
-  "module": "./dist/abc-editor.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/abc-editor.umd.cjs",
+  "module": "dist/abc-editor.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite",
     "build": "rimraf dist && tsc && vite build",

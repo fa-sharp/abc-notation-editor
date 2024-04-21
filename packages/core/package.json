@@ -1,6 +1,6 @@
 {
   "name": "@abc-editor/core",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "fa-sharp",
   "license": "MIT",
   "repository": {
@@ -10,12 +10,12 @@
   },
   "description": "ABC notation visual editor - core library",
   "type": "module",
-  "main": "dist/abc-editor-core.umd.cjs",
-  "module": "dist/abc-editor-core.js",
-  "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
+  "main": "dist/abc-editor-core.umd.cjs",
+  "module": "dist/abc-editor-core.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite build -w",
     "build": "pnpm run build-icons && rimraf dist && vite build",
