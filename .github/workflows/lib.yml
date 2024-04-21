@@ -105,6 +105,6 @@ jobs:
         run: git status
 
       - name: Publish packages
-        run: pnpm publish -r --filter "./packages/**" --tag alpha
+        run: pnpm publish -r --filter "./packages/**" --tag alpha --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
