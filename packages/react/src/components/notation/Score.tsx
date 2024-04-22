@@ -10,7 +10,6 @@ export default function Score() {
         padding: 20,
         overflow: "auto",
         width: "100%",
-        cursor: import.meta.env.PROD ? "none" : undefined,
       }}
     >
       <div ref={setRenderDiv} />

@@ -12,6 +12,7 @@ export default function BasicExample() {
         onChange={setAbc}
         enableKbdShortcuts
         chordTemplate={sampleChordTemplate}
+        jazzChords
       />
       <br />
       Generated ABC:

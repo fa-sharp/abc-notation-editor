@@ -149,13 +149,13 @@ export default class EditorState {
     this.abc = this.abc.slice(0, lastItem.startChar);
 
     if (this.chordTemplate) {
-      const currentMeasure = this.measures.at(-1);
+      const currentMeasure = this.measures.at(measureIdx);
       if (!currentMeasure) return;
       const durationWithRemovedNote =
         currentMeasure.duration -
         lastItem.duration * (lastItem.isTriplet ? 2 / 3 : 1);
       const chordToAdd = this.chordTemplate
-        ?.at(this.measures.length - 1)
+        ?.at(this.measures.length + measureIdx)
         ?.find((chord) =>
           equalUpToN(chord.fractionalBeat, durationWithRemovedNote)
         );
