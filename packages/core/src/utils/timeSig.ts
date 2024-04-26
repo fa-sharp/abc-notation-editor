@@ -1,4 +1,4 @@
-import { TimeSignatureType } from "~src/parsing/headers";
+import type { TimeSignatureType } from "~src/parsing/headers";
 import { roundToN } from "./numbers";
 
 export const getMeasureDurationFromTimeSig = (timeSig: TimeSignatureType) => {

@@ -1,12 +1,12 @@
-import { type TuneLine, type VoiceItem } from "abcjs";
-import { AbcjsNote } from "../types/abcjs";
-import { Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
+import type { TuneLine, VoiceItem } from "abcjs";
+import type { AbcjsNote } from "../types/abcjs";
+import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Clef, Rhythm } from "../types/constants";
 import { getAbcRhythm } from "../utils/rhythm";
 import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
 import {
-  KeySignatureType,
-  TimeSignatureType,
+  type KeySignatureType,
+  type TimeSignatureType,
   parseAbcHeaders,
 } from "~src/parsing/headers";
 import { Key, TimeSignature } from "tonal";

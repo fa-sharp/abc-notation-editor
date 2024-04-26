@@ -1,6 +1,6 @@
-import abcjs from "abcjs";
+import * as abcjs from "abcjs";
 import type { VoiceItem } from "abcjs";
-import { TimeSignatureType } from "./headers";
+import type { TimeSignatureType } from "./headers";
 import { parseMeasuresFromAbcjs } from "./measures";
 
 export type ChordTemplateMeasure = Array<{

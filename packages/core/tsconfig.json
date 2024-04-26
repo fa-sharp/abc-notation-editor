@@ -6,6 +6,7 @@
     "target": "ES6",
     "strict": true,
     "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowJs": true,

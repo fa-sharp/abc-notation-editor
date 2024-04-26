@@ -1,8 +1,8 @@
-import { VoiceItem } from "abcjs";
+import type { VoiceItem } from "abcjs";
 import { roundToN } from "~src/utils/numbers";
 import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
-import { AbcjsNote } from "../types/abcjs";
-import { TimeSignatureType } from "./headers";
+import type { AbcjsNote } from "../types/abcjs";
+import type { TimeSignatureType } from "./headers";
 
 export interface Measure {
   notes: AbcjsNote[];
