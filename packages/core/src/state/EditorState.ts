@@ -1,4 +1,4 @@
-import * as abcjs from "abcjs";
+import abcjs from "abcjs";
 import type { TuneLine, VoiceItem } from "abcjs";
 import type { AbcjsNote } from "../types/abcjs";
 import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";

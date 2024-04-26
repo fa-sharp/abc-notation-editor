@@ -9,7 +9,7 @@ import {
   setupStaffMouseListeners,
 } from "@abc-editor/core";
 import type { AbcVisualParams, TuneObject } from "abcjs";
-import * as abcjs from "abcjs";
+import abcjs from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,

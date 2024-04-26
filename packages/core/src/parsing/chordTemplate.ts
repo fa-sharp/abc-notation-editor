@@ -1,4 +1,4 @@
-import * as abcjs from "abcjs";
+import abcjs from "abcjs";
 import type { VoiceItem } from "abcjs";
 import type { TimeSignatureType } from "./headers";
 import { parseMeasuresFromAbcjs } from "./measures";
