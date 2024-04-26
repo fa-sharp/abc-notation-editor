@@ -1,3 +1,4 @@
+import * as abcjs from "abcjs";
 import type { TuneLine, VoiceItem } from "abcjs";
 import type { AbcjsNote } from "../types/abcjs";
 import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
@@ -40,6 +41,14 @@ export default class EditorState {
           options.chordTemplate,
           this.timeSig
         );
+        this.updateTuneData(abcjs.parseOnly(initialAbc + "y")[0].lines);
+        const lastMeasure = this.measures.at(-1);
+        const chordToAdd = this.chordTemplate
+          ?.at(this.measures.length - 1)
+          ?.find((chord) =>
+            equalUpToN(chord.fractionalBeat, lastMeasure?.duration ?? 0)
+          );
+        if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
       }
     } else {
       this.clef = Clef.Treble;
