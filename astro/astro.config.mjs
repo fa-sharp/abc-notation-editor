@@ -26,5 +26,10 @@ export default defineConfig({
     customCss: [
       './src/styles/starlight.css'
     ]
-  }), react()]
+  }), react()],
+  vite: {
+    ssr: {
+      noExternal: ['abcjs'],
+    },
+  }
 });

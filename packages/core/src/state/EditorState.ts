@@ -1,4 +1,4 @@
-import abcjs from "abcjs";
+import { parseOnly } from "abcjs";
 import type { TuneLine, VoiceItem } from "abcjs";
 import type { AbcjsNote } from "../types/abcjs";
 import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
@@ -41,7 +41,7 @@ export default class EditorState {
           options.chordTemplate,
           this.timeSig
         );
-        this.updateTuneData(abcjs.parseOnly(initialAbc + "y")[0].lines);
+        this.updateTuneData(parseOnly(initialAbc + "y")[0].lines);
         const lastMeasure = this.measures.at(-1);
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)

@@ -9,7 +9,7 @@ import {
   setupStaffMouseListeners,
 } from "@abc-editor/core";
 import type { AbcVisualParams, TuneObject } from "abcjs";
-import abcjs from "abcjs";
+import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import {
   useCallback,
@@ -19,7 +19,6 @@ import {
   useRef,
   useState,
 } from "react";
-const { renderAbc } = abcjs;
 
 interface EditorProviderProps {
   initialAbc?: string;

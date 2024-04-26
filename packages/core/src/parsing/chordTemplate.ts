@@ -1,4 +1,4 @@
-import abcjs from "abcjs";
+import { parseOnly } from "abcjs";
 import type { VoiceItem } from "abcjs";
 import type { TimeSignatureType } from "./headers";
 import { parseMeasuresFromAbcjs } from "./measures";
@@ -9,7 +9,7 @@ export type ChordTemplateMeasure = Array<{
 }>;
 
 export const parseChordTemplate = (abc: string, timeSig: TimeSignatureType) => {
-  const tuneObject = abcjs.parseOnly(abc);
+  const tuneObject = parseOnly(abc);
   const tuneLines = tuneObject[0].lines.reduce<VoiceItem[][]>((arr, line) => {
     // assume chords are on first staff and voice
     const items = line.staff?.[0]?.voices?.[0];
