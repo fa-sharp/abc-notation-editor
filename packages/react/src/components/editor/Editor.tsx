@@ -7,13 +7,19 @@ import EditorControls from "./EditorControls";
 
 import styles from "./Editor.module.css";
 
-type EditorProps = {
+export type EditorProps = {
   initialAbc?: string;
   chordTemplate?: string;
   jazzChords?: boolean;
   selectTypes?: boolean;
   format?: AbcVisualParams["format"];
   visualTranspose?: AbcVisualParams["visualTranspose"];
+  ending?: {
+    lastMeasure: number;
+    lastBarline?: "thin-thin" | "thin-thick";
+  };
+  /** Manually set the last measure number (zero-based) for each line, e.g. [3,7,11] */
+  lineBreaks?: AbcVisualParams["lineBreaks"];
   /** Make the printed music visually bigger or smaller. Will be overridden if `responsive` is set to `true`. @default 1 */
   scale?: number;
   /** Whether the printed music should grow/shrink according to the available width. Setting this to `true` overrides the `scale` option */
@@ -53,11 +59,14 @@ export default function Editor({
   selectTypes,
   visualTranspose,
   autoLineBreaks,
+  lineBreaks,
+  ending,
   responsive = false,
   scale = 1,
   enableKbdShortcuts = false,
   onChange = () => {},
 }: EditorProps) {
+  //@ts-expect-error FIXME wrong typing for `lineBreaks` - double array and 0-based
   const abcjsOptions: AbcVisualParams = useMemo(
     () => ({
       scale,
@@ -66,6 +75,7 @@ export default function Editor({
       format,
       selectTypes,
       visualTranspose,
+      lineBreaks: lineBreaks ? [lineBreaks] : undefined,
       ...(autoLineBreaks?.staffWidth
         ? {
             staffwidth: autoLineBreaks.staffWidth,
@@ -84,6 +94,7 @@ export default function Editor({
       format,
       visualTranspose,
       selectTypes,
+      lineBreaks,
       autoLineBreaks?.staffWidth,
       autoLineBreaks?.minSpacing,
       autoLineBreaks?.maxSpacing,
@@ -93,11 +104,14 @@ export default function Editor({
 
   return (
     <EditorProvider
-      initialAbc={initialAbc}
-      chordTemplate={chordTemplate}
-      abcjsOptions={abcjsOptions}
-      enableKbdShortcuts={enableKbdShortcuts}
-      onChange={onChange}
+      {...{
+        initialAbc,
+        chordTemplate,
+        abcjsOptions,
+        ending,
+        enableKbdShortcuts,
+        onChange,
+      }}
     >
       <InnerEditor />
     </EditorProvider>

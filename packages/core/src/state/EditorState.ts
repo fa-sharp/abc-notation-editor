@@ -28,8 +28,15 @@ export default class EditorState {
   clef: Clef;
 
   chordTemplate?: ChordTemplateMeasure[];
+  ending?: {
+    lastMeasure: number;
+    lastBarline?: "thin-thin" | "thin-thick";
+  };
 
-  constructor(initialAbc?: string, options?: { chordTemplate?: string }) {
+  constructor(
+    initialAbc?: string,
+    options?: { chordTemplate?: string; ending?: EditorState["ending"] }
+  ) {
     if (initialAbc) {
       this.abc = initialAbc;
       const { clef, keySig, timeSig } = parseAbcHeaders(initialAbc);
@@ -66,6 +73,7 @@ export default class EditorState {
         if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
       }
     }
+    this.ending = options?.ending;
   }
 
   updateTuneData(lines: TuneLine[]) {
@@ -89,6 +97,12 @@ export default class EditorState {
       triplet?: boolean;
     }
   ) {
+    if (
+      this.ending?.lastMeasure &&
+      this.measures.length > this.ending.lastMeasure
+    )
+      return;
+
     const abcNote =
       typeof note === "number"
         ? getAbcNoteFromMidiNum(note, options?.accidental)
@@ -129,11 +143,18 @@ export default class EditorState {
 
       // Are we at end of measure?
       if (durationWithAddedNote >= measureTotalDuration - 0.001) {
-        abcToAdd += " |";
-        const chordToAdd = this.chordTemplate
-          ?.at(this.measures.length)
-          ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
-        if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
+        if (
+          this.ending?.lastMeasure &&
+          this.measures.length === this.ending.lastMeasure
+        )
+          abcToAdd += this.ending.lastBarline === "thin-thick" ? " |]" : " ||";
+        else {
+          abcToAdd += " |";
+          const chordToAdd = this.chordTemplate
+            ?.at(this.measures.length)
+            ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
+          if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
+        }
       } else {
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)

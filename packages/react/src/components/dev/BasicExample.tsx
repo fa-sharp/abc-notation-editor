@@ -8,11 +8,13 @@ export default function BasicExample() {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <Editor
-        initialAbc={`Q:120\n%%stretchlast false\n`}
+        initialAbc={`X:1\nQ:120\nK:C\n%%stretchlast false\n`}
         scale={1.1}
         onChange={setAbc}
         enableKbdShortcuts
         chordTemplate={sampleChordTemplate}
+        ending={{ lastBarline: "thin-thick", lastMeasure: 8 }}
+        lineBreaks={[3]}
         jazzChords
       />
       <br />

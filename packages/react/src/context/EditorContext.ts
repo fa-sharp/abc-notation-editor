@@ -19,12 +19,14 @@ import {
   useRef,
   useState,
 } from "react";
+import { EditorProps } from "../components/editor/Editor";
 
 interface EditorProviderProps {
   initialAbc?: string;
   abcjsOptions?: AbcVisualParams;
   chordTemplate?: string;
   enableKbdShortcuts?: boolean;
+  ending?: EditorProps["ending"];
   onChange?: (abc: string, tuneObject: TuneObject) => void;
 }
 
@@ -33,11 +35,13 @@ const useEditor = ({
   abcjsOptions,
   enableKbdShortcuts,
   chordTemplate,
+  ending,
   onChange = () => {},
 }: EditorProviderProps) => {
   const editorState = useRef<EditorState>(
     new EditorState(initialAbc, {
       chordTemplate,
+      ending,
     })
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
