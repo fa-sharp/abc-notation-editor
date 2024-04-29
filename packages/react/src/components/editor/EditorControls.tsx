@@ -6,8 +6,13 @@ import EditorControlIcon from "./EditorControlIcon";
 import styles from "./EditorControls.module.css";
 
 export default function EditorControls() {
-  const { currentCommands, dispatchCommand, onBackspace, onNewLine } =
-    useEditorContext();
+  const {
+    currentCommands,
+    abcjsOptions,
+    dispatchCommand,
+    onBackspace,
+    onNewLine,
+  } = useEditorContext();
 
   const iconSize = 18;
 
@@ -168,9 +173,11 @@ export default function EditorControls() {
         <button className={clsx(styles.iconButton)} onClick={onBackspace}>
           <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
         </button>
-        <button className={clsx(styles.iconButton)} onClick={onNewLine}>
-          <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
-        </button>
+        {!abcjsOptions?.lineBreaks && !abcjsOptions?.wrap && (
+          <button className={clsx(styles.iconButton)} onClick={onNewLine}>
+            <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
+          </button>
+        )}
       </fieldset>
       <fieldset className={styles.controlGroup}>
         <legend>Input</legend>

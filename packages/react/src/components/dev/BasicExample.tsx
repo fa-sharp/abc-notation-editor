@@ -13,7 +13,7 @@ export default function BasicExample() {
         onChange={setAbc}
         enableKbdShortcuts
         chordTemplate={sampleChordTemplate}
-        ending={{ lastBarline: "thin-thick", lastMeasure: 8 }}
+        ending={{ lastBarline: "thin-thin", lastMeasure: 8 }}
         lineBreaks={[3]}
         jazzChords
       />

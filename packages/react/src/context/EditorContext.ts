@@ -198,6 +198,7 @@ const useEditor = ({
 
   return {
     currentCommands: editorCommands,
+    abcjsOptions,
     dispatchCommand: dispatchEditorCommand,
     setRenderDiv,
     onAddNote,
