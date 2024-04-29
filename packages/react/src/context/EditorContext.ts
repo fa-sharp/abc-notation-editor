@@ -110,10 +110,19 @@ const useEditor = ({
   // Render the ABC notation, update editor state
   useEffect(() => {
     if (!renderDiv.current) return;
-    const [tuneObject] = renderAbc(renderDiv.current, abc + "yy", {
-      ...abcjsOptions,
-      add_classes: true,
-    });
+    const isEndOfSong = !ending?.lastMeasure
+      ? false
+      : ending.lastBarline === "thin-thick"
+        ? abc.trimEnd().endsWith("|]")
+        : abc.trimEnd().endsWith("||");
+    const [tuneObject] = renderAbc(
+      renderDiv.current,
+      abc + (!isEndOfSong ? "yy" : ""),
+      {
+        ...abcjsOptions,
+        add_classes: true,
+      }
+    );
     editorState.current.updateTuneData(tuneObject.lines);
     onChange(abc, tuneObject);
 
@@ -127,7 +136,14 @@ const useEditor = ({
       dispatchEditorCommand({ type: "toggleTriplet" });
 
     import.meta.env.DEV && console.debug(editorState.current);
-  }, [abc, abcjsOptions, editorCommands.rhythm, onChange]);
+  }, [
+    abc,
+    abcjsOptions,
+    editorCommands.rhythm,
+    ending?.lastBarline,
+    ending?.lastMeasure,
+    onChange,
+  ]);
 
   // Reset editor commands if abc changed
   useEffect(() => {
