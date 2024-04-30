@@ -173,6 +173,7 @@ const useEditor = ({
     const cleanUpStaffListeners = setupStaffMouseListeners({
       renderDiv: renderDiv.current,
       numTuneLines: editorState.current.tuneLines.length,
+      clef: editorState.current.clef,
       rhythm: editorCommands.rhythm,
       rest: editorCommands.rest,
       accidental: editorCommands.accidental,

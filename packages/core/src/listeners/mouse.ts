@@ -13,7 +13,7 @@ export const setupStaffMouseListeners = ({
   dotted = false,
   accidental = Accidental.None,
   rest = false,
-  clef,
+  clef = Clef.Treble,
   onAddNote,
   lastMousePos,
   updateLastMousePos,
@@ -46,7 +46,7 @@ export const setupStaffMouseListeners = ({
     const staffLineGap =
       secondStaffLine.getBoundingClientRect().y - topStaffLineY;
     const note = getStaffClickToNoteFn({
-      clef: clef || "treble",
+      clef,
       topLineY: topStaffLineY,
       lineGap: staffLineGap,
     })(e.clientY);
