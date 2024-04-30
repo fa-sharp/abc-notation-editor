@@ -18,6 +18,7 @@ const kbdKeyToCommandMap = new Map<
   ["n", { type: "toggleAccidental", accidental: Accidental.Natural }],
   ["t", { type: "toggleTriplet" }],
   ["b", { type: "toggleBeamed" }],
+  ["e", { type: "toggleTied" }],
 
   ["Backspace", "backspace"],
   ["Enter", "newLine"],

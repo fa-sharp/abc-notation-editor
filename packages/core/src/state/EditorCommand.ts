@@ -71,9 +71,6 @@ export function editorCommandReducer(
     case "toggleTied":
       newState.tied = !newState.tied;
       break;
-    case "setTied":
-      newState.tied = action.tied;
-      break;
     case "toggleMidi":
       newState.midiEnabled = !newState.midiEnabled;
       break;
