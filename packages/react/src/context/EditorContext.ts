@@ -62,6 +62,7 @@ const useEditor = ({
       triplet: false,
       showKeyboard: false,
       beamed: false,
+      tied: false,
       midiEnabled: false,
     } satisfies EditorCommandState
   );
@@ -80,6 +81,11 @@ const useEditor = ({
   useEffect(() => {
     dottedRef.current = editorCommands.dotted;
   }, [editorCommands.dotted]);
+
+  const tiedRef = useRef(editorCommands.tied);
+  useEffect(() => {
+    tiedRef.current = editorCommands.tied;
+  }, [editorCommands.tied]);
 
   const accidentalRef = useRef(editorCommands.accidental);
   useEffect(() => {
@@ -103,6 +109,7 @@ const useEditor = ({
       rest: restRef.current,
       accidental: accidentalRef.current,
       triplet: tripletRef.current,
+      tied: tiedRef.current,
     });
     setAbc(editorState.current.abc);
   }, []);
@@ -153,6 +160,7 @@ const useEditor = ({
     });
     dispatchEditorCommand({ type: "setDotted", dotted: false });
     if (restRef.current === true) dispatchEditorCommand({ type: "toggleRest" });
+    if (tiedRef.current === true) dispatchEditorCommand({ type: "toggleTied" });
   }, [abc]);
 
   const onBackspace = useCallback(() => {

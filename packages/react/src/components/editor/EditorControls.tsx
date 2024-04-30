@@ -160,6 +160,14 @@ export default function EditorControls() {
         </button>
         <button
           className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.tied,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleTied" })}
+        >
+          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
+        </button>
+        <button
+          className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.beamed,
           })}
           onClick={() => dispatchCommand({ type: "toggleBeamed" })}

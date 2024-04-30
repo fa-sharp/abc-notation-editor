@@ -16,6 +16,7 @@ import FlatIcon from "~dist-icons/Flat.svg?raw";
 import NaturalIcon from "~dist-icons/Natural.svg?raw";
 import PianoIcon from "~dist-icons/Piano.svg?raw";
 import SharpIcon from "~dist-icons/Sharp.svg?raw";
+import TieIcon from "~dist-icons/Tie.svg?raw";
 import TripletIcon from "~dist-icons/Triplet.svg?raw";
 
 import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
@@ -38,6 +39,7 @@ enum Icon {
   Sharp,
   SixteenthNote,
   SixteenthRest,
+  Tie,
   Triplet,
   WholeNote,
   WholeRest,
@@ -78,6 +80,8 @@ function getIcon(icon: Icon): string {
       return SixteenthNoteIcon;
     case Icon.SixteenthRest:
       return SixteenthRestIcon;
+    case Icon.Tie:
+      return TieIcon;
     case Icon.Triplet:
       return TripletIcon;
     case Icon.WholeNote:

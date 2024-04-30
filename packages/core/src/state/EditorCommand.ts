@@ -6,6 +6,7 @@ export interface EditorCommandState {
   accidental: Accidental;
   dotted: boolean;
   beamed: boolean;
+  tied: boolean;
   triplet: boolean;
   showKeyboard: boolean;
   midiEnabled: boolean;
@@ -24,6 +25,7 @@ export type EditorCommandAction =
   | { type: "toggleTriplet" }
   | { type: "toggleShowKeyboard" }
   | { type: "toggleDotted" }
+  | { type: "toggleTied" }
   | { type: "toggleBeamed" }
   | { type: "toggleMidi" };
 
@@ -65,6 +67,12 @@ export function editorCommandReducer(
       break;
     case "setDotted":
       newState.dotted = action.dotted;
+      break;
+    case "toggleTied":
+      newState.tied = !newState.tied;
+      break;
+    case "setTied":
+      newState.tied = action.tied;
       break;
     case "toggleMidi":
       newState.midiEnabled = !newState.midiEnabled;

@@ -8,7 +8,7 @@ export default function BasicExample() {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <Editor
-        initialAbc={`X:1\nQ:120\nK:C\n%%stretchlast false\n`}
+        initialAbc={`X:1\nQ:120\nK:C clef=bass\n%%stretchlast false\n`}
         scale={1.1}
         onChange={setAbc}
         enableKbdShortcuts

@@ -95,6 +95,7 @@ export default class EditorState {
       rest?: boolean;
       dotted?: boolean;
       triplet?: boolean;
+      tied?: boolean;
     }
   ) {
     if (
@@ -131,6 +132,7 @@ export default class EditorState {
       rhythm,
       options?.dotted
     )}`;
+    if (options?.tied) abcToAdd += "-";
 
     // Add barline if we're at the end of the measure
     if (currentMeasure) {
