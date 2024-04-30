@@ -33,6 +33,17 @@ test<TestCtx>("Can add note with accidental to ABC score", ({ state }) => {
   expect(state.abc).toBe(initialAbc + " _E");
 });
 
+test<TestCtx>("Can add dotted quarter note with tie to ABC score", ({
+  state,
+}) => {
+  state.addNote("E4", Rhythm.Eighth, {
+    accidental: Accidental.Flat,
+    dotted: true,
+    tied: true,
+  });
+  expect(state.abc).toBe(initialAbc + " _E3/2-");
+});
+
 test<TestCtx>("Can delete last note of ABC score", ({ state }) => {
   state.backspace();
   expect(state.abc.trim()).toBe(initialAbcHeader + "C2 D2 F2 E2 |");
