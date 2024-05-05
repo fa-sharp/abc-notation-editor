@@ -46,8 +46,15 @@ export type EditorProps = {
    * For more info, see the abcjs docs:
    * [API of the returned object](https://paulrosen.github.io/abcjs/visual/render-abc-result.html) and
    * [setting up playback](https://paulrosen.github.io/abcjs/audio/synthesized-sound.html)
+   * @param renderDiv The div element where the score is rendered. This can be used to manipulate
+   * individual elements within the score. See [abcjs docs](https://paulrosen.github.io/abcjs/visual/classes.html)
+   * on all the class names that can be used to select lines/notes/etc.
    */
-  onChange?: (abc: string, tuneObject: TuneObject) => void;
+  onChange?: (
+    abc: string,
+    tuneObject: TuneObject,
+    renderDiv?: HTMLDivElement
+  ) => void;
 };
 
 /** The main ABC notation editor with a built-in toolbar. */

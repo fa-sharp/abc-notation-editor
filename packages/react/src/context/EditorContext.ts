@@ -27,7 +27,11 @@ interface EditorProviderProps {
   chordTemplate?: string;
   enableKbdShortcuts?: boolean;
   ending?: EditorProps["ending"];
-  onChange?: (abc: string, tuneObject: TuneObject) => void;
+  onChange?: (
+    abc: string,
+    tuneObject: TuneObject,
+    renderDiv?: HTMLDivElement
+  ) => void;
 }
 
 const useEditor = ({
@@ -131,7 +135,7 @@ const useEditor = ({
       }
     );
     editorState.current.updateTuneData(tuneObject.lines);
-    onChange(abc, tuneObject);
+    onChange(abc, tuneObject, renderDiv.current || undefined);
 
     // Determine beaming depending on next note
     dispatchEditorCommand({
