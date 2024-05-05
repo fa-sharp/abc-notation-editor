@@ -1,5 +1,5 @@
 import type { AbcVisualParams, TuneObject } from "abcjs";
-import { useMemo } from "react";
+import { ForwardedRef, forwardRef, useMemo } from "react";
 import { EditorProvider, useEditorContext } from "../../context/EditorContext";
 import Score from "../notation/Score";
 import Keyboard from "../piano/Keyboard";
@@ -50,22 +50,28 @@ export type EditorProps = {
   onChange?: (abc: string, tuneObject: TuneObject) => void;
 };
 
-/** The main ABC notation editor with a built-in toolbar. */
-export default function Editor({
-  initialAbc,
-  chordTemplate,
-  jazzChords,
-  format,
-  selectTypes,
-  visualTranspose,
-  autoLineBreaks,
-  lineBreaks,
-  ending,
-  responsive = false,
-  scale = 1,
-  enableKbdShortcuts = false,
-  onChange = () => {},
-}: EditorProps) {
+/**
+ * The main ABC notation editor with a built-in toolbar. Forwards a reference to the inner
+ * div element where the score is rendered.
+ */
+export default forwardRef(function Editor(
+  {
+    initialAbc,
+    chordTemplate,
+    jazzChords,
+    format,
+    selectTypes,
+    visualTranspose,
+    autoLineBreaks,
+    lineBreaks,
+    ending,
+    responsive = false,
+    scale = 1,
+    enableKbdShortcuts = false,
+    onChange = () => {},
+  }: EditorProps,
+  forwardedRef: ForwardedRef<HTMLDivElement>
+) {
   //@ts-expect-error FIXME wrong typing for `lineBreaks` - double array and 0-based
   const abcjsOptions: AbcVisualParams = useMemo(
     () => ({
@@ -113,18 +119,22 @@ export default function Editor({
         onChange,
       }}
     >
-      <InnerEditor />
+      <InnerEditor ref={forwardedRef} />
     </EditorProvider>
   );
-}
+});
 
-function InnerEditor() {
+const InnerEditor = forwardRef(function InnerEditor(
+  _: object,
+  forwardedRef: ForwardedRef<HTMLDivElement>
+) {
   const { currentCommands } = useEditorContext();
+
   return (
     <div className={styles.editor}>
       <EditorControls />
       {currentCommands.showKeyboard && <Keyboard startKey={60} endKey={84} />}
-      <Score />
+      <Score ref={forwardedRef} />
     </div>
   );
-}
+});

@@ -1,8 +1,17 @@
+import { forwardRef, useCallback, ForwardRefRenderFunction } from "react";
 import { useEditorContext } from "../../context/EditorContext";
 
-/** The ABC score display. */
-export default function Score() {
+const Score: ForwardRefRenderFunction<HTMLDivElement> = (_, forwardedRef) => {
   const { setRenderDiv } = useEditorContext();
+
+  const ref = useCallback(
+    (div: HTMLDivElement | null) => {
+      setRenderDiv(div);
+      if (forwardedRef instanceof Function) forwardedRef(div);
+      else if (forwardedRef) forwardedRef.current = div;
+    },
+    [forwardedRef, setRenderDiv]
+  );
 
   return (
     <div
@@ -12,7 +21,12 @@ export default function Score() {
         width: "100%",
       }}
     >
-      <div ref={setRenderDiv} />
+      <div ref={ref} />
     </div>
   );
-}
+};
+
+/** The ABC score display. */
+const ScoreWithForwardedRef = forwardRef(Score);
+
+export default ScoreWithForwardedRef;
