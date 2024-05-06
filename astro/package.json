@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "@abc-editor/react": "workspace:^",
-    "abcjs": "^6.2"
+    "@originjs/vite-plugin-commonjs": "^1.0.3",
+    "abcjs": "^6.2",
+    "js-confetti": "^0.12.0"
   }
 }

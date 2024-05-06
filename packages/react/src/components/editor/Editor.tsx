@@ -7,6 +7,12 @@ import EditorControls from "./EditorControls";
 
 import styles from "./Editor.module.css";
 
+export type EditorChangeHandler = (
+  abc: string,
+  tuneObject: TuneObject,
+  renderDiv?: HTMLDivElement
+) => void;
+
 export type EditorProps = {
   initialAbc?: string;
   chordTemplate?: string;
@@ -50,11 +56,7 @@ export type EditorProps = {
    * individual elements within the score. See [abcjs docs](https://paulrosen.github.io/abcjs/visual/classes.html)
    * on all the class names that can be used to select lines/notes/etc.
    */
-  onChange?: (
-    abc: string,
-    tuneObject: TuneObject,
-    renderDiv?: HTMLDivElement
-  ) => void;
+  onChange?: EditorChangeHandler;
 };
 
 /** The main ABC notation editor with a built-in toolbar. */

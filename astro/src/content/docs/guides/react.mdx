@@ -6,6 +6,8 @@ description: Getting started in React projects
 import { Code } from "astro:components";
 import BasicEditor from "../../../components/ReactBasicEditor";
 import BasicEditorCode from "../../../components/ReactBasicEditor?raw";
+import Exercise from "../../../components/ReactExercise";
+import ExerciseCode from "../../../components/ReactExercise?raw";
 
 ## Installation & Setup
 
@@ -24,16 +26,26 @@ import "@abc-editor/react/dist/style.css";
 
 ## Basic Editor
 
-This shows a basic setup of the interactive notation editor, using the `ABCEditor` component with the built-in toolbar. We can hook into this component's `onChange` handler to update the [ABC notation](https://abcnotation.com/) in the text field below, as the user writes their melody:
+This shows a basic setup of the interactive notation editor, using the `ABCEditor` component with the built-in toolbar. We can use the component's `onChange` handler to update the [ABC notation](https://abcnotation.com/) in the text field below, as the user writes their melody. [Keyboard shortcuts](../../reference/keyboard-shortcuts) are also enabled in the editor props.
 
 <div class="not-content">
-  <BasicEditor client:idle  />
+  <BasicEditor client:idle />
 </div>
 
 ### Code
 
 <Code code={BasicEditorCode} lang="tsx" />
 
-## Further reading
+## Exercise
 
-- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+This demonstrates how to setup a simple exercise/game using the notation editor. When the user successfully enters the notes of a one-octave G Major scale, the notes turn green and celebrations ensue. Notice we are making use of one of the [handy CSS classes](https://paulrosen.github.io/abcjs/visual/classes.html) from the abcjs rendering library, in order to select the note elements. Also notice we need to wrap the `onChange` callback in a `useCallback` hook in order to avoid infinite re-renders.
+
+**Write a G Major scale using quarter notes, starting from G above middle C:**
+
+<div class="not-content">
+  <Exercise client:visible />
+</div>
+
+### Code
+
+<Code code={ExerciseCode} lang="tsx" />

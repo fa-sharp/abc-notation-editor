@@ -178,7 +178,7 @@ export default class EditorState {
       if (Math.abs(measureIdx) >= this.measures.length) return;
       measureIdx--;
     }
-    this.abc = this.abc.slice(0, lastItem.startChar);
+    this.abc = this.abc.slice(0, lastItem.startChar).replace(/ +$/, "");
 
     if (this.chordTemplate) {
       const currentMeasure = this.measures.at(measureIdx);

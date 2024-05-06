@@ -190,6 +190,7 @@ const useEditor = ({
       rest: editorCommands.rest,
       accidental: editorCommands.accidental,
       dotted: editorCommands.dotted,
+      triplet: editorCommands.triplet,
       onAddNote,
       lastMousePos: lastKnownMousePos.current,
       updateLastMousePos: (pos) => (lastKnownMousePos.current = pos),
@@ -202,6 +203,7 @@ const useEditor = ({
     editorCommands.dotted,
     editorCommands.rest,
     editorCommands.rhythm,
+    editorCommands.triplet,
     onAddNote,
   ]);
 

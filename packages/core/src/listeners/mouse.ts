@@ -11,6 +11,7 @@ export const setupStaffMouseListeners = ({
   numTuneLines,
   rhythm,
   dotted = false,
+  triplet = false,
   accidental = Accidental.None,
   rest = false,
   clef = Clef.Treble,
@@ -23,6 +24,7 @@ export const setupStaffMouseListeners = ({
   rhythm: Rhythm;
   clef?: Clef;
   dotted?: boolean;
+  triplet?: boolean;
   accidental?: Accidental;
   rest?: boolean;
   onAddNote: (note: string) => void;
@@ -66,6 +68,7 @@ export const setupStaffMouseListeners = ({
     size: iconSize,
     accidental,
     dotted,
+    triplet,
   });
   let ledgerLineDivs: HTMLDivElement[] = [];
 
@@ -248,12 +251,14 @@ function getCursorIcon({
   size = 36,
   rest = false,
   dotted = false,
+  triplet = false,
   accidental = Accidental.None,
 }: {
   rhythm: Rhythm;
   size?: number;
   rest?: boolean;
   dotted?: boolean;
+  triplet?: boolean;
   accidental?: Accidental;
 }) {
   const svg = (() => {
@@ -314,13 +319,28 @@ function getCursorIcon({
     if (svgEl)
       Object.assign(svgEl.style, {
         position: "absolute",
-        left: `${rest ? size * 0.6 : size * 0.4}px`,
+        left: `${rest ? size * 0.65 : size * 0.5}px`,
         top: `${rest ? size * 0.1 : size * 0.375}px`,
         height: `${size * 0.7}px`,
         width: `${size * 0.7}px`,
         color: cursorIconColor,
       });
     div.appendChild(dotDiv);
+  }
+  if (triplet) {
+    const tripletDiv = document.createElement("div");
+    tripletDiv.innerHTML = getIcon(Icon.Triplet);
+    const svgEl = tripletDiv.querySelector("svg");
+    if (svgEl)
+      Object.assign(svgEl.style, {
+        position: "absolute",
+        left: `${size * 0.15}px`,
+        bottom: `${size * 0.95}px`,
+        height: `${size * 0.7}px`,
+        width: `${size * 0.7}px`,
+        color: cursorIconColor,
+      });
+    div.appendChild(tripletDiv);
   }
   return div;
 }
