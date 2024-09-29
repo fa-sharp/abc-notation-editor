@@ -30,7 +30,7 @@ interface EditorProviderProps {
   onChange?: (
     abc: string,
     tuneObject: TuneObject,
-    renderDiv?: HTMLDivElement
+    renderDiv?: HTMLDivElement,
   ) => void;
 }
 
@@ -46,14 +46,14 @@ const useEditor = ({
     new EditorState(initialAbc, {
       chordTemplate,
       ending,
-    })
+    }),
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
 
   const renderDiv = useRef<HTMLDivElement | null>(null);
   const setRenderDiv = useCallback(
     (div: HTMLDivElement | null) => (renderDiv.current = div),
-    []
+    [],
   );
 
   const [editorCommands, dispatchEditorCommand] = useReducer(
@@ -68,7 +68,7 @@ const useEditor = ({
       beamed: false,
       tied: false,
       midiEnabled: false,
-    } satisfies EditorCommandState
+    } satisfies EditorCommandState,
   );
 
   const restRef = useRef(editorCommands.rest);
@@ -132,7 +132,10 @@ const useEditor = ({
       {
         ...abcjsOptions,
         add_classes: true,
-      }
+        selectTypes: true,
+        clickListener: (abcElem, _, _classes, analysis) =>
+          editorState.current.selectNote(abcElem, analysis),
+      },
     );
     editorState.current.updateTuneData(tuneObject.lines);
     onChange(abc, tuneObject, renderDiv.current || undefined);
@@ -214,7 +217,7 @@ const useEditor = ({
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
       onBackspace,
-      onNewLine
+      onNewLine,
     );
     return () => cleanUpKbdListener();
   }, [enableKbdShortcuts, onBackspace, onNewLine]);

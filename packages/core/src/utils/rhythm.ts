@@ -24,3 +24,13 @@ export function getAbcRhythm(currentRhythm: Rhythm, dotted = false) {
             ? "3/4"
             : "";
 }
+
+export function getRhythmFromAbcDuration(duration: number) {
+  return duration === 0.5
+    ? Rhythm.Half
+    : duration === 0.25
+      ? Rhythm.Quarter
+      : duration === 0.125
+        ? Rhythm.Eighth
+        : undefined;
+}

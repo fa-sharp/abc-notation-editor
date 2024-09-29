@@ -1,9 +1,14 @@
 import { parseOnly } from "abcjs";
-import type { TuneLine, VoiceItem } from "abcjs";
+import type {
+  AbcElem,
+  ClickListenerAnalysis,
+  TuneLine,
+  VoiceItem,
+} from "abcjs";
 import type { AbcjsNote } from "../types/abcjs";
 import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Clef, Rhythm } from "../types/constants";
-import { getAbcRhythm } from "../utils/rhythm";
+import { getAbcRhythm, getRhythmFromAbcDuration } from "../utils/rhythm";
 import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
 import {
   type KeySignatureType,
@@ -33,9 +38,24 @@ export default class EditorState {
     lastBarline?: "thin-thin" | "thin-thick";
   };
 
+  selected?: {
+    measureIdx: number;
+    noteIdx: number;
+    data?: {
+      note?: string;
+      rhythm?: Rhythm;
+      accidental?: Accidental;
+      beamed?: boolean;
+      rest?: boolean;
+      dotted?: boolean;
+      triplet?: boolean;
+      tied?: boolean;
+    };
+  };
+
   constructor(
     initialAbc?: string,
-    options?: { chordTemplate?: string; ending?: EditorState["ending"] }
+    options?: { chordTemplate?: string; ending?: EditorState["ending"] },
   ) {
     if (initialAbc) {
       this.abc = initialAbc;
@@ -46,14 +66,14 @@ export default class EditorState {
       if (options?.chordTemplate) {
         this.chordTemplate = parseChordTemplate(
           options.chordTemplate,
-          this.timeSig
+          this.timeSig,
         );
         this.updateTuneData(parseOnly(initialAbc + "y")[0].lines);
         const lastMeasure = this.measures.at(-1);
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)
           ?.find((chord) =>
-            equalUpToN(chord.fractionalBeat, lastMeasure?.duration ?? 0)
+            equalUpToN(chord.fractionalBeat, lastMeasure?.duration ?? 0),
           );
         if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
       }
@@ -65,10 +85,10 @@ export default class EditorState {
       if (options?.chordTemplate) {
         this.chordTemplate = parseChordTemplate(
           options.chordTemplate,
-          this.timeSig
+          this.timeSig,
         );
         const chordToAdd = this.chordTemplate?.[0]?.find((chord) =>
-          equalUpToN(chord.fractionalBeat, 0)
+          equalUpToN(chord.fractionalBeat, 0),
         );
         if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
       }
@@ -96,7 +116,7 @@ export default class EditorState {
       dotted?: boolean;
       triplet?: boolean;
       tied?: boolean;
-    }
+    },
   ) {
     if (
       this.ending?.lastMeasure &&
@@ -117,10 +137,10 @@ export default class EditorState {
     // Determine if this is the start of a triplet
     if (options?.triplet && currentMeasure) {
       const startTripletIdx = currentMeasure.notes.findLastIndex(
-        (n) => !!n.startTriplet
+        (n) => !!n.startTriplet,
       );
       const endTripletIdx = currentMeasure.notes.findLastIndex(
-        (n) => !!n.endTriplet
+        (n) => !!n.endTriplet,
       );
       if (startTripletIdx === -1 || startTripletIdx < endTripletIdx) {
         abcToAdd += "(3";
@@ -130,7 +150,7 @@ export default class EditorState {
     // Add the actual note and rhythm
     abcToAdd += `${!options?.rest ? abcNote : "z"}${getAbcRhythm(
       rhythm,
-      options?.dotted
+      options?.dotted,
     )}`;
     if (options?.tied) abcToAdd += "-";
 
@@ -161,7 +181,7 @@ export default class EditorState {
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)
           ?.find((chord) =>
-            equalUpToN(chord.fractionalBeat, durationWithAddedNote)
+            equalUpToN(chord.fractionalBeat, durationWithAddedNote),
           );
         if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
       }
@@ -171,25 +191,80 @@ export default class EditorState {
     this.abc += abcToAdd;
   }
 
+  selectNote(abcElem: AbcElem, analysis: ClickListenerAnalysis) {
+    let measureIdx = this.measures.findIndex((m) => m.line === analysis.line);
+    if (measureIdx === -1) return;
+    measureIdx += analysis.measure;
+    const measure = this.measures[measureIdx];
+    const noteIdx = measure?.notes.findIndex(
+      (note) => note.startChar === abcElem.startChar,
+    );
+    if (noteIdx === undefined || noteIdx === -1) return;
+    const note = measure!.notes[noteIdx]!;
+
+    this.selected = {
+      measureIdx,
+      noteIdx,
+      data: {
+        note: note.pitches?.[0]?.name,
+        rhythm: getRhythmFromAbcDuration(note.duration),
+      },
+    };
+  }
+
+  editNote(data: {
+    note: string | number;
+    rhythm: Rhythm;
+    accidental?: Accidental;
+    beamed?: boolean;
+    rest?: boolean;
+    dotted?: boolean;
+    tied?: boolean;
+  }) {
+    if (!this.selected) return;
+    const existingNote = this.measures
+      .at(this.selected?.measureIdx)
+      ?.notes.at(this.selected.noteIdx);
+    if (!existingNote) return;
+
+    let abcNote =
+      typeof data.note === "number"
+        ? getAbcNoteFromMidiNum(data.note, data.accidental)
+        : getAbcNoteFromNoteName(data.note, data.accidental);
+    const newAbc = `${!data.rest ? abcNote : "z"}${getAbcRhythm(
+      data.rhythm,
+      data?.dotted,
+    )}`;
+    if (data.tied) abcNote += "-";
+
+    // get starting index of note, ignoring any chord symbol before
+    const startIdxOfNoteWithoutChord = /(^"[^"]*"\s*)?(.*)/d.exec(
+      this.abc.slice(existingNote.startChar, existingNote.endChar),
+    )?.indices?.[2]?.[0];
+    if (typeof startIdxOfNoteWithoutChord !== "number") return;
+
+    this.abc =
+      this.abc.slice(0, existingNote.startChar + startIdxOfNoteWithoutChord) +
+      newAbc +
+      this.abc.slice(existingNote.endChar);
+  }
+
   backspace() {
-    let measureIdx = -1;
-    let lastItem: AbcjsNote | undefined;
-    while (!(lastItem = this.measures.at(measureIdx)?.notes.at(-1))) {
-      if (Math.abs(measureIdx) >= this.measures.length) return;
-      measureIdx--;
-    }
-    this.abc = this.abc.slice(0, lastItem.startChar).replace(/ +$/, "");
+    const lastItem = this.lastItem;
+    if (!lastItem) return;
+
+    const { measureIdx, item } = lastItem;
+    this.abc = this.abc.slice(0, item.startChar).replace(/ +$/, "");
 
     if (this.chordTemplate) {
       const currentMeasure = this.measures.at(measureIdx);
       if (!currentMeasure) return;
       const durationWithRemovedNote =
-        currentMeasure.duration -
-        lastItem.duration * (lastItem.isTriplet ? 2 / 3 : 1);
+        currentMeasure.duration - item.duration * (item.isTriplet ? 2 / 3 : 1);
       const chordToAdd = this.chordTemplate
         ?.at(this.measures.length + measureIdx)
         ?.find((chord) =>
-          equalUpToN(chord.fractionalBeat, durationWithRemovedNote)
+          equalUpToN(chord.fractionalBeat, durationWithRemovedNote),
         );
       if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
     }
@@ -217,10 +292,11 @@ export default class EditorState {
 
     const currentDuration = lastMeasure.notes.reduce(
       (acc, curr) => acc + curr.duration * (curr.isTriplet ? 2 / 3 : 1),
-      0
+      0,
     );
     const currentBeat = currentDuration * 4;
 
+    // TODO handle beaming and different time signatures
     return (
       ((nextRhythm === Rhythm.Eighth && ![0, 2].includes(currentBeat)) ||
         (nextRhythm === Rhythm.Sixteenth &&
@@ -231,13 +307,23 @@ export default class EditorState {
     );
   }
 
+  get lastItem() {
+    let measureIdx = -1;
+    let lastItem: AbcjsNote | undefined;
+    while (!(lastItem = this.measures.at(measureIdx)?.notes.at(-1))) {
+      if (Math.abs(measureIdx) >= this.measures.length) return null;
+      measureIdx--;
+    }
+    return { item: lastItem, measureIdx };
+  }
+
   get currentDuration() {
     const lastMeasure = this.measures.at(-1);
     if (!lastMeasure) return -1;
 
     return lastMeasure.notes.reduce(
       (acc, curr) => acc + curr.duration * (curr.isTriplet ? 2 / 3 : 1),
-      0
+      0,
     );
   }
 

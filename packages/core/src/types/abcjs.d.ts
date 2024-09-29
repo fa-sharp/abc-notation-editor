@@ -1,7 +1,8 @@
-import type { VoiceItemNote } from "abcjs";
+import type { AbcElem, VoiceItemNote } from "abcjs";
 
 export interface AbcjsNote extends VoiceItemNote {
   // Properties from abcjs
+  abselem: AbcElem["abselem"];
   duration: number;
   decoration?: Array<"accent" | "staccato">;
   pitches?: Array<Pitch>;
