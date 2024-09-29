@@ -38,7 +38,7 @@ export default class EditorState {
     lastBarline?: "thin-thin" | "thin-thick";
   };
 
-  selected?: {
+  selected: {
     measureIdx: number;
     noteIdx: number;
     data?: {
@@ -51,7 +51,7 @@ export default class EditorState {
       triplet?: boolean;
       tied?: boolean;
     };
-  };
+  } | null = null;
 
   constructor(
     initialAbc?: string,
@@ -104,6 +104,7 @@ export default class EditorState {
       return arr;
     }, []);
     this.measures = parseMeasuresFromAbcjs(this.tuneLines, this.timeSig);
+    this.selected = null;
   }
 
   addNote(

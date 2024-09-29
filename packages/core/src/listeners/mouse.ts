@@ -37,13 +37,17 @@ export const setupStaffMouseListeners = ({
   updateLastMousePos?: (pos: { x: number; y: number } | null) => void;
 }) => {
   const topStaffLine = renderDiv.querySelector<SVGPathElement>(
-    `.abcjs-l${numTuneLines - 1} .abcjs-top-line`
+    `.abcjs-l${numTuneLines - 1} .abcjs-top-line`,
   );
   const secondStaffLine = topStaffLine?.nextSibling as SVGPathElement;
-  if (!topStaffLine || !secondStaffLine) return () => {};
+  const lastElementOnLine = renderDiv.querySelector(
+    `.abcjs-staff.l${numTuneLines - 1} g:last-of-type`,
+  );
+  if (!topStaffLine || !secondStaffLine || !lastElementOnLine) return () => {};
 
   /** Click listener for adding notes with the mouse */
   const staffClickListener = (e: PointerEvent) => {
+    if (mode === "editing") return;
     const topStaffLineY = topStaffLine.getBoundingClientRect().y;
     const staffLineGap =
       secondStaffLine.getBoundingClientRect().y - topStaffLineY;
@@ -70,6 +74,7 @@ export const setupStaffMouseListeners = ({
     dotted,
     triplet,
   });
+  let mode: "editing" | "adding" = "editing";
   let ledgerLineDivs: HTMLDivElement[] = [];
 
   // If there is a last known mouse position inside staff, re-draw the cursor (and ledger lines if needed)
@@ -105,13 +110,35 @@ export const setupStaffMouseListeners = ({
     // Remove previous ledger lines
     ledgerLineDivs.forEach((div) => div.remove());
 
+    // Determine whether we are editing or adding notes
+    const topStaffLineY = topStaffLine.getBoundingClientRect().y;
+    const staffLineGap =
+      secondStaffLine.getBoundingClientRect().y - topStaffLineY;
+    const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+    const maxAddingDistance = staffLineGap * 6;
+    const lastElementRect = lastElementOnLine.getBoundingClientRect();
+    if (
+      e.clientX < lastElementRect.left ||
+      (e.clientX < lastElementRect.right - 5 &&
+        e.clientY > lastElementRect.top &&
+        e.clientY < lastElementRect.bottom) ||
+      e.clientY < topStaffLineY - maxAddingDistance ||
+      e.clientY > bottomStaffLineY + maxAddingDistance
+    ) {
+      mode = "editing";
+      cursorIconDiv.hidden = true;
+    } else {
+      mode = "adding";
+      cursorIconDiv.hidden = false;
+    }
+
     // Move the cursor icon
     cursorIconDiv.style.top = `${e.clientY - iconSize * CURSOR_TOP_ADJUST}px`;
     cursorIconDiv.style.left = `${e.clientX - iconSize * CURSOR_LEFT_ADJUST}px`;
     if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
     // Draw ledger lines if needed.
-    if (!rest) {
+    if (!rest && mode === "adding") {
       const topStaffLineY = topStaffLine.getBoundingClientRect().y;
       const staffLineGap =
         secondStaffLine.getBoundingClientRect().y - topStaffLineY;
@@ -160,12 +187,12 @@ export function getStaffClickToNoteFn(props: {
 }) {
   const getNoteFromDegrees = (degrees: number) =>
     getNoteFromC4MajorDegree(
-      props.clef === "treble" ? degrees + 10 : degrees - 2
+      props.clef === "treble" ? degrees + 10 : degrees - 2,
     );
   return (y: number) => {
     const distanceFromTopLine = props.topLineY - y;
     const estimatedDegreesFromTopLine = Math.round(
-      distanceFromTopLine / (props.lineGap / 2)
+      distanceFromTopLine / (props.lineGap / 2),
     );
     return getNoteFromDegrees(estimatedDegreesFromTopLine);
   };
