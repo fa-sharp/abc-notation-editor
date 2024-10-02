@@ -14,32 +14,32 @@ const initialAbc = initialAbcHeader + "C4 G4 | g2";
 beforeEach<TestCtx>((ctx) => {
   const state = new EditorState(initialAbc);
   const [tuneObject] = parseOnly(initialAbc);
-  state.updateTuneData(tuneObject.lines);
+  state.updateTuneData(tuneObject);
   ctx.state = state;
 });
 
 test<TestCtx>("Correctly adds barlines when adding notes", ({ state }) => {
   state.addNote("A4", Rhythm.Half);
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   state.addNote("B3", Rhythm.Quarter);
   expect(state.abc.trim().at(-1)).toBe("|");
 });
 
 test<TestCtx>("Still adds barlines if measure is too long", ({ state }) => {
   state.addNote("A4", Rhythm.Half);
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   state.addNote("B3", Rhythm.Half);
   expect(state.abc.trim().at(-1)).toBe("|");
 });
 
 test<TestCtx>("Correctly adds barlines when adding triplets", ({ state }) => {
   state.addNote("A4", Rhythm.Quarter, { triplet: true });
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   state.addNote("A4", Rhythm.Quarter, { triplet: true });
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   state.addNote("A4", Rhythm.Quarter, { triplet: true });
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   state.addNote("B3", Rhythm.Quarter);
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
   expect(state.abc.trim().at(-1)).toBe("|");
 });

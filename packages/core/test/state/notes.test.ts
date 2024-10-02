@@ -14,7 +14,7 @@ const initialAbc = initialAbcHeader + "C2 D2 F2 E2 | _G2";
 beforeEach<TestCtx>((ctx) => {
   const state = new EditorState(initialAbc);
   const [tuneObject] = parseOnly(initialAbc);
-  state.updateTuneData(tuneObject.lines);
+  state.updateTuneData(tuneObject);
   ctx.state = state;
 });
 
@@ -48,7 +48,7 @@ test<TestCtx>("Can delete last note of ABC score", ({ state }) => {
   state.backspace();
   expect(state.abc.trim()).toBe(initialAbcHeader + "C2 D2 F2 E2 |");
 
-  state.updateTuneData(parseOnly(state.abc)[0].lines);
+  state.updateTuneData(parseOnly(state.abc)[0]);
 
   state.backspace();
   expect(state.abc.trim()).toBe(initialAbcHeader + "C2 D2 F2");
