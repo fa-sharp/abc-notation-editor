@@ -2,7 +2,7 @@ import { parseOnly } from "abcjs";
 import type {
   AbcElem,
   ClickListenerAnalysis,
-  TuneLine,
+  TuneObject,
   VoiceItem,
 } from "abcjs";
 import type { AbcjsNote } from "../types/abcjs";
@@ -15,7 +15,7 @@ import {
   type TimeSignatureType,
   parseAbcHeaders,
 } from "~src/parsing/headers";
-import { Key, TimeSignature } from "tonal";
+import { AbcNotation, Key, TimeSignature } from "tonal";
 import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
 import {
   type ChordTemplateMeasure,
@@ -25,6 +25,7 @@ import { equalUpToN } from "~src/utils/numbers";
 
 export default class EditorState {
   abc: string;
+  tuneObject: TuneObject | null = null;
   tuneLines: VoiceItem[][] = [];
   measures: Measure[] = [];
 
@@ -68,7 +69,7 @@ export default class EditorState {
           options.chordTemplate,
           this.timeSig,
         );
-        this.updateTuneData(parseOnly(initialAbc + "y")[0].lines);
+        this.updateTuneData(parseOnly(initialAbc + "y")[0]);
         const lastMeasure = this.measures.at(-1);
         const chordToAdd = this.chordTemplate
           ?.at(this.measures.length - 1)
@@ -96,15 +97,33 @@ export default class EditorState {
     this.ending = options?.ending;
   }
 
-  updateTuneData(lines: TuneLine[]) {
+  updateTuneData(tuneObject: TuneObject) {
+    this.tuneObject = tuneObject;
     // Reduce the `lines` property from ABCJS into a simpler array, assuming only one staff and one voice for now
-    this.tuneLines = lines.reduce<VoiceItem[][]>((arr, line) => {
+    this.tuneLines = tuneObject.lines.reduce<VoiceItem[][]>((arr, line) => {
       const items = line.staff?.[0]?.voices?.[0];
       if (items) arr.push(items);
       return arr;
     }, []);
     this.measures = parseMeasuresFromAbcjs(this.tuneLines, this.timeSig);
-    this.selected = null;
+    // Update selected note and re-highlight if needed
+    if (this.selected) {
+      const existingNote = this.measures
+        .at(this.selected.measureIdx)
+        ?.notes.at(this.selected.noteIdx);
+      if (!existingNote) this.selected = null;
+      else {
+        this.selected.data = {
+          note: existingNote.pitches?.[0]?.name,
+          rhythm: getRhythmFromAbcDuration(existingNote.duration),
+        };
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+        this.tuneObject?.engraver?.rangeHighlight(
+          existingNote.startChar,
+          existingNote.endChar,
+        );
+      }
+    }
   }
 
   addNote(
@@ -214,7 +233,7 @@ export default class EditorState {
   }
 
   editNote(data: {
-    note: string | number;
+    note: string;
     rhythm: Rhythm;
     accidental?: Accidental;
     beamed?: boolean;
@@ -228,26 +247,57 @@ export default class EditorState {
       ?.notes.at(this.selected.noteIdx);
     if (!existingNote) return;
 
-    let abcNote =
-      typeof data.note === "number"
-        ? getAbcNoteFromMidiNum(data.note, data.accidental)
-        : getAbcNoteFromNoteName(data.note, data.accidental);
-    const newAbc = `${!data.rest ? abcNote : "z"}${getAbcRhythm(
+    let newAbc = `${!data.rest ? data.note : "z"}${getAbcRhythm(
       data.rhythm,
       data?.dotted,
     )}`;
-    if (data.tied) abcNote += "-";
+    if (data.tied) newAbc += "-";
 
-    // get starting index of note, ignoring any chord symbol before
-    const startIdxOfNoteWithoutChord = /(^"[^"]*"\s*)?(.*)/d.exec(
-      this.abc.slice(existingNote.startChar, existingNote.endChar),
+    // get starting and ending index of note, ignoring any chord symbol before or spaces after
+    const existingNoteAbc = this.abc.slice(
+      existingNote.startChar,
+      existingNote.endChar,
+    );
+    const startIdxOfNoteWithoutChord = /(^\s*"[^"]*"\s*)?(.*)/d.exec(
+      existingNoteAbc,
     )?.indices?.[2]?.[0];
     if (typeof startIdxOfNoteWithoutChord !== "number") return;
+    const endIdxOfNoteWithoutSpaces =
+      /\s+$/.exec(existingNoteAbc)?.index || existingNoteAbc.length;
 
-    this.abc =
-      this.abc.slice(0, existingNote.startChar + startIdxOfNoteWithoutChord) +
-      newAbc +
-      this.abc.slice(existingNote.endChar);
+    const startIdx = existingNote.startChar + startIdxOfNoteWithoutChord;
+    const endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
+    this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
+  }
+
+  noteUp() {
+    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+
+    const [acc] = AbcNotation.tokenize(this.selected.data.note);
+    const [, newLetter, newOctave] = AbcNotation.tokenize(
+      AbcNotation.transpose(this.selected.data.note, "M2"),
+    );
+    const newNote = `${acc}${newLetter}${newOctave}`;
+
+    this.editNote({
+      note: newNote,
+      rhythm: this.selected.data.rhythm,
+    });
+  }
+
+  noteDown() {
+    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+
+    const [acc] = AbcNotation.tokenize(this.selected.data.note);
+    const [, newLetter, newOctave] = AbcNotation.tokenize(
+      AbcNotation.transpose(this.selected.data.note, "M-2"),
+    );
+    const newNote = `${acc}${newLetter}${newOctave}`;
+
+    this.editNote({
+      note: newNote,
+      rhythm: this.selected.data.rhythm,
+    });
   }
 
   backspace() {

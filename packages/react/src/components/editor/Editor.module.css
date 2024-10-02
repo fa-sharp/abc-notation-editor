@@ -17,3 +17,10 @@
   line-height: normal;
   box-sizing: border-box;
 }
+
+/* Style the outline for selected notes */
+:global .abcjs-note:focus {
+  outline: solid 2px rgb(115, 183, 206);
+  outline-offset: 4px;
+  border-radius: 1px;
+}

@@ -10,7 +10,7 @@ import styles from "./Editor.module.css";
 export type EditorChangeHandler = (
   abc: string,
   tuneObject: TuneObject,
-  renderDiv?: HTMLDivElement
+  renderDiv?: HTMLDivElement,
 ) => void;
 
 export type EditorProps = {
@@ -65,7 +65,6 @@ export default function Editor({
   chordTemplate,
   jazzChords,
   format,
-  selectTypes,
   visualTranspose,
   autoLineBreaks,
   lineBreaks,
@@ -82,7 +81,6 @@ export default function Editor({
       responsive: responsive ? "resize" : undefined,
       jazzchords: jazzChords,
       format,
-      selectTypes,
       visualTranspose,
       lineBreaks: lineBreaks ? [lineBreaks] : undefined,
       ...(autoLineBreaks?.staffWidth
@@ -102,13 +100,12 @@ export default function Editor({
       jazzChords,
       format,
       visualTranspose,
-      selectTypes,
       lineBreaks,
       autoLineBreaks?.staffWidth,
       autoLineBreaks?.minSpacing,
       autoLineBreaks?.maxSpacing,
       autoLineBreaks?.preferredMeasuresPerLine,
-    ]
+    ],
   );
 
   return (

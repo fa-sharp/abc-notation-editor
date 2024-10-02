@@ -22,7 +22,6 @@ export default function ReactExercise() {
         responsive
         ending={{ lastMeasure: 2 }}
         lineBreaks={[2]}
-        selectTypes={false}
         onChange={onChange}
       />
     </div>

@@ -132,12 +132,12 @@ const useEditor = ({
       {
         ...abcjsOptions,
         add_classes: true,
-        selectTypes: true,
+        selectTypes: ["note"],
         clickListener: (abcElem, _, _classes, analysis) =>
           editorState.current.selectNote(abcElem, analysis),
       },
     );
-    editorState.current.updateTuneData(tuneObject.lines);
+    editorState.current.updateTuneData(tuneObject);
     onChange(abc, tuneObject, renderDiv.current || undefined);
 
     // Determine beaming depending on next note
@@ -169,6 +169,16 @@ const useEditor = ({
     if (restRef.current === true) dispatchEditorCommand({ type: "toggleRest" });
     if (tiedRef.current === true) dispatchEditorCommand({ type: "toggleTied" });
   }, [abc]);
+
+  const onNoteUp = useCallback(() => {
+    editorState.current.noteUp();
+    setAbc(editorState.current.abc);
+  }, []);
+
+  const onNoteDown = useCallback(() => {
+    editorState.current.noteDown();
+    setAbc(editorState.current.abc);
+  }, []);
 
   const onBackspace = useCallback(() => {
     editorState.current.backspace();
@@ -216,6 +226,8 @@ const useEditor = ({
     import.meta.env.DEV && console.debug("Setting up keyboard listener");
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
+      onNoteUp,
+      onNoteDown,
       onBackspace,
       onNewLine,
     );
