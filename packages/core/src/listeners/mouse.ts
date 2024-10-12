@@ -40,14 +40,14 @@ export const setupStaffMouseListeners = ({
     `.abcjs-l${numTuneLines - 1} .abcjs-top-line`,
   );
   const secondStaffLine = topStaffLine?.nextSibling as SVGPathElement;
-  const lastElementOnLine =
-    renderDiv.querySelector(
-      `.abcjs-staff.l${numTuneLines - 1} g:last-of-type .abcjs-notehead`,
-    ) ||
-    renderDiv.querySelector(
-      `.abcjs-staff.l${numTuneLines - 1} g:last-of-type path`,
-    ) ||
+  const notesOnLine = renderDiv.querySelectorAll(
+    `.abcjs-staff.l${numTuneLines - 1} .abcjs-note, .abcjs-staff.l${numTuneLines - 1} .abcjs-rest`,
+  );
+  let lastElementOnLine =
+    notesOnLine[notesOnLine.length - 1] ||
     renderDiv.querySelector(`.abcjs-staff.l${numTuneLines - 1} g:last-of-type`);
+  if (lastElementOnLine?.querySelector(".abcjs-notehead"))
+    lastElementOnLine = lastElementOnLine?.querySelector(".abcjs-notehead");
   if (!topStaffLine || !secondStaffLine || !lastElementOnLine) return () => {};
 
   /** Click listener for adding notes with the mouse */
