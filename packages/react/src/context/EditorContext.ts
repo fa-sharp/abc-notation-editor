@@ -232,7 +232,7 @@ const useEditor = ({
       onNewLine,
     );
     return () => cleanUpKbdListener();
-  }, [enableKbdShortcuts, onBackspace, onNewLine]);
+  }, [enableKbdShortcuts, onBackspace, onNewLine, onNoteDown, onNoteUp]);
 
   // Setup MIDI listener
   useEffect(() => {

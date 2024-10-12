@@ -37,9 +37,13 @@ export function setupKeyboardListener(
 ) {
   const listener = (e: KeyboardEvent) => {
     const command = kbdKeyToCommandMap.get(e.key);
-    if (command === "noteUp") onNoteUp();
-    else if (command === "noteDown") onNoteDown();
-    else if (command === "backspace") onBackspace();
+    if (command === "noteUp") {
+      e.preventDefault();
+      onNoteUp();
+    } else if (command === "noteDown") {
+      e.preventDefault();
+      onNoteDown();
+    } else if (command === "backspace") onBackspace();
     else if (command === "newLine") onNewLine();
     else if (command !== undefined) dispatchEditorCommand(command);
   };
