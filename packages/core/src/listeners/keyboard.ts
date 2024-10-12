@@ -3,7 +3,13 @@ import { Accidental, Rhythm } from "../types/constants";
 
 const kbdKeyToCommandMap = new Map<
   string,
-  EditorCommandAction | "backspace" | "newLine" | "noteUp" | "noteDown"
+  | EditorCommandAction
+  | "backspace"
+  | "newLine"
+  | "noteUp"
+  | "noteDown"
+  | "nextNote"
+  | "prevNote"
 >([
   ["1", { type: "setRhythm", rhythm: Rhythm.Whole }],
   ["2", { type: "setRhythm", rhythm: Rhythm.Half }],
@@ -22,6 +28,8 @@ const kbdKeyToCommandMap = new Map<
 
   ["ArrowUp", "noteUp"],
   ["ArrowDown", "noteDown"],
+  ["ArrowLeft", "prevNote"],
+  ["ArrowRight", "nextNote"],
 
   ["Backspace", "backspace"],
   ["Enter", "newLine"],
@@ -32,6 +40,8 @@ export function setupKeyboardListener(
   dispatchEditorCommand: (command: EditorCommandAction) => void,
   onNoteUp: () => void,
   onNoteDown: () => void,
+  onNextNote: () => void,
+  onPrevNote: () => void,
   onBackspace: () => void,
   onNewLine: () => void,
 ) {
@@ -43,6 +53,12 @@ export function setupKeyboardListener(
     } else if (command === "noteDown") {
       e.preventDefault();
       onNoteDown();
+    } else if (command === "nextNote") {
+      e.preventDefault();
+      onNextNote();
+    } else if (command === "prevNote") {
+      e.preventDefault();
+      onPrevNote();
     } else if (command === "backspace") onBackspace();
     else if (command === "newLine") onNewLine();
     else if (command !== undefined) dispatchEditorCommand(command);

@@ -180,6 +180,14 @@ const useEditor = ({
     setAbc(editorState.current.abc);
   }, []);
 
+  const onSelectNextNote = useCallback(() => {
+    editorState.current.selectNextNote();
+  }, []);
+
+  const onSelectPrevNote = useCallback(() => {
+    editorState.current.selectPrevNote();
+  }, []);
+
   const onBackspace = useCallback(() => {
     editorState.current.backspace();
     setAbc(editorState.current.abc);
@@ -228,11 +236,21 @@ const useEditor = ({
       dispatchEditorCommand,
       onNoteUp,
       onNoteDown,
+      onSelectNextNote,
+      onSelectPrevNote,
       onBackspace,
       onNewLine,
     );
     return () => cleanUpKbdListener();
-  }, [enableKbdShortcuts, onBackspace, onNewLine, onNoteDown, onNoteUp]);
+  }, [
+    enableKbdShortcuts,
+    onBackspace,
+    onNewLine,
+    onNoteDown,
+    onNoteUp,
+    onSelectNextNote,
+    onSelectPrevNote,
+  ]);
 
   // Setup MIDI listener
   useEffect(() => {

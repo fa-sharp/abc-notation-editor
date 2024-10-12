@@ -232,6 +232,54 @@ export default class EditorState {
     };
   }
 
+  selectNextNote() {
+    if (!this.selected) return;
+    let { noteIdx, measureIdx } = this.selected;
+    let nextNote = this.measures.at(measureIdx)?.notes.at(++noteIdx);
+    if (!nextNote)
+      nextNote = this.measures.at(++measureIdx)?.notes.at((noteIdx = 0));
+    if (nextNote) {
+      this.selected.noteIdx = noteIdx;
+      this.selected.measureIdx = measureIdx;
+      this.selected.data = {
+        note: nextNote.pitches?.[0]?.name,
+        rhythm: getRhythmFromAbcDuration(nextNote.duration),
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      this.tuneObject?.engraver?.rangeHighlight(
+        nextNote.startChar,
+        nextNote.endChar,
+      );
+    }
+  }
+
+  selectPrevNote() {
+    if (!this.selected) return;
+    let { noteIdx, measureIdx } = this.selected;
+    let prevNote;
+    if (noteIdx > 0)
+      prevNote = this.measures.at(measureIdx)?.notes.at(--noteIdx);
+    else if (measureIdx > 0) {
+      const prevMeasure = this.measures.at(--measureIdx);
+      if (!prevMeasure) return;
+      noteIdx = prevMeasure.notes.length - 1;
+      prevNote = prevMeasure.notes.at(noteIdx);
+    }
+    if (prevNote) {
+      this.selected.noteIdx = noteIdx;
+      this.selected.measureIdx = measureIdx;
+      this.selected.data = {
+        note: prevNote.pitches?.[0]?.name,
+        rhythm: getRhythmFromAbcDuration(prevNote.duration),
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      this.tuneObject?.engraver?.rangeHighlight(
+        prevNote.startChar,
+        prevNote.endChar,
+      );
+    }
+  }
+
   editNote(data: {
     note: string;
     rhythm: Rhythm;
