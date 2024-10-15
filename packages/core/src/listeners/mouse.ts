@@ -66,7 +66,7 @@ export const setupStaffMouseListeners = ({
 
   // Setup the cursor icon for the staff
   const CURSOR_TOP_ADJUST = 0.81;
-  const CURSOR_LEFT_ADJUST = 0.5;
+  const CURSOR_LEFT_ADJUST = 0.57 - (Math.log2(rhythm) + 1) * 0.025;
   const topStaffLineY = topStaffLine.getBoundingClientRect().y;
   const staffLineGap =
     secondStaffLine.getBoundingClientRect().y - topStaffLineY;
