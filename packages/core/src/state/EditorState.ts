@@ -295,7 +295,9 @@ export default class EditorState {
       ?.notes.at(this.selected.noteIdx);
     if (!existingNote) return;
 
-    let newAbc = `${!data.rest ? data.note : "z"}${getAbcRhythm(
+    let newAbc = "";
+    if (existingNote.startTriplet) newAbc += "(3";
+    newAbc += `${!data.rest ? data.note : "z"}${getAbcRhythm(
       data.rhythm,
       data?.dotted,
     )}`;
