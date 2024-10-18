@@ -235,7 +235,7 @@ export default class EditorState {
         rhythm: getRhythmFromAbcDuration(note.duration),
       },
     };
-    if (drag && drag.index !== 0) this.moveNote(-drag.step);
+    if (drag && drag.step !== 0) this.moveNote(-drag.step);
   }
 
   selectNextNote() {
