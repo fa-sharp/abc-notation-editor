@@ -47,7 +47,7 @@ export const setupStaffMouseListeners = ({
   let lastElementOnLine =
     notesOnLine[notesOnLine.length - 1] ||
     renderDiv.querySelector(
-      `.abcjs-staff-wrapper.l${numTuneLines - 1} g:last-of-type`,
+      `.abcjs-staff-wrapper.abcjs-l${numTuneLines - 1} g:last-of-type`,
     );
   if (lastElementOnLine?.querySelector(".abcjs-notehead"))
     lastElementOnLine = lastElementOnLine?.querySelector(".abcjs-notehead");
