@@ -1,7 +1,8 @@
+import { Icon } from "@abc-editor/core";
 import { useState } from "react";
 import { useEditorContext } from "../../context/EditorContext";
+import EditorControlIcon from "../editor/EditorControlIcon";
 import Key from "./Key";
-
 import styles from "./Keyboard.module.scss";
 
 type KeyboardProps = {
@@ -12,15 +13,25 @@ type KeyboardProps = {
 export default function Keyboard({ startKey, endKey }: KeyboardProps) {
   const { onAddNote } = useEditorContext();
 
+  const [currentStartKey, setCurrentStartKey] = useState(startKey);
+
   const [keys, setKeys] = useState(
-    new Array<boolean>(endKey - startKey).fill(false)
+    new Array<boolean>(endKey - startKey).fill(false),
   );
 
   return (
     <div className={styles.keyboard}>
+      <button
+        className={styles.iconButton}
+        title="Lower octave"
+        onClick={() => setCurrentStartKey((prev) => prev - 12)}
+        disabled={currentStartKey <= 12}
+      >
+        <EditorControlIcon icon={Icon.ChevronLeft} size={26} />
+      </button>
       <div>
         {keys.map((isPlayed, idx) => {
-          const midiNum = startKey + idx;
+          const midiNum = currentStartKey + idx;
           return (
             <Key
               key={midiNum}
@@ -37,6 +48,14 @@ export default function Keyboard({ startKey, endKey }: KeyboardProps) {
           );
         })}
       </div>
+      <button
+        className={styles.iconButton}
+        title="Higher octave"
+        onClick={() => setCurrentStartKey((prev) => prev + 12)}
+        disabled={currentStartKey >= 96}
+      >
+        <EditorControlIcon icon={Icon.ChevronRight} size={26} />
+      </button>
     </div>
   );
 }

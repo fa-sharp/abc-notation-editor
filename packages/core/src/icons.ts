@@ -22,9 +22,14 @@ import TripletIcon from "~dist-icons/Triplet.svg?raw";
 import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
 import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 
+import ChevronLeft from "~dist-icons/ChevronLeft.svg?raw";
+import ChevronRight from "dist-icons/ChevronRight.svg?raw";
+
 enum Icon {
   Backspace,
   Beaming,
+  ChevronLeft,
+  ChevronRight,
   Dot,
   EighthNote,
   EighthRest,
@@ -52,6 +57,10 @@ function getIcon(icon: Icon): string {
       return BackspaceIcon;
     case Icon.Beaming:
       return BeamingIcon;
+    case Icon.ChevronLeft:
+      return ChevronLeft;
+    case Icon.ChevronRight:
+      return ChevronRight;
     case Icon.Dot:
       return DotIcon;
     case Icon.EighthNote:
