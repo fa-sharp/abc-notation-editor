@@ -58,6 +58,6 @@
   },
   "dependencies": {
     "@abc-editor/core": "workspace:^",
-    "tonal": "^6.2.0"
+    "tonal": "^6.3.0"
   }
 }

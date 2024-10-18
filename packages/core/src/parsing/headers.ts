@@ -1,9 +1,8 @@
-import type { MajorKey, MinorKey } from "@tonaljs/key";
 import type { TimeSignature as ITimeSignature } from "@tonaljs/time-signature";
 import { Key, TimeSignature } from "tonal";
 import { Clef } from "~src/types/constants";
 
-export type KeySignatureType = MajorKey | MinorKey;
+export type KeySignatureType = Key.MajorKey | Key.MinorKey;
 export type TimeSignatureType = ITimeSignature;
 
 const headerRegex = /^.:/;
@@ -19,7 +18,7 @@ const getSupportedClef = (rawClef: string): Clef =>
 const isMajorKey = (keyValue: string) => keyValue.at(-1) !== "m";
 
 export const parseAbcHeaders = (
-  abc: string
+  abc: string,
 ): {
   clef: Clef;
   keySig: KeySignatureType;
