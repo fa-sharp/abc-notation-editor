@@ -34,10 +34,10 @@
     "react"
   ],
   "peerDependencies": {
-    "abcjs": "^6.2"
+    "abcjs": "^6.4"
   },
   "devDependencies": {
-    "@tonaljs/key": "^4.10.0",
+    "@tonaljs/key": "^4.11.0",
     "@tonaljs/time-signature": "^4.9.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",

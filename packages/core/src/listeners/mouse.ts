@@ -37,15 +37,18 @@ export const setupStaffMouseListeners = ({
   updateLastMousePos?: (pos: { x: number; y: number } | null) => void;
 }) => {
   const topStaffLine = renderDiv.querySelector<SVGPathElement>(
-    `.abcjs-l${numTuneLines - 1} .abcjs-top-line`,
+    `.abcjs-staff-wrapper.abcjs-l${numTuneLines - 1} .abcjs-top-line`,
   );
   const secondStaffLine = topStaffLine?.nextSibling as SVGPathElement;
   const notesOnLine = renderDiv.querySelectorAll(
-    `.abcjs-staff.l${numTuneLines - 1} .abcjs-note, .abcjs-staff.l${numTuneLines - 1} .abcjs-rest`,
+    `.abcjs-staff-wrapper.abcjs-l${numTuneLines - 1} .abcjs-note, ` +
+      `.abcjs-staff-wrapper.abcjs-l${numTuneLines - 1} .abcjs-rest`,
   );
   let lastElementOnLine =
     notesOnLine[notesOnLine.length - 1] ||
-    renderDiv.querySelector(`.abcjs-staff.l${numTuneLines - 1} g:last-of-type`);
+    renderDiv.querySelector(
+      `.abcjs-staff-wrapper.l${numTuneLines - 1} g:last-of-type`,
+    );
   if (lastElementOnLine?.querySelector(".abcjs-notehead"))
     lastElementOnLine = lastElementOnLine?.querySelector(".abcjs-notehead");
   if (!topStaffLine || !secondStaffLine || !lastElementOnLine) return () => {};

@@ -33,7 +33,7 @@
     "react"
   ],
   "peerDependencies": {
-    "abcjs": "^6.2",
+    "abcjs": "^6.4",
     "react": "^18",
     "react-dom": "^18"
   },
