@@ -32,5 +32,6 @@ If you enable keyboard shortcuts in the editor component, the following shortcut
 
 | Shortcut    |     Command      |
 | :---------- | :--------------: |
+| Arrow keys  | Navigate notes, and move them up and down |
 | `Backspace` | Delete last note |
 | `Enter`     |     New line     |
