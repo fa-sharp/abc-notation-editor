@@ -12,7 +12,7 @@ export default function BasicExample() {
         scale={1.1}
         onChange={setAbc}
         enableKbdShortcuts
-        // chordTemplate={sampleChordTemplate}
+        chordTemplate={sampleChordTemplate}
         ending={{ lastBarline: "thin-thin", lastMeasure: 8 }}
         lineBreaks={[3]}
         jazzChords

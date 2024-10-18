@@ -87,10 +87,18 @@ export const setupStaffMouseListeners = ({
 
   // If there is a last known mouse position inside staff, re-draw the cursor (and ledger lines if needed)
   if (lastMousePos) {
+    mode = getMode(
+      lastMousePos.x,
+      lastMousePos.y,
+      topStaffLineY,
+      staffLineGap,
+      lastElementOnLine,
+    );
     cursorIconDiv.style.top = `${
       lastMousePos.y - iconSize * CURSOR_TOP_ADJUST
     }px`;
     cursorIconDiv.style.left = `${lastMousePos.x - iconSize * CURSOR_LEFT_ADJUST}px`;
+    if (mode === "editing") cursorIconDiv.hidden = true;
     renderDiv.appendChild(cursorIconDiv);
     if (!rest) {
       ledgerLineDivs = drawLedgerLines({
@@ -122,21 +130,16 @@ export const setupStaffMouseListeners = ({
     const topStaffLineY = topStaffLine.getBoundingClientRect().y;
     const staffLineGap =
       secondStaffLine.getBoundingClientRect().y - topStaffLineY;
-    const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
-    const maxAddingDistance = staffLineGap * 6;
-    const lastElementRect = lastElementOnLine.getBoundingClientRect();
-    if (
-      e.clientX < lastElementRect.left ||
-      (e.clientX < lastElementRect.right &&
-        e.clientY > lastElementRect.top &&
-        e.clientY < lastElementRect.bottom) ||
-      e.clientY < topStaffLineY - maxAddingDistance ||
-      e.clientY > bottomStaffLineY + maxAddingDistance
-    ) {
-      mode = "editing";
+    mode = getMode(
+      e.clientX,
+      e.clientY,
+      topStaffLineY,
+      staffLineGap,
+      lastElementOnLine,
+    );
+    if (mode === "editing") {
       cursorIconDiv.hidden = true;
     } else {
-      mode = "adding";
       cursorIconDiv.hidden = false;
     }
 
@@ -378,4 +381,25 @@ function getCursorIcon({
     div.appendChild(tripletDiv);
   }
   return div;
+}
+
+/** Determine which mode we're in */
+function getMode(
+  clientX: number,
+  clientY: number,
+  topStaffLineY: number,
+  staffLineGap: number,
+  lastElement: Element,
+) {
+  const lastElementRect = lastElement.getBoundingClientRect();
+  const maxAddingDistance = staffLineGap * 6;
+  const bottomStaffLineY = topStaffLineY + staffLineGap * 4;
+  return clientX < lastElementRect.left ||
+    (clientX < lastElementRect.right &&
+      clientY > lastElementRect.top &&
+      clientY < lastElementRect.bottom) ||
+    clientY < topStaffLineY - maxAddingDistance ||
+    clientY > bottomStaffLineY + maxAddingDistance
+    ? "editing"
+    : "adding";
 }
