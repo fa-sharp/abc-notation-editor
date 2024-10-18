@@ -42,5 +42,5 @@ const durationToRhythmMap = new Map<
 
 /** Get the rhythm from the duration of the note. */
 export function getRhythmFromAbcDuration(duration: number) {
-  return durationToRhythmMap.get(duration)?.rhythm;
+  return durationToRhythmMap.get(duration);
 }
