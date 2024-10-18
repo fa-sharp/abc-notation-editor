@@ -38,8 +38,7 @@ const kbdKeyToCommandMap = new Map<
 /** Setup keyboard shortcuts listener for the notation editor. Returns a cleanup function. */
 export function setupKeyboardListener(
   dispatchEditorCommand: (command: EditorCommandAction) => void,
-  onNoteUp: () => void,
-  onNoteDown: () => void,
+  onMoveNote: (step: number) => void,
   onNextNote: () => void,
   onPrevNote: () => void,
   onBackspace: () => void,
@@ -49,10 +48,10 @@ export function setupKeyboardListener(
     const command = kbdKeyToCommandMap.get(e.key);
     if (command === "noteUp") {
       e.preventDefault();
-      onNoteUp();
+      onMoveNote(1);
     } else if (command === "noteDown") {
       e.preventDefault();
-      onNoteDown();
+      onMoveNote(-1);
     } else if (command === "nextNote") {
       e.preventDefault();
       onNextNote();

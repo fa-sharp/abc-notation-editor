@@ -133,8 +133,11 @@ const useEditor = ({
         ...abcjsOptions,
         add_classes: true,
         selectTypes: ["note"],
-        clickListener: (abcElem, _, _classes, analysis) =>
-          editorState.current.selectNote(abcElem, analysis),
+        dragging: true,
+        clickListener: (abcElem, _, _classes, analysis, drag) => {
+          editorState.current.selectNote(abcElem, analysis, drag);
+          if (drag.step !== 0) setAbc(editorState.current.abc);
+        },
       },
     );
     editorState.current.updateTuneData(tuneObject);
@@ -170,13 +173,8 @@ const useEditor = ({
     if (tiedRef.current === true) dispatchEditorCommand({ type: "toggleTied" });
   }, [abc]);
 
-  const onNoteUp = useCallback(() => {
-    editorState.current.noteUp();
-    setAbc(editorState.current.abc);
-  }, []);
-
-  const onNoteDown = useCallback(() => {
-    editorState.current.noteDown();
+  const onMoveNote = useCallback((step: number) => {
+    editorState.current.moveNote(step);
     setAbc(editorState.current.abc);
   }, []);
 
@@ -234,8 +232,7 @@ const useEditor = ({
     import.meta.env.DEV && console.debug("Setting up keyboard listener");
     const cleanUpKbdListener = setupKeyboardListener(
       dispatchEditorCommand,
-      onNoteUp,
-      onNoteDown,
+      onMoveNote,
       onSelectNextNote,
       onSelectPrevNote,
       onBackspace,
@@ -245,9 +242,8 @@ const useEditor = ({
   }, [
     enableKbdShortcuts,
     onBackspace,
+    onMoveNote,
     onNewLine,
-    onNoteDown,
-    onNoteUp,
     onSelectNextNote,
     onSelectPrevNote,
   ]);

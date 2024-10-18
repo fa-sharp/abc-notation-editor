@@ -2,6 +2,7 @@ import { parseOnly } from "abcjs";
 import type {
   AbcElem,
   ClickListenerAnalysis,
+  ClickListenerDrag,
   TuneObject,
   VoiceItem,
 } from "abcjs";
@@ -211,7 +212,11 @@ export default class EditorState {
     this.abc += abcToAdd;
   }
 
-  selectNote(abcElem: AbcElem, analysis: ClickListenerAnalysis) {
+  selectNote(
+    abcElem: AbcElem,
+    analysis: ClickListenerAnalysis,
+    drag?: ClickListenerDrag,
+  ) {
     let measureIdx = this.measures.findIndex((m) => m.line === analysis.line);
     if (measureIdx === -1) return;
     measureIdx += analysis.measure;
@@ -230,6 +235,7 @@ export default class EditorState {
         rhythm: getRhythmFromAbcDuration(note.duration),
       },
     };
+    if (drag && drag.index !== 0) this.moveNote(-drag.step);
   }
 
   selectNextNote() {
@@ -341,6 +347,24 @@ export default class EditorState {
     const [acc] = AbcNotation.tokenize(this.selected.data.note);
     const [, newLetter, newOctave] = AbcNotation.tokenize(
       AbcNotation.transpose(this.selected.data.note, "M-2"),
+    );
+    const newNote = `${acc}${newLetter}${newOctave}`;
+
+    this.editNote({
+      note: newNote,
+      rhythm: this.selected.data.rhythm,
+    });
+  }
+
+  moveNote(step: number) {
+    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+
+    const [acc] = AbcNotation.tokenize(this.selected.data.note);
+    const [, newLetter, newOctave] = AbcNotation.tokenize(
+      AbcNotation.transpose(
+        this.selected.data.note,
+        `M${step < 0 ? step - 1 : step + 1}`,
+      ),
     );
     const newNote = `${acc}${newLetter}${newOctave}`;
 
