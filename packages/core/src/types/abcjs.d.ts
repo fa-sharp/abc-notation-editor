@@ -21,4 +21,5 @@ interface Pitch {
   name: string;
   highestVert?: number;
   verticalPos: number;
+  startTie?: object;
 }

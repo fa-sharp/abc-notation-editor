@@ -117,6 +117,7 @@ export default class EditorState {
         const rhythmData = getRhythmFromAbcDuration(existingNote.duration);
         this.selected.data = {
           note: existingNote.pitches?.[0]?.name,
+          tied: !!existingNote.pitches?.[0]?.startTie,
           rhythm: rhythmData?.rhythm,
           dotted: rhythmData?.dotted,
         };
@@ -235,6 +236,7 @@ export default class EditorState {
       noteIdx,
       data: {
         note: note.pitches?.[0]?.name,
+        tied: !!note.pitches?.[0]?.startTie,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
       },
@@ -254,6 +256,7 @@ export default class EditorState {
       this.selected.measureIdx = measureIdx;
       this.selected.data = {
         note: nextNote.pitches?.[0]?.name,
+        tied: !!nextNote.pitches?.[0]?.startTie,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
       };
@@ -283,6 +286,7 @@ export default class EditorState {
       this.selected.measureIdx = measureIdx;
       this.selected.data = {
         note: prevNote.pitches?.[0]?.name,
+        tied: !!prevNote.pitches?.[0]?.startTie,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
       };
@@ -350,6 +354,7 @@ export default class EditorState {
       note: newNote,
       rhythm: this.selected.data.rhythm,
       dotted: this.selected.data.dotted,
+      tied: this.selected.data.tied,
     });
   }
 
