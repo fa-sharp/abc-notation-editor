@@ -21,10 +21,10 @@ const EditorControlIcon = ({ icon, size }: Props) => {
       }
       svg && div.replaceChildren(svg);
     },
-    [rawSvg, size]
+    [rawSvg, size],
   );
 
-  return <div ref={refCallback} />;
+  return <div aria-hidden ref={refCallback} />;
 };
 
 export default EditorControlIcon;

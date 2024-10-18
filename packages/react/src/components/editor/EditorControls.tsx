@@ -21,6 +21,9 @@ export default function EditorControls() {
       <fieldset className={styles.controlGroup}>
         <legend>Accidental</legend>
         <button
+          title="Flat"
+          role="switch"
+          aria-checked={currentCommands.accidental === Accidental.Flat}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.accidental === Accidental.Flat,
           })}
@@ -34,6 +37,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Flat} size={iconSize} />
         </button>
         <button
+          title="Sharp"
+          role="switch"
+          aria-checked={currentCommands.accidental === Accidental.Sharp}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.accidental === Accidental.Sharp,
           })}
@@ -47,6 +53,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
         </button>
         <button
+          title="Natural"
+          role="switch"
+          aria-checked={currentCommands.accidental === Accidental.Natural}
           className={clsx(styles.iconButton, {
             [styles.selected]:
               currentCommands.accidental === Accidental.Natural,
@@ -64,6 +73,9 @@ export default function EditorControls() {
       <fieldset className={styles.controlGroup}>
         <legend>Rhythm</legend>
         <button
+          title="Whole note"
+          role="switch"
+          aria-checked={currentCommands.rhythm === Rhythm.Whole}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Whole,
           })}
@@ -78,6 +90,9 @@ export default function EditorControls() {
           )}
         </button>
         <button
+          title="Half note"
+          role="switch"
+          aria-checked={currentCommands.rhythm === Rhythm.Half}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Half,
           })}
@@ -92,6 +107,9 @@ export default function EditorControls() {
           )}
         </button>
         <button
+          title="Quarter note"
+          role="switch"
+          aria-checked={currentCommands.rhythm === Rhythm.Quarter}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Quarter,
           })}
@@ -106,6 +124,9 @@ export default function EditorControls() {
           )}
         </button>
         <button
+          title="Eighth note"
+          role="switch"
+          aria-checked={currentCommands.rhythm === Rhythm.Eighth}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Eighth,
           })}
@@ -120,6 +141,9 @@ export default function EditorControls() {
           )}
         </button>
         <button
+          title="Sixteenth note"
+          role="switch"
+          aria-checked={currentCommands.rhythm === Rhythm.Sixteenth}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rhythm === Rhythm.Sixteenth,
           })}
@@ -135,6 +159,9 @@ export default function EditorControls() {
         </button>
         <div className={styles.spacer}></div>
         <button
+          title="Toggle dotted note"
+          role="switch"
+          aria-checked={currentCommands.dotted}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.dotted,
           })}
@@ -143,6 +170,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Dot} size={iconSize} />
         </button>
         <button
+          title="Toggle rest"
+          role="switch"
+          aria-checked={currentCommands.rest}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.rest,
           })}
@@ -151,6 +181,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
         </button>
         <button
+          title="Toggle triplet"
+          role="switch"
+          aria-checked={currentCommands.triplet}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.triplet,
           })}
@@ -159,6 +192,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Triplet} size={iconSize} />
         </button>
         <button
+          title="Toggle tied note"
+          role="switch"
+          aria-checked={currentCommands.tied}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.tied,
           })}
@@ -167,6 +203,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Tie} size={iconSize} />
         </button>
         <button
+          title="Toggle beamed note"
+          role="switch"
+          aria-checked={currentCommands.beamed}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.beamed,
           })}
@@ -178,11 +217,19 @@ export default function EditorControls() {
       </fieldset>
       <fieldset className={styles.controlGroup}>
         <legend>Edit</legend>
-        <button className={clsx(styles.iconButton)} onClick={onBackspace}>
+        <button
+          title="Backspace"
+          className={clsx(styles.iconButton)}
+          onClick={onBackspace}
+        >
           <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
         </button>
         {!abcjsOptions?.lineBreaks && !abcjsOptions?.wrap && (
-          <button className={clsx(styles.iconButton)} onClick={onNewLine}>
+          <button
+            title="New line"
+            className={clsx(styles.iconButton)}
+            onClick={onNewLine}
+          >
             <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
           </button>
         )}
@@ -190,6 +237,9 @@ export default function EditorControls() {
       <fieldset className={styles.controlGroup}>
         <legend>Input</legend>
         <button
+          title="Toggle visual keyboard"
+          role="switch"
+          aria-checked={currentCommands.showKeyboard}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.showKeyboard,
           })}
@@ -198,6 +248,9 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Piano} size={iconSize} />
         </button>
         <button
+          title="Toggle MIDI input"
+          role="switch"
+          aria-checked={currentCommands.midiEnabled}
           className={clsx(styles.iconButton, {
             [styles.selected]: currentCommands.midiEnabled,
           })}
