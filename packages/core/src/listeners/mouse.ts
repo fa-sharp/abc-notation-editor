@@ -100,7 +100,7 @@ export const setupStaffMouseListeners = ({
     cursorIconDiv.style.left = `${lastMousePos.x - iconSize * CURSOR_LEFT_ADJUST}px`;
     if (mode === "editing") cursorIconDiv.hidden = true;
     renderDiv.appendChild(cursorIconDiv);
-    if (!rest) {
+    if (!rest && mode === "adding") {
       ledgerLineDivs = drawLedgerLines({
         mousePos: lastMousePos,
         topStaffLineY,
@@ -123,8 +123,10 @@ export const setupStaffMouseListeners = ({
   };
 
   const staffMoveListener = (e: PointerEvent) => {
-    // Remove previous ledger lines
+    // Remove previous ledger lines and update saved mouse position
     ledgerLineDivs.forEach((div) => div.remove());
+    if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
+    if (e.buttons) return; // skip everything else if user is dragging
 
     // Determine whether we are editing or adding notes
     const topStaffLineY = topStaffLine.getBoundingClientRect().y;
@@ -146,7 +148,6 @@ export const setupStaffMouseListeners = ({
     // Move the cursor icon
     cursorIconDiv.style.top = `${e.clientY - iconSize * CURSOR_TOP_ADJUST}px`;
     cursorIconDiv.style.left = `${e.clientX - iconSize * CURSOR_LEFT_ADJUST}px`;
-    if (updateLastMousePos) updateLastMousePos({ x: e.clientX, y: e.clientY });
 
     // Draw ledger lines if needed.
     if (!rest && mode === "adding") {
@@ -169,7 +170,9 @@ export const setupStaffMouseListeners = ({
   renderDiv.addEventListener("pointerdown", staffClickListener);
   renderDiv.addEventListener("pointerenter", staffEnterListener);
   renderDiv.addEventListener("pointerleave", staffLeaveListener);
-  renderDiv.addEventListener("pointermove", staffMoveListener);
+  renderDiv.addEventListener("pointermove", staffMoveListener, {
+    passive: true,
+  });
 
   return () => {
     import.meta.env.DEV && console.debug("Tearing down mouse listeners");
