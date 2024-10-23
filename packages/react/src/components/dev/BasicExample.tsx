@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Editor from "../editor/Editor";
 
+const onNoteAdded = (midiNum: number) => console.log({ noteAdded: midiNum });
+
 export default function BasicExample() {
   const [abc, setAbc] = useState("");
   return (
@@ -16,6 +18,7 @@ export default function BasicExample() {
         ending={{ lastBarline: "thin-thin", lastMeasure: 8 }}
         lineBreaks={[3]}
         jazzChords
+        onNoteAdded={onNoteAdded}
       />
       <br />
       Generated ABC:

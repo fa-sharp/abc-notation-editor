@@ -32,6 +32,7 @@ interface EditorProviderProps {
     tuneObject: TuneObject,
     renderDiv?: HTMLDivElement,
   ) => void;
+  onNoteAdded?: (midiNum: number) => void;
 }
 
 const useEditor = ({
@@ -41,6 +42,7 @@ const useEditor = ({
   chordTemplate,
   ending,
   onChange = () => {},
+  onNoteAdded,
 }: EditorProviderProps) => {
   const editorState = useRef<EditorState>(
     new EditorState(initialAbc, {
@@ -106,17 +108,23 @@ const useEditor = ({
     tripletRef.current = editorCommands.triplet;
   }, [editorCommands.triplet]);
 
-  const onAddNote = useCallback((noteName: string | number) => {
-    editorState.current.addNote(noteName, rhythmRef.current, {
-      beamed: beamedRef.current,
-      dotted: dottedRef.current,
-      rest: restRef.current,
-      accidental: accidentalRef.current,
-      triplet: tripletRef.current,
-      tied: tiedRef.current,
-    });
-    setAbc(editorState.current.abc);
-  }, []);
+  const onAddNote = useCallback(
+    (noteName: string | number) => {
+      editorState.current.addNote(noteName, rhythmRef.current, {
+        beamed: beamedRef.current,
+        dotted: dottedRef.current,
+        rest: restRef.current,
+        accidental: accidentalRef.current,
+        triplet: tripletRef.current,
+        tied: tiedRef.current,
+      });
+      onNoteAdded &&
+        editorState.current.lastAddedMidiNum !== undefined &&
+        onNoteAdded(editorState.current.lastAddedMidiNum);
+      setAbc(editorState.current.abc);
+    },
+    [onNoteAdded],
+  );
 
   // Render the ABC notation, update editor state
   useEffect(() => {
@@ -136,7 +144,12 @@ const useEditor = ({
         dragging: true,
         clickListener: (abcElem, _, _classes, analysis, drag) => {
           editorState.current.selectNote(abcElem, analysis, drag);
-          if (drag.step !== 0) setAbc(editorState.current.abc);
+          if (drag.step !== 0) {
+            onNoteAdded &&
+              editorState.current.lastAddedMidiNum !== undefined &&
+              onNoteAdded(editorState.current.lastAddedMidiNum);
+            setAbc(editorState.current.abc);
+          }
         },
       },
     );
@@ -173,10 +186,16 @@ const useEditor = ({
     if (tiedRef.current === true) dispatchEditorCommand({ type: "toggleTied" });
   }, [abc]);
 
-  const onMoveNote = useCallback((step: number) => {
-    editorState.current.moveNote(step);
-    setAbc(editorState.current.abc);
-  }, []);
+  const onMoveNote = useCallback(
+    (step: number) => {
+      editorState.current.moveNote(step);
+      onNoteAdded &&
+        editorState.current.lastAddedMidiNum !== undefined &&
+        onNoteAdded(editorState.current.lastAddedMidiNum);
+      setAbc(editorState.current.abc);
+    },
+    [onNoteAdded],
+  );
 
   const onSelectNextNote = useCallback(() => {
     editorState.current.selectNextNote();

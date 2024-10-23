@@ -57,6 +57,8 @@ export type EditorProps = {
    * on all the class names that can be used to select lines/notes/etc.
    */
   onChange?: EditorChangeHandler;
+  /** Fired after a note is added to the score. Can be used for immediate playback of the added note or other effects. */
+  onNoteAdded?: (midiNum: number) => void;
 };
 
 /** The main ABC notation editor with a built-in toolbar. */
@@ -73,6 +75,7 @@ export default function Editor({
   scale = 1,
   enableKbdShortcuts = false,
   onChange = () => {},
+  onNoteAdded,
 }: EditorProps) {
   //@ts-expect-error FIXME wrong typing for `lineBreaks` - double array and 0-based
   const abcjsOptions: AbcVisualParams = useMemo(
@@ -117,6 +120,7 @@ export default function Editor({
         ending,
         enableKbdShortcuts,
         onChange,
+        onNoteAdded,
       }}
     >
       <InnerEditor />

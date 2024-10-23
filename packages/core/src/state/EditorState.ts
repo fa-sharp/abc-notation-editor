@@ -10,7 +10,12 @@ import type { AbcjsNote } from "../types/abcjs";
 import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
 import { Accidental, Clef, Rhythm } from "../types/constants";
 import { getAbcRhythm, getRhythmFromAbcDuration } from "../utils/rhythm";
-import { getAbcNoteFromMidiNum, getAbcNoteFromNoteName } from "../utils/notes";
+import {
+  getAbcNoteFromMidiNum,
+  getAbcNoteFromNoteName,
+  getLastAccidentalInMeasure,
+  getMidiNumFromAbcNote,
+} from "../utils/notes";
 import {
   type KeySignatureType,
   type TimeSignatureType,
@@ -54,6 +59,8 @@ export default class EditorState {
       tied?: boolean;
     };
   } | null = null;
+
+  lastAddedMidiNum?: number;
 
   constructor(
     initialAbc?: string,
@@ -128,6 +135,7 @@ export default class EditorState {
         );
       }
     }
+    this.lastAddedMidiNum = undefined;
   }
 
   addNote(
@@ -178,8 +186,8 @@ export default class EditorState {
     )}`;
     if (options?.tied) abcToAdd += "-";
 
-    // Add barline if we're at the end of the measure
     if (currentMeasure) {
+      // Add barline if we're at the end of the measure
       const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
       const durationWithAddedNote =
         currentMeasure.duration +
@@ -187,7 +195,6 @@ export default class EditorState {
           (options?.dotted ? 3 / 2 : 1) *
           (options?.triplet ? 2 / 3 : 1);
 
-      // Are we at end of measure?
       if (durationWithAddedNote >= measureTotalDuration - 0.001) {
         if (
           this.ending?.lastMeasure &&
@@ -208,6 +215,18 @@ export default class EditorState {
             equalUpToN(chord.fractionalBeat, durationWithAddedNote),
           );
         if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
+      }
+
+      // Set last added note
+      const midiNum =
+        typeof note === "number" ? note : getMidiNumFromAbcNote(abcNote);
+      if (options?.accidental && options.accidental !== Accidental.None)
+        this.lastAddedMidiNum = midiNum;
+      else if (midiNum !== undefined) {
+        const lastAcc = getLastAccidentalInMeasure(abcNote, currentMeasure);
+        if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
+        else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
+        else this.lastAddedMidiNum = midiNum;
       }
     }
 
@@ -308,10 +327,9 @@ export default class EditorState {
     tied?: boolean;
   }) {
     if (!this.selected) return;
-    const existingNote = this.measures
-      .at(this.selected?.measureIdx)
-      ?.notes.at(this.selected.noteIdx);
-    if (!existingNote) return;
+    const measure = this.measures.at(this.selected.measureIdx);
+    const existingNote = measure?.notes.at(this.selected.noteIdx);
+    if (!measure || !existingNote) return;
 
     let newAbc = "";
     if (existingNote.startTriplet) newAbc += "(3";
@@ -336,6 +354,18 @@ export default class EditorState {
     const startIdx = existingNote.startChar + startIdxOfNoteWithoutChord;
     const endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
     this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
+
+    // Set last added note
+    const [accidental, note, octave] = AbcNotation.tokenize(data.note);
+    if (accidental) this.lastAddedMidiNum = getMidiNumFromAbcNote(data.note);
+    else {
+      const midiNum = getMidiNumFromAbcNote(note + octave);
+      if (!midiNum) return;
+      const lastAcc = getLastAccidentalInMeasure(note + octave, measure);
+      if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
+      else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
+      else this.lastAddedMidiNum = midiNum;
+    }
   }
 
   moveNote(step: number) {
