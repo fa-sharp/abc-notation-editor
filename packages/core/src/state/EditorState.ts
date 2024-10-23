@@ -413,7 +413,8 @@ export default class EditorState {
     if (this.abc.at(-1) === "\n") return;
 
     const lastBarlineIndex = this.abc.lastIndexOf("|");
-    if (lastBarlineIndex) this.abc = this.abc.slice(0, lastBarlineIndex + 1);
+    if (lastBarlineIndex === -1) return;
+    this.abc = this.abc.slice(0, lastBarlineIndex + 1);
     this.abc = this.abc + "\n";
 
     if (this.chordTemplate) {

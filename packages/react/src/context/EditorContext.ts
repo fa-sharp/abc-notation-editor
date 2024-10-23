@@ -256,7 +256,6 @@ const useEditor = ({
       onSelectNextNote,
       onSelectPrevNote,
       onBackspace,
-      onNewLine,
     );
     return () => cleanUpKbdListener();
   }, [

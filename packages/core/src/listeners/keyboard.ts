@@ -5,7 +5,6 @@ const kbdKeyToCommandMap = new Map<
   string,
   | EditorCommandAction
   | "backspace"
-  | "newLine"
   | "noteUp"
   | "noteDown"
   | "nextNote"
@@ -32,7 +31,6 @@ const kbdKeyToCommandMap = new Map<
   ["ArrowRight", "nextNote"],
 
   ["Backspace", "backspace"],
-  ["Enter", "newLine"],
 ]);
 
 /** Setup keyboard shortcuts listener for the notation editor. Returns a cleanup function. */
@@ -42,7 +40,6 @@ export function setupKeyboardListener(
   onNextNote: () => void,
   onPrevNote: () => void,
   onBackspace: () => void,
-  onNewLine: () => void,
 ) {
   const listener = (e: KeyboardEvent) => {
     const command = kbdKeyToCommandMap.get(e.key);
@@ -59,7 +56,6 @@ export function setupKeyboardListener(
       e.preventDefault();
       onPrevNote();
     } else if (command === "backspace") onBackspace();
-    else if (command === "newLine") onNewLine();
     else if (command !== undefined) dispatchEditorCommand(command);
   };
 
