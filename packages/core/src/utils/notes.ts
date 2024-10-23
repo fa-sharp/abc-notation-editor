@@ -8,7 +8,9 @@ export function getAbcNoteFromMidiNum(
   accidental: Accidental = Accidental.None,
 ) {
   if (accidental === Accidental.Natural)
-    return "=" + Midi.midiToNoteName(midiNum);
+    return (
+      "=" + AbcNotation.scientificToAbcNotation(Midi.midiToNoteName(midiNum))
+    );
   return AbcNotation.scientificToAbcNotation(
     Midi.midiToNoteName(midiNum, {
       sharps: accidental === Accidental.Sharp,
