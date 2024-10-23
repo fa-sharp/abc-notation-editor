@@ -173,6 +173,7 @@ const useEditor = ({
     ending?.lastBarline,
     ending?.lastMeasure,
     onChange,
+    onNoteAdded,
   ]);
 
   // Reset editor commands if abc changed

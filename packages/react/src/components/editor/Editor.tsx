@@ -17,7 +17,6 @@ export type EditorProps = {
   initialAbc?: string;
   chordTemplate?: string;
   jazzChords?: boolean;
-  selectTypes?: boolean;
   format?: AbcVisualParams["format"];
   visualTranspose?: AbcVisualParams["visualTranspose"];
   ending?: {
@@ -45,7 +44,8 @@ export type EditorProps = {
   /** Whether to enable keyboard shortcuts for the editor. TODO docs @default false */
   enableKbdShortcuts?: boolean;
   /**
-   * Fires after each edit made to the score.
+   * Fires after each edit made to the score. Make sure to stabilize the event handler with `useCallback`
+   * to avoid a re-render loop.
    * @param abc The updated ABC score
    * @param tuneObject The tuneObject returned by the abcjs rendering library. This object has useful
    * parsed information about the score, and can also be used to setup playback with the abcjs library.
@@ -57,7 +57,11 @@ export type EditorProps = {
    * on all the class names that can be used to select lines/notes/etc.
    */
   onChange?: EditorChangeHandler;
-  /** Fired after a note is added to the score. Can be used for immediate playback of the added note or other effects. */
+  /**
+   * Fired after a note is added to the score. Can be used for immediate playback of the added note.
+   * Make sure to stabilize the event handler with `useCallback` to avoid a re-render loop.
+   * @param midiNum The MIDI number of the note just added to the score.
+   */
   onNoteAdded?: (midiNum: number) => void;
 };
 
