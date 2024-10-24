@@ -41,8 +41,14 @@ export function getMidiNumFromAbcNote(abcNote: string) {
   return Midi.toMidi(AbcNotation.abcToScientificNotation(abcNote)) ?? undefined;
 }
 
-export function getLastAccidentalInMeasure(abcNote: string, measure: Measure) {
+/** Get the last accidental for this note in the given measure  */
+export function getLastAccidentalInMeasure(
+  abcNote: string,
+  measure: Measure,
+  beforeCharIdx?: number,
+) {
   return measure.notes
+    .filter((note) => !beforeCharIdx || note.endChar <= beforeCharIdx)
     .flatMap((note) => note.pitches)
     .findLast((pitch) => {
       if (!pitch?.accidental) return false;

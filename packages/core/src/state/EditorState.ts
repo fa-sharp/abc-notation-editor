@@ -361,7 +361,11 @@ export default class EditorState {
     else {
       const midiNum = getMidiNumFromAbcNote(note + octave);
       if (!midiNum) return;
-      const lastAcc = getLastAccidentalInMeasure(note + octave, measure);
+      const lastAcc = getLastAccidentalInMeasure(
+        note + octave,
+        measure,
+        startIdx,
+      );
       if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
       else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
       else this.lastAddedMidiNum = midiNum;
