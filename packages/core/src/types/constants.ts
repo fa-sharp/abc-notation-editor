@@ -3,6 +3,8 @@ export enum Accidental {
   Sharp = "sharp",
   Flat = "flat",
   Natural = "natural",
+  DoubleSharp = "dblsharp",
+  DoubleFlat = "dblflat",
 }
 
 export enum Rhythm {

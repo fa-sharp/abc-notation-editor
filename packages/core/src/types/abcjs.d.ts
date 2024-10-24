@@ -16,7 +16,7 @@ export interface AbcjsNote extends VoiceItemNote {
 }
 
 interface Pitch {
-  accidental?: "flat" | "sharp";
+  accidental?: "flat" | "sharp" | "natural";
   pitch: number;
   name: string;
   highestVert?: number;
