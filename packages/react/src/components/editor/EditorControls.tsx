@@ -21,7 +21,7 @@ export default function EditorControls() {
   return (
     <div className={styles.controls}>
       <fieldset className={styles.controlGroup}>
-        <legend>Accidental</legend>
+        <legend>Note entry</legend>
         <button
           title="Flat"
           role="switch"
@@ -71,9 +71,7 @@ export default function EditorControls() {
         >
           <EditorControlIcon icon={Icon.Natural} size={iconSize} />
         </button>
-      </fieldset>
-      <fieldset className={styles.controlGroup}>
-        <legend>Rhythm</legend>
+        <div className={styles.spacer}></div>
         <button
           title="Whole note"
           role="switch"
@@ -218,51 +216,7 @@ export default function EditorControls() {
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
-        <legend>Score</legend>
-        <button
-          title="Backspace"
-          className={clsx(styles.iconButton)}
-          onClick={onBackspace}
-        >
-          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
-        </button>
-        {!abcjsOptions?.lineBreaks && !abcjsOptions?.wrap && (
-          <button
-            title="New line"
-            className={clsx(styles.iconButton)}
-            onClick={onNewLine}
-          >
-            <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
-          </button>
-        )}
-      </fieldset>
-      <fieldset className={styles.controlGroup}>
-        <legend>Input</legend>
-        <button
-          title="Toggle visual keyboard"
-          role="switch"
-          aria-checked={currentCommands.showKeyboard}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: currentCommands.showKeyboard,
-          })}
-          onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
-        >
-          <EditorControlIcon icon={Icon.Piano} size={iconSize} />
-        </button>
-        <button
-          title="Toggle MIDI input"
-          role="switch"
-          aria-checked={currentCommands.midiEnabled}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: currentCommands.midiEnabled,
-          })}
-          onClick={() => dispatchCommand({ type: "toggleMidi" })}
-        >
-          MIDI
-        </button>
-      </fieldset>
-      <fieldset className={styles.controlGroup}>
-        <legend>Edit note</legend>
+        <legend>Edit</legend>
         <button
           title="Flat"
           role="switch"
@@ -319,6 +273,48 @@ export default function EditorControls() {
           }
         >
           <EditorControlIcon icon={Icon.Natural} size={iconSize} />
+        </button>
+        <div className={styles.spacer}></div>
+        <button
+          title="Backspace"
+          className={clsx(styles.iconButton)}
+          onClick={onBackspace}
+        >
+          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
+        </button>
+        {!abcjsOptions?.lineBreaks && !abcjsOptions?.wrap && (
+          <button
+            title="New line"
+            className={clsx(styles.iconButton)}
+            onClick={onNewLine}
+          >
+            <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
+          </button>
+        )}
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Input</legend>
+        <button
+          title="Toggle visual keyboard"
+          role="switch"
+          aria-checked={currentCommands.showKeyboard}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.showKeyboard,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
+        >
+          <EditorControlIcon icon={Icon.Piano} size={iconSize} />
+        </button>
+        <button
+          title="Toggle MIDI input"
+          role="switch"
+          aria-checked={currentCommands.midiEnabled}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: currentCommands.midiEnabled,
+          })}
+          onClick={() => dispatchCommand({ type: "toggleMidi" })}
+        >
+          MIDI
         </button>
       </fieldset>
     </div>
