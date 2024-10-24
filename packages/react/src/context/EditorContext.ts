@@ -205,10 +205,15 @@ const useEditor = ({
     [onNoteAdded],
   );
 
-  const onChangeAccidental = useCallback((accidental: Accidental) => {
-    editorState.current.changeAccidental(accidental);
-    setAbc(editorState.current.abc);
-  }, []);
+  const onChangeAccidental = useCallback(
+    (accidental: Accidental) => {
+      editorState.current.changeAccidental(accidental);
+      editorState.current.lastAddedMidiNum !== undefined &&
+        onNoteAdded?.(editorState.current.lastAddedMidiNum);
+      setAbc(editorState.current.abc);
+    },
+    [onNoteAdded],
+  );
 
   const onSelectNextNote = useCallback(() => {
     editorState.current.selectNextNote();
