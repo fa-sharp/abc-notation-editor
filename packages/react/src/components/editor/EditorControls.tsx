@@ -12,6 +12,8 @@ export default function EditorControls() {
     dispatchCommand,
     onBackspace,
     onNewLine,
+    onChangeAccidental,
+    selectedNote,
   } = useEditorContext();
 
   const iconSize = 18;
@@ -216,7 +218,7 @@ export default function EditorControls() {
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
-        <legend>Edit</legend>
+        <legend>Score</legend>
         <button
           title="Backspace"
           className={clsx(styles.iconButton)}
@@ -257,6 +259,66 @@ export default function EditorControls() {
           onClick={() => dispatchCommand({ type: "toggleMidi" })}
         >
           MIDI
+        </button>
+      </fieldset>
+      <fieldset className={styles.controlGroup}>
+        <legend>Edit note</legend>
+        <button
+          title="Flat"
+          role="switch"
+          aria-checked={selectedNote?.data?.accidental === Accidental.Flat}
+          className={clsx(styles.iconButton, {
+            [styles.selected]:
+              selectedNote?.data?.accidental === Accidental.Flat,
+          })}
+          disabled={!selectedNote || selectedNote.data?.rest}
+          onClick={() =>
+            onChangeAccidental(
+              selectedNote?.data?.accidental === Accidental.Flat
+                ? Accidental.None
+                : Accidental.Flat,
+            )
+          }
+        >
+          <EditorControlIcon icon={Icon.Flat} size={iconSize} />
+        </button>
+        <button
+          title="Sharp"
+          role="switch"
+          aria-checked={selectedNote?.data?.accidental === Accidental.Sharp}
+          className={clsx(styles.iconButton, {
+            [styles.selected]:
+              selectedNote?.data?.accidental === Accidental.Sharp,
+          })}
+          disabled={!selectedNote || selectedNote.data?.rest}
+          onClick={() =>
+            onChangeAccidental(
+              selectedNote?.data?.accidental === Accidental.Sharp
+                ? Accidental.None
+                : Accidental.Sharp,
+            )
+          }
+        >
+          <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
+        </button>
+        <button
+          title="Natural"
+          role="switch"
+          aria-checked={selectedNote?.data?.accidental === Accidental.Natural}
+          className={clsx(styles.iconButton, {
+            [styles.selected]:
+              selectedNote?.data?.accidental === Accidental.Natural,
+          })}
+          disabled={!selectedNote || selectedNote.data?.rest}
+          onClick={() =>
+            onChangeAccidental(
+              selectedNote?.data?.accidental === Accidental.Natural
+                ? Accidental.None
+                : Accidental.Natural,
+            )
+          }
+        >
+          <EditorControlIcon icon={Icon.Natural} size={iconSize} />
         </button>
       </fieldset>
     </div>

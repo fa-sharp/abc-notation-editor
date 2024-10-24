@@ -44,10 +44,20 @@ const useEditor = ({
   onChange = () => {},
   onNoteAdded,
 }: EditorProviderProps) => {
+  const [selectedNote, setSelectedNote] =
+    useState<EditorState["selected"]>(null);
+
+  const onSelected = useCallback((selected: EditorState["selected"]) => {
+    if (selected?.data?.note && selected.data.rhythm) {
+      setSelectedNote(selected);
+    } else setSelectedNote(null);
+  }, []);
+
   const editorState = useRef<EditorState>(
     new EditorState(initialAbc, {
       chordTemplate,
       ending,
+      onSelected,
     }),
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
@@ -118,9 +128,8 @@ const useEditor = ({
         triplet: tripletRef.current,
         tied: tiedRef.current,
       });
-      onNoteAdded &&
-        editorState.current.lastAddedMidiNum !== undefined &&
-        onNoteAdded(editorState.current.lastAddedMidiNum);
+      editorState.current.lastAddedMidiNum !== undefined &&
+        onNoteAdded?.(editorState.current.lastAddedMidiNum);
       setAbc(editorState.current.abc);
     },
     [onNoteAdded],
@@ -145,9 +154,8 @@ const useEditor = ({
         clickListener: (abcElem, _, _classes, analysis, drag) => {
           editorState.current.selectNote(abcElem, analysis, drag);
           if (drag.step !== 0) {
-            onNoteAdded &&
-              editorState.current.lastAddedMidiNum !== undefined &&
-              onNoteAdded(editorState.current.lastAddedMidiNum);
+            editorState.current.lastAddedMidiNum !== undefined &&
+              onNoteAdded?.(editorState.current.lastAddedMidiNum);
             setAbc(editorState.current.abc);
           }
         },
@@ -190,13 +198,17 @@ const useEditor = ({
   const onMoveNote = useCallback(
     (step: number) => {
       editorState.current.moveNote(step);
-      onNoteAdded &&
-        editorState.current.lastAddedMidiNum !== undefined &&
-        onNoteAdded(editorState.current.lastAddedMidiNum);
+      editorState.current.lastAddedMidiNum !== undefined &&
+        onNoteAdded?.(editorState.current.lastAddedMidiNum);
       setAbc(editorState.current.abc);
     },
     [onNoteAdded],
   );
+
+  const onChangeAccidental = useCallback((accidental: Accidental) => {
+    editorState.current.changeAccidental(accidental);
+    setAbc(editorState.current.abc);
+  }, []);
 
   const onSelectNextNote = useCallback(() => {
     editorState.current.selectNextNote();
@@ -283,6 +295,8 @@ const useEditor = ({
     onAddNote,
     onBackspace,
     onNewLine,
+    onChangeAccidental,
+    selectedNote,
   };
 };
 

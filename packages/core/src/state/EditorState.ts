@@ -59,12 +59,17 @@ export default class EditorState {
       tied?: boolean;
     };
   } | null = null;
+  onSelected?: (selected: EditorState["selected"]) => void;
 
   lastAddedMidiNum?: number;
 
   constructor(
     initialAbc?: string,
-    options?: { chordTemplate?: string; ending?: EditorState["ending"] },
+    options?: {
+      chordTemplate?: string;
+      ending?: EditorState["ending"];
+      onSelected?: (selected: EditorState["selected"]) => void;
+    },
   ) {
     if (initialAbc) {
       this.abc = initialAbc;
@@ -103,6 +108,7 @@ export default class EditorState {
       }
     }
     this.ending = options?.ending;
+    this.onSelected = options?.onSelected;
   }
 
   updateTuneData(tuneObject: TuneObject) {
@@ -122,12 +128,16 @@ export default class EditorState {
       if (!existingNote) this.selected = null;
       else {
         const rhythmData = getRhythmFromAbcDuration(existingNote.duration);
-        this.selected.data = {
-          note: existingNote.pitches?.[0]?.name,
-          accidental: existingNote.pitches?.[0]?.accidental as Accidental,
-          tied: !!existingNote.pitches?.[0]?.startTie,
-          rhythm: rhythmData?.rhythm,
-          dotted: rhythmData?.dotted,
+        this.selected = {
+          measureIdx: this.selected.measureIdx,
+          noteIdx: this.selected.noteIdx,
+          data: {
+            note: existingNote.pitches?.[0]?.name,
+            accidental: existingNote.pitches?.[0]?.accidental as Accidental,
+            tied: !!existingNote.pitches?.[0]?.startTie,
+            rhythm: rhythmData?.rhythm,
+            dotted: rhythmData?.dotted,
+          },
         };
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.tuneObject?.engraver?.rangeHighlight(
@@ -135,6 +145,7 @@ export default class EditorState {
           existingNote.endChar,
         );
       }
+      this.onSelected?.(this.selected);
     }
     this.lastAddedMidiNum = undefined;
   }
@@ -263,6 +274,7 @@ export default class EditorState {
       },
     };
     if (drag && drag.step !== 0) this.moveNote(-drag.step);
+    else this.onSelected?.(this.selected);
   }
 
   selectNextNote() {
@@ -273,15 +285,18 @@ export default class EditorState {
       nextNote = this.measures.at(++measureIdx)?.notes.at((noteIdx = 0));
     if (nextNote) {
       const rhythmData = getRhythmFromAbcDuration(nextNote.duration);
-      this.selected.noteIdx = noteIdx;
-      this.selected.measureIdx = measureIdx;
-      this.selected.data = {
-        note: nextNote.pitches?.[0]?.name,
-        accidental: nextNote.pitches?.[0]?.accidental as Accidental,
-        tied: !!nextNote.pitches?.[0]?.startTie,
-        rhythm: rhythmData?.rhythm,
-        dotted: rhythmData?.dotted,
+      this.selected = {
+        noteIdx,
+        measureIdx,
+        data: {
+          note: nextNote.pitches?.[0]?.name,
+          accidental: nextNote.pitches?.[0]?.accidental as Accidental,
+          tied: !!nextNote.pitches?.[0]?.startTie,
+          rhythm: rhythmData?.rhythm,
+          dotted: rhythmData?.dotted,
+        },
       };
+      this.onSelected?.(this.selected);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       this.tuneObject?.engraver?.rangeHighlight(
         nextNote.startChar,
@@ -304,15 +319,18 @@ export default class EditorState {
     }
     if (prevNote) {
       const rhythmData = getRhythmFromAbcDuration(prevNote.duration);
-      this.selected.noteIdx = noteIdx;
-      this.selected.measureIdx = measureIdx;
-      this.selected.data = {
-        note: prevNote.pitches?.[0]?.name,
-        accidental: prevNote.pitches?.[0]?.accidental as Accidental,
-        tied: !!prevNote.pitches?.[0]?.startTie,
-        rhythm: rhythmData?.rhythm,
-        dotted: rhythmData?.dotted,
+      this.selected = {
+        noteIdx,
+        measureIdx,
+        data: {
+          note: prevNote.pitches?.[0]?.name,
+          accidental: prevNote.pitches?.[0]?.accidental as Accidental,
+          tied: !!prevNote.pitches?.[0]?.startTie,
+          rhythm: rhythmData?.rhythm,
+          dotted: rhythmData?.dotted,
+        },
       };
+      this.onSelected?.(this.selected);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       this.tuneObject?.engraver?.rangeHighlight(
         prevNote.startChar,
@@ -324,7 +342,6 @@ export default class EditorState {
   editNote(data: {
     note: string;
     rhythm: Rhythm;
-    accidental?: Accidental;
     beamed?: boolean;
     rest?: boolean;
     dotted?: boolean;
@@ -388,6 +405,20 @@ export default class EditorState {
     );
     const newNote = `${acc}${newLetter}${newOctave}`;
 
+    this.editNote({
+      note: newNote,
+      rhythm: this.selected.data.rhythm,
+      dotted: this.selected.data.dotted,
+      tied: this.selected.data.tied,
+    });
+  }
+
+  changeAccidental(accidental: Accidental) {
+    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+
+    const [, letter, octave] = AbcNotation.tokenize(this.selected.data.note);
+    const noteWithoutAcc = AbcNotation.abcToScientificNotation(letter + octave);
+    const newNote = getAbcNoteFromNoteName(noteWithoutAcc, accidental);
     this.editNote({
       note: newNote,
       rhythm: this.selected.data.rhythm,

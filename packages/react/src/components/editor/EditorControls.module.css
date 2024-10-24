@@ -1,6 +1,8 @@
 .controls {
   display: flex;
-  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 
   font-size: 0.8em;
 }
@@ -35,6 +37,7 @@
 .controls button:disabled {
   background-color: rgb(237 237 237);
   color: rgb(140 140 140);
+  cursor: unset;
 }
 
 .controls button.selected {

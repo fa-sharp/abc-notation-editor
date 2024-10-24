@@ -6,9 +6,7 @@ const onNoteAdded = (midiNum: number) => console.log({ noteAdded: midiNum });
 export default function BasicExample() {
   const [abc, setAbc] = useState("");
   return (
-    <div
-      style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
+    <div>
       <Editor
         initialAbc={`X:1\nQ:120\nK:C clef=bass\n%%stretchlast false\n`}
         scale={1.1}
@@ -21,7 +19,7 @@ export default function BasicExample() {
         onNoteAdded={onNoteAdded}
       />
       <br />
-      Generated ABC:
+      <div>Generated ABC:</div>
       <textarea readOnly rows={10} cols={50} value={abc} />
     </div>
   );

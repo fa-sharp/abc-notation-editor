@@ -7,7 +7,7 @@ export default function Score() {
   return (
     <div
       style={{
-        padding: 20,
+        padding: 10,
         overflow: "auto",
         width: "100%",
       }}
