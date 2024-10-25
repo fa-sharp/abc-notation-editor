@@ -13,6 +13,7 @@ export default function EditorControls() {
     onBackspace,
     onNewLine,
     onChangeAccidental,
+    onToggleBeaming,
     selectedNote,
   } = useEditorContext();
 
@@ -273,6 +274,22 @@ export default function EditorControls() {
           }
         >
           <EditorControlIcon icon={Icon.Natural} size={iconSize} />
+        </button>
+        <button
+          title="Toggle beamed note"
+          role="switch"
+          aria-checked={selectedNote?.data?.beamed}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.beamed,
+          })}
+          onClick={() => onToggleBeaming()}
+          disabled={
+            !selectedNote?.data?.rhythm ||
+            ![8, 16].includes(selectedNote.data.rhythm) ||
+            selectedNote.data.beamed === undefined
+          }
+        >
+          <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
         </button>
         <div className={styles.spacer}></div>
         <button

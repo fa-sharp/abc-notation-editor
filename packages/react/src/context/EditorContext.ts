@@ -215,6 +215,11 @@ const useEditor = ({
     [onNoteAdded],
   );
 
+  const onToggleBeaming = useCallback(() => {
+    editorState.current.toggleBeaming();
+    setAbc(editorState.current.abc);
+  }, []);
+
   const onSelectNextNote = useCallback(() => {
     editorState.current.selectNextNote();
   }, []);
@@ -301,6 +306,7 @@ const useEditor = ({
     onBackspace,
     onNewLine,
     onChangeAccidental,
+    onToggleBeaming,
     selectedNote,
   };
 };

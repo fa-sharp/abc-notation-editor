@@ -1,15 +1,11 @@
 import type { AbcElem, VoiceItemNote } from "abcjs";
 
-export interface AbcjsNote extends VoiceItemNote {
+export interface AbcjsNote extends VoiceItemNote, AbcElem {
   // Properties from abcjs
-  abselem: AbcElem["abselem"];
-  duration: number;
+  abselem: AbcElem["abselem"] & { beam?: object };
   decoration?: Array<"accent" | "staccato">;
-  pitches?: Array<Pitch>;
+  pitches?: Array<NonNullable<AbcElem["pitches"]>[number] & Pitch>;
   rest?: { type: "rest" | "spacer" };
-  startTriplet?: number;
-  endTriplet?: boolean;
-  chord?: Array<{ name: string }>;
 
   // Custom added properties
   isTriplet?: boolean;
@@ -17,9 +13,4 @@ export interface AbcjsNote extends VoiceItemNote {
 
 interface Pitch {
   accidental?: "flat" | "sharp" | "natural";
-  pitch: number;
-  name: string;
-  highestVert?: number;
-  verticalPos: number;
-  startTie?: object;
 }

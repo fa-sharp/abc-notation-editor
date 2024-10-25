@@ -28,6 +28,7 @@ import {
   parseChordTemplate,
 } from "~src/parsing/chordTemplate";
 import { equalUpToN } from "~src/utils/numbers";
+import { getBeamingOfAbcjsNote } from "~src/utils/beaming";
 
 export default class EditorState {
   abc: string;
@@ -137,6 +138,7 @@ export default class EditorState {
             tied: !!existingNote.pitches?.[0]?.startTie,
             rhythm: rhythmData?.rhythm,
             dotted: rhythmData?.dotted,
+            beamed: getBeamingOfAbcjsNote(existingNote),
           },
         };
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -271,6 +273,7 @@ export default class EditorState {
         tied: !!note.pitches?.[0]?.startTie,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
+        beamed: getBeamingOfAbcjsNote(note),
       },
     };
     if (drag && drag.step !== 0) this.moveNote(-drag.step);
@@ -294,6 +297,7 @@ export default class EditorState {
           tied: !!nextNote.pitches?.[0]?.startTie,
           rhythm: rhythmData?.rhythm,
           dotted: rhythmData?.dotted,
+          beamed: getBeamingOfAbcjsNote(nextNote),
         },
       };
       this.onSelected?.(this.selected);
@@ -328,6 +332,7 @@ export default class EditorState {
           tied: !!prevNote.pitches?.[0]?.startTie,
           rhythm: rhythmData?.rhythm,
           dotted: rhythmData?.dotted,
+          beamed: getBeamingOfAbcjsNote(prevNote),
         },
       };
       this.onSelected?.(this.selected);
@@ -373,7 +378,10 @@ export default class EditorState {
       /\s+$/.exec(existingNoteAbc)?.index || existingNoteAbc.length;
 
     const startIdx = existingNote.startChar + startIdxOfNoteWithoutChord;
-    const endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
+    let endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
+    if (data.beamed && this.abc[endIdx] === " " && this.abc[endIdx + 1] !== '"')
+      endIdx += 1;
+    else if (data.beamed === false && this.abc[endIdx] !== " ") newAbc += " ";
     this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
 
     // Set last added note
@@ -424,6 +432,23 @@ export default class EditorState {
       rhythm: this.selected.data.rhythm,
       dotted: this.selected.data.dotted,
       tied: this.selected.data.tied,
+    });
+  }
+
+  toggleBeaming() {
+    if (
+      !this.selected?.data?.note ||
+      !this.selected.data.rhythm ||
+      this.selected.data.beamed === undefined
+    )
+      return;
+
+    this.editNote({
+      note: this.selected.data.note,
+      rhythm: this.selected.data.rhythm,
+      dotted: this.selected.data.dotted,
+      tied: this.selected.data.tied,
+      beamed: !this.selected.data.beamed,
     });
   }
 
