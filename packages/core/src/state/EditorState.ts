@@ -140,6 +140,7 @@ export default class EditorState {
             rhythm: rhythmData?.rhythm,
             dotted: rhythmData?.dotted,
             beamed: getBeamingOfAbcjsNote(existingNote),
+            rest: !!existingNote.rest,
           },
         };
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -250,6 +251,7 @@ export default class EditorState {
         tied: options?.tied,
         dotted: options?.dotted,
         beamed: options?.beamed,
+        rest: options?.rest,
       },
     };
   }
@@ -280,6 +282,7 @@ export default class EditorState {
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
         beamed: getBeamingOfAbcjsNote(note),
+        rest: !!note.rest,
       },
     };
     if (drag && drag.step !== 0) this.moveNote(-drag.step);
@@ -314,6 +317,7 @@ export default class EditorState {
           rhythm: rhythmData?.rhythm,
           dotted: rhythmData?.dotted,
           beamed: getBeamingOfAbcjsNote(nextNote),
+          rest: !!nextNote.rest,
         },
       };
       this.onSelected?.(this.selected);
@@ -357,6 +361,7 @@ export default class EditorState {
           rhythm: rhythmData?.rhythm,
           dotted: rhythmData?.dotted,
           beamed: getBeamingOfAbcjsNote(prevNote),
+          rest: !!prevNote.rest,
         },
       };
       this.onSelected?.(this.selected);
@@ -473,6 +478,17 @@ export default class EditorState {
       dotted: this.selected.data.dotted,
       tied: this.selected.data.tied,
       beamed: !this.selected.data.beamed,
+    });
+  }
+
+  toggleTie() {
+    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+
+    this.editNote({
+      note: this.selected.data.note,
+      rhythm: this.selected.data.rhythm,
+      dotted: this.selected.data.dotted,
+      tied: !this.selected.data.tied,
     });
   }
 

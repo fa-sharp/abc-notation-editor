@@ -203,6 +203,11 @@ const useEditor = ({
     setAbc(editorState.current.abc);
   }, []);
 
+  const onToggleTie = useCallback(() => {
+    editorState.current.toggleTie();
+    setAbc(editorState.current.abc);
+  }, []);
+
   const onSelectNextNote = useCallback(() => {
     editorState.current.selectNextNote();
   }, []);
@@ -290,6 +295,7 @@ const useEditor = ({
     onNewLine,
     onChangeAccidental,
     onToggleBeaming,
+    onToggleTie,
     selectedNote,
   };
 };

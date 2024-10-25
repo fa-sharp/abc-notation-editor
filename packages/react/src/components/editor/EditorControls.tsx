@@ -14,6 +14,7 @@ export default function EditorControls() {
     onNewLine,
     onChangeAccidental,
     onToggleBeaming,
+    onToggleTie,
     selectedNote,
   } = useEditorContext();
 
@@ -219,7 +220,7 @@ export default function EditorControls() {
       <fieldset className={styles.controlGroup}>
         <legend>Edit</legend>
         <button
-          title="Flat"
+          title="Toggle flat"
           role="switch"
           aria-checked={selectedNote?.data?.accidental === Accidental.Flat}
           className={clsx(styles.iconButton, {
@@ -238,7 +239,7 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Flat} size={iconSize} />
         </button>
         <button
-          title="Sharp"
+          title="Toggle sharp"
           role="switch"
           aria-checked={selectedNote?.data?.accidental === Accidental.Sharp}
           className={clsx(styles.iconButton, {
@@ -257,7 +258,7 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
         </button>
         <button
-          title="Natural"
+          title="Toggle natural"
           role="switch"
           aria-checked={selectedNote?.data?.accidental === Accidental.Natural}
           className={clsx(styles.iconButton, {
@@ -282,14 +283,27 @@ export default function EditorControls() {
           className={clsx(styles.iconButton, {
             [styles.selected]: selectedNote?.data?.beamed,
           })}
-          onClick={() => onToggleBeaming()}
+          onClick={onToggleBeaming}
           disabled={
             !selectedNote?.data?.rhythm ||
+            selectedNote.data.rest ||
             ![8, 16].includes(selectedNote.data.rhythm) ||
             selectedNote.data.beamed === undefined
           }
         >
           <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
+        </button>
+        <button
+          title="Toggle tied note"
+          role="switch"
+          aria-checked={selectedNote?.data?.tied}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.tied,
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={onToggleTie}
+        >
+          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
         </button>
         <div className={styles.spacer}></div>
         <button
