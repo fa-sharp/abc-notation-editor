@@ -176,12 +176,13 @@ export default class EditorState {
         : getAbcNoteFromNoteName(note, options?.accidental);
 
     const currentMeasure = this.measures.at(-1);
+    if (!currentMeasure) return;
 
     let abcToAdd = "";
     if (!options?.beamed) abcToAdd += " ";
 
     // Determine if this is the start of a triplet
-    if (options?.triplet && currentMeasure) {
+    if (options?.triplet) {
       const startTripletIdx = currentMeasure.notes.findLastIndex(
         (n) => !!n.startTriplet,
       );
@@ -200,52 +201,62 @@ export default class EditorState {
     )}`;
     if (options?.tied) abcToAdd += "-";
 
-    if (currentMeasure) {
-      // Add barline if we're at the end of the measure
-      const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
-      const durationWithAddedNote =
-        currentMeasure.duration +
-        (1 / rhythm) *
-          (options?.dotted ? 3 / 2 : 1) *
-          (options?.triplet ? 2 / 3 : 1);
+    // Add barline if we're at the end of the measure
+    const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
+    const durationWithAddedNote =
+      currentMeasure.duration +
+      (1 / rhythm) *
+        (options?.dotted ? 3 / 2 : 1) *
+        (options?.triplet ? 2 / 3 : 1);
 
-      if (durationWithAddedNote >= measureTotalDuration - 0.001) {
-        if (
-          this.ending?.lastMeasure &&
-          this.measures.length === this.ending.lastMeasure
-        )
-          abcToAdd += this.ending.lastBarline === "thin-thick" ? " |]" : " ||";
-        else {
-          abcToAdd += " |";
-          const chordToAdd = this.chordTemplate
-            ?.at(this.measures.length)
-            ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
-          if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
-        }
-      } else {
+    if (durationWithAddedNote >= measureTotalDuration - 0.001) {
+      if (
+        this.ending?.lastMeasure &&
+        this.measures.length === this.ending.lastMeasure
+      )
+        abcToAdd += this.ending.lastBarline === "thin-thick" ? " |]" : " ||";
+      else {
+        abcToAdd += " |";
         const chordToAdd = this.chordTemplate
-          ?.at(this.measures.length - 1)
-          ?.find((chord) =>
-            equalUpToN(chord.fractionalBeat, durationWithAddedNote),
-          );
+          ?.at(this.measures.length)
+          ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
         if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
       }
-
-      // Set last added note
-      const midiNum =
-        typeof note === "number" ? note : getMidiNumFromAbcNote(abcNote);
-      if (options?.accidental && options.accidental !== Accidental.None)
-        this.lastAddedMidiNum = midiNum;
-      else if (midiNum !== undefined) {
-        const lastAcc = getLastAccidentalInMeasure(abcNote, currentMeasure);
-        if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
-        else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
-        else this.lastAddedMidiNum = midiNum;
-      }
+    } else {
+      const chordToAdd = this.chordTemplate
+        ?.at(this.measures.length - 1)
+        ?.find((chord) =>
+          equalUpToN(chord.fractionalBeat, durationWithAddedNote),
+        );
+      if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
     }
 
-    // Add the note to the ABC score
+    // Set last added note
+    const midiNum =
+      typeof note === "number" ? note : getMidiNumFromAbcNote(abcNote);
+    if (options?.accidental && options.accidental !== Accidental.None)
+      this.lastAddedMidiNum = midiNum;
+    else if (midiNum !== undefined) {
+      const lastAcc = getLastAccidentalInMeasure(abcNote, currentMeasure);
+      if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
+      else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
+      else this.lastAddedMidiNum = midiNum;
+    }
+
+    // Add the note to the ABC score, and select the note
     this.abc += abcToAdd;
+    this.selected = {
+      measureIdx: this.measures.length - 1,
+      noteIdx: currentMeasure.notes.length,
+      data: {
+        note: abcNote,
+        rhythm,
+        accidental: options?.accidental,
+        tied: options?.tied,
+        dotted: options?.dotted,
+        beamed: options?.beamed,
+      },
+    };
   }
 
   selectNote(
