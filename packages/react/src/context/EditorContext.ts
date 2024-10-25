@@ -32,7 +32,7 @@ interface EditorProviderProps {
     tuneObject: TuneObject,
     renderDiv?: HTMLDivElement,
   ) => void;
-  onNoteAdded?: (midiNum: number) => void;
+  onNote?: (midiNum: number) => void;
 }
 
 const useEditor = ({
@@ -42,7 +42,7 @@ const useEditor = ({
   chordTemplate,
   ending,
   onChange = () => {},
-  onNoteAdded,
+  onNote,
 }: EditorProviderProps) => {
   const [selectedNote, setSelectedNote] =
     useState<EditorState["selected"]>(null);
@@ -58,6 +58,7 @@ const useEditor = ({
       chordTemplate,
       ending,
       onSelected,
+      onNote,
     }),
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
@@ -118,22 +119,17 @@ const useEditor = ({
     tripletRef.current = editorCommands.triplet;
   }, [editorCommands.triplet]);
 
-  const onAddNote = useCallback(
-    (noteName: string | number) => {
-      editorState.current.addNote(noteName, rhythmRef.current, {
-        beamed: beamedRef.current,
-        dotted: dottedRef.current,
-        rest: restRef.current,
-        accidental: accidentalRef.current,
-        triplet: tripletRef.current,
-        tied: tiedRef.current,
-      });
-      editorState.current.lastAddedMidiNum !== undefined &&
-        onNoteAdded?.(editorState.current.lastAddedMidiNum);
-      setAbc(editorState.current.abc);
-    },
-    [onNoteAdded],
-  );
+  const onAddNote = useCallback((noteName: string | number) => {
+    editorState.current.addNote(noteName, rhythmRef.current, {
+      beamed: beamedRef.current,
+      dotted: dottedRef.current,
+      rest: restRef.current,
+      accidental: accidentalRef.current,
+      triplet: tripletRef.current,
+      tied: tiedRef.current,
+    });
+    setAbc(editorState.current.abc);
+  }, []);
 
   // Render the ABC notation, update editor state
   useEffect(() => {
@@ -154,8 +150,6 @@ const useEditor = ({
         clickListener: (abcElem, _, _classes, analysis, drag) => {
           editorState.current.selectNote(abcElem, analysis, drag);
           if (drag.step !== 0) {
-            editorState.current.lastAddedMidiNum !== undefined &&
-              onNoteAdded?.(editorState.current.lastAddedMidiNum);
             setAbc(editorState.current.abc);
           }
         },
@@ -181,7 +175,6 @@ const useEditor = ({
     ending?.lastBarline,
     ending?.lastMeasure,
     onChange,
-    onNoteAdded,
   ]);
 
   // Reset editor commands if abc changed
@@ -195,25 +188,15 @@ const useEditor = ({
     if (tiedRef.current === true) dispatchEditorCommand({ type: "toggleTied" });
   }, [abc]);
 
-  const onMoveNote = useCallback(
-    (step: number) => {
-      editorState.current.moveNote(step);
-      editorState.current.lastAddedMidiNum !== undefined &&
-        onNoteAdded?.(editorState.current.lastAddedMidiNum);
-      setAbc(editorState.current.abc);
-    },
-    [onNoteAdded],
-  );
+  const onMoveNote = useCallback((step: number) => {
+    editorState.current.moveNote(step);
+    setAbc(editorState.current.abc);
+  }, []);
 
-  const onChangeAccidental = useCallback(
-    (accidental: Accidental) => {
-      editorState.current.changeAccidental(accidental);
-      editorState.current.lastAddedMidiNum !== undefined &&
-        onNoteAdded?.(editorState.current.lastAddedMidiNum);
-      setAbc(editorState.current.abc);
-    },
-    [onNoteAdded],
-  );
+  const onChangeAccidental = useCallback((accidental: Accidental) => {
+    editorState.current.changeAccidental(accidental);
+    setAbc(editorState.current.abc);
+  }, []);
 
   const onToggleBeaming = useCallback(() => {
     editorState.current.toggleBeaming();

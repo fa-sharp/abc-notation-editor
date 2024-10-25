@@ -56,3 +56,43 @@ export function getLastAccidentalInMeasure(
       return abcNote === note + octave;
     })?.accidental;
 }
+
+export function getMidiNumForAddedNote(
+  midiNumOrNoteName: number | string,
+  abcNote: string,
+  measure: Measure,
+  accidental?: Accidental,
+) {
+  const midiNum =
+    typeof midiNumOrNoteName === "number"
+      ? midiNumOrNoteName
+      : getMidiNumFromAbcNote(abcNote);
+  if (accidental && accidental !== Accidental.None) return midiNum;
+  else if (midiNum !== undefined) {
+    const lastAcc = getLastAccidentalInMeasure(abcNote, measure);
+    if (lastAcc === "sharp") return midiNum + 1;
+    if (lastAcc === "flat") return midiNum - 1;
+    return midiNum;
+  }
+}
+
+export function getMidiNumForEditedNote(
+  abcNote: string,
+  measure: Measure,
+  startIdx: number,
+) {
+  const [accidental, note, octave] = AbcNotation.tokenize(abcNote);
+  if (accidental) return getMidiNumFromAbcNote(abcNote);
+  else {
+    const midiNum = getMidiNumFromAbcNote(note + octave);
+    if (!midiNum) return;
+    const lastAcc = getLastAccidentalInMeasure(
+      note + octave,
+      measure,
+      startIdx,
+    );
+    if (lastAcc === "sharp") return midiNum + 1;
+    if (lastAcc === "flat") return midiNum - 1;
+    return midiNum;
+  }
+}

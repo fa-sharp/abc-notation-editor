@@ -13,8 +13,8 @@ import { getAbcRhythm, getRhythmFromAbcDuration } from "../utils/rhythm";
 import {
   getAbcNoteFromMidiNum,
   getAbcNoteFromNoteName,
-  getLastAccidentalInMeasure,
-  getMidiNumFromAbcNote,
+  getMidiNumForAddedNote,
+  getMidiNumForEditedNote,
 } from "../utils/notes";
 import {
   type KeySignatureType,
@@ -61,8 +61,7 @@ export default class EditorState {
     };
   } | null = null;
   onSelected?: (selected: EditorState["selected"]) => void;
-
-  lastAddedMidiNum?: number;
+  onNote?: (midiNum: number) => void;
 
   constructor(
     initialAbc?: string,
@@ -70,6 +69,7 @@ export default class EditorState {
       chordTemplate?: string;
       ending?: EditorState["ending"];
       onSelected?: (selected: EditorState["selected"]) => void;
+      onNote?: (midiNum: number) => void;
     },
   ) {
     if (initialAbc) {
@@ -110,6 +110,7 @@ export default class EditorState {
     }
     this.ending = options?.ending;
     this.onSelected = options?.onSelected;
+    this.onNote = options?.onNote;
   }
 
   updateTuneData(tuneObject: TuneObject) {
@@ -149,11 +150,10 @@ export default class EditorState {
       }
       this.onSelected?.(this.selected);
     }
-    this.lastAddedMidiNum = undefined;
   }
 
   addNote(
-    note: number | string,
+    midiNumOrNoteName: number | string,
     rhythm: Rhythm,
     options?: {
       accidental?: Accidental;
@@ -171,9 +171,9 @@ export default class EditorState {
       return;
 
     const abcNote =
-      typeof note === "number"
-        ? getAbcNoteFromMidiNum(note, options?.accidental)
-        : getAbcNoteFromNoteName(note, options?.accidental);
+      typeof midiNumOrNoteName === "number"
+        ? getAbcNoteFromMidiNum(midiNumOrNoteName, options?.accidental)
+        : getAbcNoteFromNoteName(midiNumOrNoteName, options?.accidental);
 
     const currentMeasure = this.measures.at(-1);
     if (!currentMeasure) return;
@@ -231,17 +231,12 @@ export default class EditorState {
       if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
     }
 
-    // Set last added note
-    const midiNum =
-      typeof note === "number" ? note : getMidiNumFromAbcNote(abcNote);
-    if (options?.accidental && options.accidental !== Accidental.None)
-      this.lastAddedMidiNum = midiNum;
-    else if (midiNum !== undefined) {
-      const lastAcc = getLastAccidentalInMeasure(abcNote, currentMeasure);
-      if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
-      else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
-      else this.lastAddedMidiNum = midiNum;
-    }
+    const midiNum = getMidiNumForAddedNote(
+      midiNumOrNoteName,
+      abcNote,
+      currentMeasure,
+    );
+    if (midiNum && !options?.rest) this.onNote?.(midiNum);
 
     // Add the note to the ABC score, and select the note
     this.abc += abcToAdd;
@@ -288,7 +283,17 @@ export default class EditorState {
       },
     };
     if (drag && drag.step !== 0) this.moveNote(-drag.step);
-    else this.onSelected?.(this.selected);
+    else {
+      this.onSelected?.(this.selected);
+      if (this.selected.data?.note && measure) {
+        const midiNum = getMidiNumForEditedNote(
+          this.selected.data.note,
+          measure,
+          note.startChar,
+        );
+        if (midiNum) this.onNote?.(midiNum);
+      }
+    }
   }
 
   selectNextNote() {
@@ -312,6 +317,14 @@ export default class EditorState {
         },
       };
       this.onSelected?.(this.selected);
+      if (this.selected.data?.note && this.measures[measureIdx]) {
+        const midiNum = getMidiNumForEditedNote(
+          this.selected.data.note,
+          this.measures[measureIdx]!,
+          nextNote.startChar,
+        );
+        if (midiNum) this.onNote?.(midiNum);
+      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       this.tuneObject?.engraver?.rangeHighlight(
         nextNote.startChar,
@@ -347,6 +360,14 @@ export default class EditorState {
         },
       };
       this.onSelected?.(this.selected);
+      if (this.selected.data?.note && this.measures[measureIdx]) {
+        const midiNum = getMidiNumForEditedNote(
+          this.selected.data.note,
+          this.measures[measureIdx]!,
+          prevNote.startChar,
+        );
+        if (midiNum) this.onNote?.(midiNum);
+      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       this.tuneObject?.engraver?.rangeHighlight(
         prevNote.startChar,
@@ -390,26 +411,18 @@ export default class EditorState {
 
     const startIdx = existingNote.startChar + startIdxOfNoteWithoutChord;
     let endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
-    if (data.beamed && this.abc[endIdx] === " " && this.abc[endIdx + 1] !== '"')
+    if (
+      data.beamed &&
+      this.abc[endIdx] === " " &&
+      this.abc[endIdx + 1] !== '"' &&
+      this.abc[endIdx + 1] !== "|"
+    )
       endIdx += 1;
     else if (data.beamed === false && this.abc[endIdx] !== " ") newAbc += " ";
     this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
 
-    // Set last added note
-    const [accidental, note, octave] = AbcNotation.tokenize(data.note);
-    if (accidental) this.lastAddedMidiNum = getMidiNumFromAbcNote(data.note);
-    else {
-      const midiNum = getMidiNumFromAbcNote(note + octave);
-      if (!midiNum) return;
-      const lastAcc = getLastAccidentalInMeasure(
-        note + octave,
-        measure,
-        startIdx,
-      );
-      if (lastAcc === "sharp") this.lastAddedMidiNum = midiNum + 1;
-      else if (lastAcc === "flat") this.lastAddedMidiNum = midiNum - 1;
-      else this.lastAddedMidiNum = midiNum;
-    }
+    const midiNum = getMidiNumForEditedNote(data.note, measure, startIdx);
+    if (midiNum) this.onNote?.(midiNum);
   }
 
   moveNote(step: number) {
