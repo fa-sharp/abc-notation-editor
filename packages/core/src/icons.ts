@@ -23,32 +23,34 @@ import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
 import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 
 import ChevronLeft from "~dist-icons/ChevronLeft.svg?raw";
-import ChevronRight from "dist-icons/ChevronRight.svg?raw";
+import ChevronRight from "~dist-icons/ChevronRight.svg?raw";
 
-enum Icon {
-  Backspace,
-  Beaming,
-  ChevronLeft,
-  ChevronRight,
-  Dot,
-  EighthNote,
-  EighthRest,
-  Flat,
-  HalfNote,
-  HalfRest,
-  Natural,
-  NewLine,
-  Piano,
-  QuarterNote,
-  QuarterRest,
-  Sharp,
-  SixteenthNote,
-  SixteenthRest,
-  Tie,
-  Triplet,
-  WholeNote,
-  WholeRest,
-}
+const Icon = Object.freeze({
+  Backspace: "backspace",
+  Beaming: "beaming",
+  ChevronLeft: "chevronLeft",
+  ChevronRight: "chevronRight",
+  Dot: "dot",
+  EighthNote: "eighthNote",
+  EighthRest: "eighthRest",
+  Flat: "flat",
+  HalfNote: "halfNote",
+  HalfRest: "halfRest",
+  Natural: "natural",
+  NewLine: "newLine",
+  Piano: "piano",
+  QuarterNote: "quarterNote",
+  QuarterRest: "quarterRest",
+  Sharp: "sharp",
+  SixteenthNote: "sixteenthNote",
+  SixteenthRest: "sixteenthRest",
+  Tie: "tie",
+  Triplet: "triplet",
+  WholeNote: "wholeNote",
+  WholeRest: "wholeRest",
+});
+
+type Icon = (typeof Icon)[keyof typeof Icon];
 
 /** Get the raw SVG of the given icon */
 function getIcon(icon: Icon): string {
