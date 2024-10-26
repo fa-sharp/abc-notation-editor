@@ -1,6 +1,7 @@
 import { AbcNotation, Midi, Note } from "tonal";
 import { Accidental } from "../types/constants";
 import type { Measure } from "~src/parsing/measures";
+import type { KeySignatureType } from "~src/parsing/headers";
 
 /** Get the note in ABC notation from the given MIDI pitch (0-127) */
 export function getAbcNoteFromMidiNum(
@@ -58,41 +59,72 @@ export function getLastAccidentalInMeasure(
 }
 
 export function getMidiNumForAddedNote(
-  midiNumOrNoteName: number | string,
   abcNote: string,
   measure: Measure,
   accidental?: Accidental,
+  keySig?: KeySignatureType,
 ) {
-  const midiNum =
-    typeof midiNumOrNoteName === "number"
-      ? midiNumOrNoteName
-      : getMidiNumFromAbcNote(abcNote);
+  const midiNum = getMidiNumFromAbcNote(abcNote);
+  if (midiNum === undefined) return null;
   if (accidental && accidental !== Accidental.None) return midiNum;
-  else if (midiNum !== undefined) {
-    const lastAcc = getLastAccidentalInMeasure(abcNote, measure);
-    if (lastAcc === "sharp") return midiNum + 1;
-    if (lastAcc === "flat") return midiNum - 1;
-    return midiNum;
+
+  const lastAcc = getLastAccidentalInMeasure(abcNote, measure);
+  if (lastAcc === "sharp") return midiNum + 1;
+  if (lastAcc === "flat") return midiNum - 1;
+  if (lastAcc === "natural") return midiNum;
+
+  // const isInKey = Pcset.isNoteIncludedIn([...keySig.scale]);
+  const noteData = Note.get(AbcNotation.abcToScientificNotation(abcNote));
+  if (keySig?.type === "major") {
+    const noteInScale = keySig.scale.find(
+      (note) => noteData.letter === Note.get(note).letter,
+    );
+    if (noteInScale && noteData.oct)
+      return Midi.toMidi(noteInScale + noteData.oct);
   }
+  if (keySig?.type === "minor") {
+    const noteInScale = keySig.natural.scale.find(
+      (note) => noteData.letter === Note.get(note).letter,
+    );
+    if (noteInScale && noteData.oct)
+      return Midi.toMidi(noteInScale + noteData.oct);
+  }
+
+  return midiNum;
 }
 
 export function getMidiNumForEditedNote(
   abcNote: string,
   measure: Measure,
   startIdx: number,
+  keySig?: KeySignatureType,
 ) {
   const [accidental, note, octave] = AbcNotation.tokenize(abcNote);
-  if (accidental) return getMidiNumFromAbcNote(abcNote);
-  else {
-    const midiNum = getMidiNumFromAbcNote(note + octave);
-    if (!midiNum) return;
-    const lastAcc = getLastAccidentalInMeasure(
-      note + octave,
-      measure,
-      startIdx,
+  if (accidental) return getMidiNumFromAbcNote(abcNote) ?? null;
+
+  const midiNum = getMidiNumFromAbcNote(note + octave);
+  if (midiNum === undefined) return null;
+
+  const lastAcc = getLastAccidentalInMeasure(note + octave, measure, startIdx);
+  if (lastAcc === "sharp") return midiNum + 1;
+  if (lastAcc === "flat") return midiNum - 1;
+  if (lastAcc === "natural") return midiNum;
+
+  const noteData = Note.get(AbcNotation.abcToScientificNotation(abcNote));
+  if (keySig?.type === "major") {
+    const noteInScale = keySig.scale.find(
+      (note) => noteData.letter === Note.get(note).letter,
     );
-    if (lastAcc === "sharp") return midiNum + 1;
-    if (lastAcc === "flat") return midiNum - 1;
-    return midiNum;
+    if (noteInScale && noteData.oct)
+      return Midi.toMidi(noteInScale + noteData.oct);
   }
+  if (keySig?.type === "minor") {
+    const noteInScale = keySig.natural.scale.find(
+      (note) => noteData.letter === Note.get(note).letter,
+    );
+    if (noteInScale && noteData.oct)
+      return Midi.toMidi(noteInScale + noteData.oct);
+  }
+
+  return midiNum;
 }

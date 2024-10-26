@@ -233,9 +233,10 @@ export default class EditorState {
     }
 
     const midiNum = getMidiNumForAddedNote(
-      midiNumOrNoteName,
       abcNote,
       currentMeasure,
+      options?.accidental,
+      this.keySig,
     );
     if (midiNum && !options?.rest) this.onNote?.(midiNum);
 
@@ -293,6 +294,7 @@ export default class EditorState {
           this.selected.data.note,
           measure,
           note.startChar,
+          this.keySig,
         );
         if (midiNum) this.onNote?.(midiNum);
       }
@@ -326,6 +328,7 @@ export default class EditorState {
           this.selected.data.note,
           this.measures[measureIdx]!,
           nextNote.startChar,
+          this.keySig,
         );
         if (midiNum) this.onNote?.(midiNum);
       }
@@ -370,6 +373,7 @@ export default class EditorState {
           this.selected.data.note,
           this.measures[measureIdx]!,
           prevNote.startChar,
+          this.keySig,
         );
         if (midiNum) this.onNote?.(midiNum);
       }
@@ -426,7 +430,12 @@ export default class EditorState {
     else if (data.beamed === false && this.abc[endIdx] !== " ") newAbc += " ";
     this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
 
-    const midiNum = getMidiNumForEditedNote(data.note, measure, startIdx);
+    const midiNum = getMidiNumForEditedNote(
+      data.note,
+      measure,
+      startIdx,
+      this.keySig,
+    );
     if (midiNum) this.onNote?.(midiNum);
   }
 
