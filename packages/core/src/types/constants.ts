@@ -7,6 +7,14 @@ export enum Accidental {
   DoubleFlat = "dblflat",
 }
 
+export const AccidentalToAlt = {
+  [Accidental.DoubleFlat]: -2,
+  [Accidental.Flat]: -1,
+  [Accidental.Natural]: 0,
+  [Accidental.Sharp]: 1,
+  [Accidental.DoubleSharp]: 2,
+};
+
 export enum Rhythm {
   Whole = 1,
   Half = 2,

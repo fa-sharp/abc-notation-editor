@@ -171,13 +171,18 @@ export default class EditorState {
     )
       return;
 
-    const abcNote =
-      typeof midiNumOrNoteName === "number"
-        ? getAbcNoteFromMidiNum(midiNumOrNoteName, options?.accidental)
-        : getAbcNoteFromNoteName(midiNumOrNoteName, options?.accidental);
-
     const currentMeasure = this.measures.at(-1);
     if (!currentMeasure) return;
+
+    const abcNote =
+      typeof midiNumOrNoteName === "number"
+        ? getAbcNoteFromMidiNum(
+            midiNumOrNoteName,
+            options?.accidental,
+            currentMeasure,
+            this.keySig,
+          )
+        : getAbcNoteFromNoteName(midiNumOrNoteName, options?.accidental);
 
     let abcToAdd = "";
     if (!options?.beamed) abcToAdd += " ";
@@ -232,12 +237,15 @@ export default class EditorState {
       if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
     }
 
-    const midiNum = getMidiNumForAddedNote(
-      abcNote,
-      currentMeasure,
-      options?.accidental,
-      this.keySig,
-    );
+    const midiNum =
+      typeof midiNumOrNoteName === "number"
+        ? midiNumOrNoteName
+        : getMidiNumForAddedNote(
+            abcNote,
+            currentMeasure,
+            options?.accidental,
+            this.keySig,
+          );
     if (midiNum && !options?.rest) this.onNote?.(midiNum);
 
     // Add the note to the ABC score, and select the note

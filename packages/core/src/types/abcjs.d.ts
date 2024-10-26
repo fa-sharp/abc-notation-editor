@@ -12,5 +12,5 @@ export interface AbcjsNote extends VoiceItemNote, AbcElem {
 }
 
 interface Pitch {
-  accidental?: "flat" | "sharp" | "natural";
+  accidental?: "flat" | "sharp" | "natural" | "dblsharp" | "dblflat";
 }

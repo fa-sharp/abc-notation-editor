@@ -7,7 +7,7 @@ export default function BasicExample() {
   return (
     <div>
       <Editor
-        initialAbc={`X:1\nQ:120\nK:Bb clef=bass\n%%stretchlast false\n`}
+        initialAbc={`X:1\nQ:120\nK:C#m clef=bass\n%%stretchlast false\n`}
         scale={1.1}
         responsive
         onChange={setAbc}
