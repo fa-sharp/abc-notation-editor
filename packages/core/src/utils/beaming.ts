@@ -5,7 +5,7 @@ export function getBeamingOfAbcjsNote(note: AbcjsNote) {
     ? true
     : note.endBeam
       ? false
-      : note.abselem.beam
+      : note.abselem?.beam
         ? true
         : !note.startBeam && !note.endBeam
           ? false

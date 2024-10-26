@@ -1,10 +1,7 @@
-import { AbcNotation, Midi, Note, Pcset, Scale } from "tonal";
+import { AbcNotation, Midi, Note } from "tonal";
 import type { KeySignatureType } from "~src/parsing/headers";
 import type { Measure } from "~src/parsing/measures";
 import { Accidental, AccidentalToAlt } from "../types/constants";
-
-const C_MAJOR_NOTES = Scale.get("C Major").notes;
-const isWhiteKey = Pcset.isNoteIncludedIn(C_MAJOR_NOTES);
 
 /**
  * Get the note in ABC notation from the given MIDI pitch (0-127). Can pass in the current measure
@@ -40,7 +37,7 @@ export function getAbcNoteFromMidiNum(
           AccidentalToAlt[lastAcc]
         )
           return note + octave;
-        return isWhiteKey(noteName) ? "=" + abcNote : abcNote;
+        return noteData.alt === 0 ? "=" + abcNote : abcNote;
       }
     }
     if (foundEnharmonic) {
@@ -54,7 +51,7 @@ export function getAbcNoteFromMidiNum(
         return `${needNatural ? "=" : ""}${AbcNotation.scientificToAbcNotation(foundEnharmonic.note)}`;
       }
     }
-    if (noteData.alt === 0) {
+    if (keySig && noteData.alt === 0) {
       return "=" + AbcNotation.scientificToAbcNotation(noteName);
     }
     return AbcNotation.scientificToAbcNotation(noteName);
