@@ -277,6 +277,18 @@ export default function EditorControls() {
           <EditorControlIcon icon={Icon.Natural} size={iconSize} />
         </button>
         <button
+          title="Toggle tied note"
+          role="switch"
+          aria-checked={selectedNote?.data?.tied}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.tied,
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={onToggleTie}
+        >
+          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
+        </button>
+        <button
           title="Toggle beamed note"
           role="switch"
           aria-checked={selectedNote?.data?.beamed}
@@ -292,18 +304,6 @@ export default function EditorControls() {
           }
         >
           <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
-        </button>
-        <button
-          title="Toggle tied note"
-          role="switch"
-          aria-checked={selectedNote?.data?.tied}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: selectedNote?.data?.tied,
-          })}
-          disabled={!selectedNote?.data || selectedNote.data.rest}
-          onClick={onToggleTie}
-        >
-          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
         </button>
         <div className={styles.spacer}></div>
         <button
