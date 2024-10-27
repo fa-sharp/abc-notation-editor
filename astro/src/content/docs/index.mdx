@@ -1,6 +1,6 @@
 ---
 title: ABC Notation Editor
-description: Get started building your docs site with Starlight.
+description: A notation editor for writing simple melodies/tunes.
 template: splash
 hero:
   tagline: A notation editor for writing simple melodies/tunes, built on
@@ -24,12 +24,10 @@ hero:
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
-import BasicEditor from "../../components/ReactBasicEditor";
+import DemoEditor from "../../components/ReactDemoEditor";
 
 ### Try it:
 
-(Check out the [keyboard shortcuts](reference/keyboard-shortcuts) for faster editing)
-
 <div class="not-content">
-  <BasicEditor client:idle />
+  <DemoEditor client:only="react" />
 </div>
