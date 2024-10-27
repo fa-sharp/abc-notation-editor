@@ -26,7 +26,7 @@
   justify-content: center;
   align-items: center;
 
-  height: 3em;
+  height: clamp(2.6em, 2.2vw, 3em);
   aspect-ratio: 1;
 }
 
