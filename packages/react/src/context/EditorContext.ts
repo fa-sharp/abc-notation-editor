@@ -62,6 +62,10 @@ const useEditor = ({
     }),
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
+  const [history, setHistory] = useState(() => ({
+    canUndo: editorState.current.canUndo,
+    canRedo: editorState.current.canRedo,
+  }));
 
   const renderDiv = useRef<HTMLDivElement | null>(null);
   const setRenderDiv = useCallback(
@@ -166,6 +170,11 @@ const useEditor = ({
     // Reset triplet command if needed
     if (editorState.current.isEndOfTriplet && tripletRef.current === true)
       dispatchEditorCommand({ type: "toggleTriplet" });
+    // Update history state
+    setHistory({
+      canUndo: editorState.current.canUndo,
+      canRedo: editorState.current.canRedo,
+    });
 
     import.meta.env.DEV && console.debug(editorState.current);
   }, [
@@ -223,6 +232,16 @@ const useEditor = ({
 
   const onNewLine = useCallback(() => {
     editorState.current.newLine();
+    setAbc(editorState.current.abc);
+  }, []);
+
+  const onUndo = useCallback(() => {
+    editorState.current.undo();
+    setAbc(editorState.current.abc);
+  }, []);
+
+  const onRedo = useCallback(() => {
+    editorState.current.redo();
     setAbc(editorState.current.abc);
   }, []);
 
@@ -287,6 +306,7 @@ const useEditor = ({
 
   return {
     currentCommands: editorCommands,
+    history,
     abcjsOptions,
     dispatchCommand: dispatchEditorCommand,
     setRenderDiv,
@@ -296,6 +316,8 @@ const useEditor = ({
     onChangeAccidental,
     onToggleBeaming,
     onToggleTie,
+    onUndo,
+    onRedo,
     selectedNote,
   };
 };

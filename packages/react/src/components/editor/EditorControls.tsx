@@ -15,6 +15,9 @@ export default function EditorControls() {
     onChangeAccidental,
     onToggleBeaming,
     onToggleTie,
+    history,
+    onUndo,
+    onRedo,
     selectedNote,
   } = useEditorContext();
 
@@ -322,6 +325,22 @@ export default function EditorControls() {
             <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
           </button>
         )}
+        <button
+          title="Undo"
+          className={clsx(styles.iconButton)}
+          disabled={!history.canUndo}
+          onClick={onUndo}
+        >
+          <EditorControlIcon icon={Icon.Undo} size={iconSize} />
+        </button>
+        <button
+          title="Redo"
+          className={clsx(styles.iconButton)}
+          disabled={!history.canRedo}
+          onClick={onRedo}
+        >
+          <EditorControlIcon icon={Icon.Redo} size={iconSize} />
+        </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
         <legend>Input</legend>

@@ -22,8 +22,11 @@ import TripletIcon from "~dist-icons/Triplet.svg?raw";
 import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
 import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 
-import ChevronLeft from "~dist-icons/ChevronLeft.svg?raw";
-import ChevronRight from "~dist-icons/ChevronRight.svg?raw";
+import ChevronLeftIcon from "~dist-icons/ChevronLeft.svg?raw";
+import ChevronRightIcon from "~dist-icons/ChevronRight.svg?raw";
+
+import UndoIcon from "~dist-icons/Undo.svg?raw";
+import RedoIcon from "~dist-icons/Redo.svg?raw";
 
 const Icon = Object.freeze({
   Backspace: "backspace",
@@ -41,11 +44,13 @@ const Icon = Object.freeze({
   Piano: "piano",
   QuarterNote: "quarterNote",
   QuarterRest: "quarterRest",
+  Redo: "redo",
   Sharp: "sharp",
   SixteenthNote: "sixteenthNote",
   SixteenthRest: "sixteenthRest",
   Tie: "tie",
   Triplet: "triplet",
+  Undo: "undo",
   WholeNote: "wholeNote",
   WholeRest: "wholeRest",
 });
@@ -60,9 +65,9 @@ function getIcon(icon: Icon): string {
     case Icon.Beaming:
       return BeamingIcon;
     case Icon.ChevronLeft:
-      return ChevronLeft;
+      return ChevronLeftIcon;
     case Icon.ChevronRight:
-      return ChevronRight;
+      return ChevronRightIcon;
     case Icon.Dot:
       return DotIcon;
     case Icon.EighthNote:
@@ -85,6 +90,8 @@ function getIcon(icon: Icon): string {
       return QuarterNoteIcon;
     case Icon.QuarterRest:
       return QuarterRestIcon;
+    case Icon.Redo:
+      return RedoIcon;
     case Icon.Sharp:
       return SharpIcon;
     case Icon.SixteenthNote:
@@ -95,6 +102,8 @@ function getIcon(icon: Icon): string {
       return TieIcon;
     case Icon.Triplet:
       return TripletIcon;
+    case Icon.Undo:
+      return UndoIcon;
     case Icon.WholeNote:
       return WholeNoteIcon;
     case Icon.WholeRest:

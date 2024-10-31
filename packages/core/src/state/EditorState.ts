@@ -1,4 +1,3 @@
-import { parseOnly } from "abcjs";
 import type {
   AbcElem,
   ClickListenerAnalysis,
@@ -6,32 +5,35 @@ import type {
   TuneObject,
   VoiceItem,
 } from "abcjs";
-import type { AbcjsNote } from "../types/abcjs";
-import { type Measure, parseMeasuresFromAbcjs } from "../parsing/measures";
-import { Accidental, Clef, Rhythm } from "../types/constants";
-import { getAbcRhythm, getRhythmFromAbcDuration } from "../utils/rhythm";
+import { parseOnly } from "abcjs";
+import { AbcNotation, Key, TimeSignature } from "tonal";
 import {
-  getAbcNoteFromMidiNum,
-  getAbcNoteFromNoteName,
-  getMidiNumForAddedNote,
-  getMidiNumForEditedNote,
-} from "../utils/notes";
+  type ChordTemplateMeasure,
+  parseChordTemplate,
+} from "~src/parsing/chordTemplate";
 import {
   type KeySignatureType,
   type TimeSignatureType,
   parseAbcHeaders,
 } from "~src/parsing/headers";
-import { AbcNotation, Key, TimeSignature } from "tonal";
-import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
-import {
-  type ChordTemplateMeasure,
-  parseChordTemplate,
-} from "~src/parsing/chordTemplate";
-import { equalUpToN } from "~src/utils/numbers";
+import { type Measure, parseMeasuresFromAbcjs } from "~src/parsing/measures";
+import type { AbcjsNote } from "~src/types/abcjs";
+import { Accidental, Clef, Rhythm } from "~src/types/constants";
 import { getBeamingOfAbcjsNote } from "~src/utils/beaming";
+import { History } from "~src/utils/history";
+import {
+  getAbcNoteFromMidiNum,
+  getAbcNoteFromNoteName,
+  getMidiNumForAddedNote,
+  getMidiNumForEditedNote,
+} from "~src/utils/notes";
+import { equalUpToN } from "~src/utils/numbers";
+import { getAbcRhythm, getRhythmFromAbcDuration } from "~src/utils/rhythm";
+import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
 
 export default class EditorState {
   abc: string;
+  history = new History();
   tuneObject: TuneObject | null = null;
   tuneLines: VoiceItem[][] = [];
   measures: Measure[] = [];
@@ -249,7 +251,7 @@ export default class EditorState {
     if (midiNum && !options?.rest) this.onNote?.(midiNum);
 
     // Add the note to the ABC score, and select the note
-    this.abc += abcToAdd;
+    this.history.addEdit(this.abc, (this.abc += abcToAdd));
     this.selected = {
       measureIdx: this.measures.length - 1,
       noteIdx: currentMeasure.notes.length,
@@ -436,7 +438,12 @@ export default class EditorState {
     )
       endIdx += 1;
     else if (data.beamed === false && this.abc[endIdx] !== " ") newAbc += " ";
-    this.abc = this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx);
+
+    this.history.addEdit(
+      this.abc,
+      (this.abc =
+        this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx)),
+    );
 
     const midiNum = getMidiNumForEditedNote(
       data.note,
@@ -514,7 +521,7 @@ export default class EditorState {
     if (!lastItem) return;
 
     const { measureIdx, item } = lastItem;
-    this.abc = this.abc.slice(0, item.startChar).replace(/ +$/, "");
+    let newAbc = this.abc.slice(0, item.startChar).replace(/ +$/, "");
 
     if (this.chordTemplate) {
       const currentMeasure = this.measures.at(measureIdx);
@@ -526,8 +533,10 @@ export default class EditorState {
         ?.find((chord) =>
           equalUpToN(chord.fractionalBeat, durationWithRemovedNote),
         );
-      if (chordToAdd) this.abc += ` "^${chordToAdd.name}"`;
+      if (chordToAdd) newAbc += ` "^${chordToAdd.name}"`;
     }
+
+    this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   newLine() {
@@ -535,15 +544,24 @@ export default class EditorState {
 
     const lastBarlineIndex = this.abc.lastIndexOf("|");
     if (lastBarlineIndex === -1) return;
-    this.abc = this.abc.slice(0, lastBarlineIndex + 1);
-    this.abc = this.abc + "\n";
+    let newAbc = this.abc.slice(0, lastBarlineIndex + 1) + "\n";
 
     if (this.chordTemplate) {
       const chordToAdd = this.chordTemplate
         ?.at(this.measures.length - 1)
         ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
-      if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
+      if (chordToAdd) newAbc += `"^${chordToAdd.name}"`;
     }
+
+    this.history.addEdit(this.abc, (this.abc = newAbc));
+  }
+
+  undo() {
+    this.abc = this.history.undo(this.abc);
+  }
+
+  redo() {
+    this.abc = this.history.redo(this.abc);
   }
 
   shouldBeamNextNote(nextRhythm: Rhythm) {
@@ -596,5 +614,13 @@ export default class EditorState {
       measureIdx--;
     }
     return !!lastNote && !!lastNote.endTriplet;
+  }
+
+  get canUndo() {
+    return !!this.history.prevEdit;
+  }
+
+  get canRedo() {
+    return !!this.history.nextEdit;
   }
 }
