@@ -41,7 +41,7 @@
 }
 
 .controls button.selected {
-  background-color: rgb(115, 183, 206);
+  background-color: var(--abc-editor-menu-button);
 }
 
 .controls .spacer {

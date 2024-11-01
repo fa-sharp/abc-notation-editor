@@ -1,6 +1,6 @@
+import { synth } from "abcjs";
 import { useState } from "react";
 import Editor from "../editor/Editor";
-import { synth } from "abcjs";
 
 export default function BasicExample() {
   const [abc, setAbc] = useState("");
@@ -10,12 +10,13 @@ export default function BasicExample() {
         initialAbc={`X:1\nQ:120\nK:C#m clef=bass\n%%stretchlast false\n`}
         scale={1.1}
         responsive
-        onChange={setAbc}
         enableKbdShortcuts
         chordTemplate={sampleChordTemplate}
         ending={{ lastBarline: "thin-thin", lastMeasure: 8 }}
+        errors={{ measureDuration: true }}
         lineBreaks={[3]}
         jazzChords
+        onChange={setAbc}
         onNote={noteEventHandler}
       />
       <br />

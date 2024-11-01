@@ -5,6 +5,7 @@ import Score from "../notation/Score";
 import Keyboard from "../piano/Keyboard";
 import EditorControls from "./EditorControls";
 
+import { EditorState } from "@abc-editor/core";
 import styles from "./Editor.module.css";
 
 export type EditorChangeHandler = (
@@ -19,9 +20,12 @@ export type EditorProps = {
   jazzChords?: boolean;
   format?: AbcVisualParams["format"];
   visualTranspose?: AbcVisualParams["visualTranspose"];
-  ending?: {
-    lastMeasure: number;
-    lastBarline?: "thin-thin" | "thin-thick";
+  ending?: EditorState["ending"];
+  errors?: EditorState["errorOptions"];
+  colors?: {
+    errorColor?: string;
+    selectionColor?: string;
+    menuButtonColor?: string;
   };
   /** Manually set the last measure number (zero-based) for each line, e.g. [3,7,11] */
   lineBreaks?: AbcVisualParams["lineBreaks"];
@@ -75,6 +79,12 @@ export default function Editor({
   autoLineBreaks,
   lineBreaks,
   ending,
+  errors,
+  colors: {
+    errorColor = "#ff0000",
+    selectionColor = "rgb(80, 100, 255)",
+    menuButtonColor = "rgb(100, 183, 206)",
+  } = {},
   responsive = false,
   scale = 1,
   enableKbdShortcuts = false,
@@ -89,6 +99,7 @@ export default function Editor({
       jazzchords: jazzChords,
       format,
       visualTranspose,
+      selectionColor,
       lineBreaks: lineBreaks ? [lineBreaks] : undefined,
       ...(autoLineBreaks?.staffWidth
         ? {
@@ -108,6 +119,7 @@ export default function Editor({
       format,
       visualTranspose,
       lineBreaks,
+      selectionColor,
       autoLineBreaks?.staffWidth,
       autoLineBreaks?.minSpacing,
       autoLineBreaks?.maxSpacing,
@@ -122,20 +134,30 @@ export default function Editor({
         chordTemplate,
         abcjsOptions,
         ending,
+        errors,
         enableKbdShortcuts,
         onChange,
         onNote,
       }}
     >
-      <InnerEditor />
+      <InnerEditor colors={{ selectionColor, menuButtonColor, errorColor }} />
     </EditorProvider>
   );
 }
 
-function InnerEditor() {
+function InnerEditor(props: { colors: NonNullable<EditorProps["colors"]> }) {
   const { currentCommands } = useEditorContext();
   return (
-    <div className={styles.editor}>
+    <div
+      className={styles.editor}
+      style={
+        {
+          "--abc-editor-error": props.colors.errorColor,
+          "--abc-editor-selection": props.colors.selectionColor,
+          "--abc-editor-menu-button": props.colors.menuButtonColor,
+        } as React.CSSProperties
+      }
+    >
       <EditorControls />
       {currentCommands.showKeyboard && <Keyboard startKey={60} endKey={84} />}
       <Score />

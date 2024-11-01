@@ -42,6 +42,9 @@ export default class EditorState {
   timeSig: TimeSignatureType;
   clef: Clef;
 
+  errorOptions?: {
+    measureDuration?: boolean;
+  };
   chordTemplate?: ChordTemplateMeasure[];
   ending?: {
     lastMeasure: number;
@@ -70,6 +73,7 @@ export default class EditorState {
     options?: {
       chordTemplate?: string;
       ending?: EditorState["ending"];
+      errors?: EditorState["errorOptions"];
       onSelected?: (selected: EditorState["selected"]) => void;
       onNote?: (midiNum: number) => void;
     },
@@ -110,6 +114,7 @@ export default class EditorState {
         if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
       }
     }
+    this.errorOptions = options?.errors;
     this.ending = options?.ending;
     this.onSelected = options?.onSelected;
     this.onNote = options?.onNote;
@@ -124,6 +129,16 @@ export default class EditorState {
       return arr;
     }, []);
     this.measures = parseMeasuresFromAbcjs(this.tuneLines, this.timeSig);
+    if (this.errorOptions?.measureDuration)
+      this.measures
+        .filter((m) => m.duration > 1.0001)
+        .forEach((measure) => {
+          measure.notes.forEach((note) =>
+            note.abselem?.elemset.forEach((elem) =>
+              elem.setAttribute("fill", "var(--abc-editor-error)"),
+            ),
+          );
+        });
     // Update selected note and re-highlight if needed
     if (this.selected) {
       const existingNote = this.measures

@@ -27,6 +27,7 @@ interface EditorProviderProps {
   chordTemplate?: string;
   enableKbdShortcuts?: boolean;
   ending?: EditorProps["ending"];
+  errors?: EditorProps["errors"];
   onChange?: (
     abc: string,
     tuneObject: TuneObject,
@@ -41,6 +42,7 @@ const useEditor = ({
   enableKbdShortcuts,
   chordTemplate,
   ending,
+  errors,
   onChange = () => {},
   onNote,
 }: EditorProviderProps) => {
@@ -59,6 +61,7 @@ const useEditor = ({
       ending,
       onSelected,
       onNote,
+      errors,
     }),
   );
   const [abc, setAbc] = useState(() => editorState.current.abc);
