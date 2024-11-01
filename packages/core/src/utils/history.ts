@@ -37,7 +37,7 @@ export class History {
   }
 
   get prevEdit() {
-    return this.edits.at(this.editIdx - 1);
+    return this.edits[this.editIdx - 1];
   }
 
   get nextEdit() {
