@@ -25,90 +25,87 @@ import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 import ChevronLeftIcon from "~dist-icons/ChevronLeft.svg?raw";
 import ChevronRightIcon from "~dist-icons/ChevronRight.svg?raw";
 
-import UndoIcon from "~dist-icons/Undo.svg?raw";
 import RedoIcon from "~dist-icons/Redo.svg?raw";
+import UndoIcon from "~dist-icons/Undo.svg?raw";
 
-const Icon = Object.freeze({
-  Backspace: "backspace",
-  Beaming: "beaming",
-  ChevronLeft: "chevronLeft",
-  ChevronRight: "chevronRight",
-  Dot: "dot",
-  EighthNote: "eighthNote",
-  EighthRest: "eighthRest",
-  Flat: "flat",
-  HalfNote: "halfNote",
-  HalfRest: "halfRest",
-  Natural: "natural",
-  NewLine: "newLine",
-  Piano: "piano",
-  QuarterNote: "quarterNote",
-  QuarterRest: "quarterRest",
-  Redo: "redo",
-  Sharp: "sharp",
-  SixteenthNote: "sixteenthNote",
-  SixteenthRest: "sixteenthRest",
-  Tie: "tie",
-  Triplet: "triplet",
-  Undo: "undo",
-  WholeNote: "wholeNote",
-  WholeRest: "wholeRest",
-});
-
-type Icon = (typeof Icon)[keyof typeof Icon];
+type Icon =
+  | "backspace"
+  | "beaming"
+  | "chevronLeft"
+  | "chevronRight"
+  | "dot"
+  | "eighthNote"
+  | "eighthRest"
+  | "flat"
+  | "halfNote"
+  | "halfRest"
+  | "natural"
+  | "newLine"
+  | "piano"
+  | "quarterNote"
+  | "quarterRest"
+  | "redo"
+  | "sharp"
+  | "sixteenthNote"
+  | "sixteenthRest"
+  | "tie"
+  | "triplet"
+  | "undo"
+  | "wholeNote"
+  | "wholeRest";
 
 /** Get the raw SVG of the given icon */
 function getIcon(icon: Icon): string {
   switch (icon) {
-    case Icon.Backspace:
+    case "backspace":
       return BackspaceIcon;
-    case Icon.Beaming:
+    case "beaming":
       return BeamingIcon;
-    case Icon.ChevronLeft:
+    case "chevronLeft":
       return ChevronLeftIcon;
-    case Icon.ChevronRight:
+    case "chevronRight":
       return ChevronRightIcon;
-    case Icon.Dot:
+    case "dot":
       return DotIcon;
-    case Icon.EighthNote:
+    case "eighthNote":
       return EighthNoteIcon;
-    case Icon.EighthRest:
+    case "eighthRest":
       return EighthRestIcon;
-    case Icon.Flat:
+    case "flat":
       return FlatIcon;
-    case Icon.HalfNote:
+    case "halfNote":
       return HalfNoteIcon;
-    case Icon.HalfRest:
+    case "halfRest":
       return HalfRestIcon;
-    case Icon.Natural:
+    case "natural":
       return NaturalIcon;
-    case Icon.NewLine:
+    case "newLine":
       return NewLineIcon;
-    case Icon.Piano:
+    case "piano":
       return PianoIcon;
-    case Icon.QuarterNote:
+    case "quarterNote":
       return QuarterNoteIcon;
-    case Icon.QuarterRest:
+    case "quarterRest":
       return QuarterRestIcon;
-    case Icon.Redo:
+    case "redo":
       return RedoIcon;
-    case Icon.Sharp:
+    case "sharp":
       return SharpIcon;
-    case Icon.SixteenthNote:
+    case "sixteenthNote":
       return SixteenthNoteIcon;
-    case Icon.SixteenthRest:
+    case "sixteenthRest":
       return SixteenthRestIcon;
-    case Icon.Tie:
+    case "tie":
       return TieIcon;
-    case Icon.Triplet:
+    case "triplet":
       return TripletIcon;
-    case Icon.Undo:
+    case "undo":
       return UndoIcon;
-    case Icon.WholeNote:
+    case "wholeNote":
       return WholeNoteIcon;
-    case Icon.WholeRest:
+    case "wholeRest":
       return WholeRestIcon;
   }
 }
 
-export { Icon, getIcon };
+export { getIcon, type Icon };

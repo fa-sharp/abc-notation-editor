@@ -1,4 +1,3 @@
-import { Icon } from "@abc-editor/core";
 import { useState } from "react";
 import { useEditorContext } from "../../context/EditorContext";
 import EditorControlIcon from "../editor/EditorControlIcon";
@@ -27,7 +26,7 @@ export default function Keyboard({ startKey, endKey }: KeyboardProps) {
         onClick={() => setCurrentStartKey((prev) => prev - 12)}
         disabled={currentStartKey <= 12}
       >
-        <EditorControlIcon icon={Icon.ChevronLeft} size={26} />
+        <EditorControlIcon icon="chevronLeft" size={26} />
       </button>
       <div>
         {keys.map((isPlayed, idx) => {
@@ -54,7 +53,7 @@ export default function Keyboard({ startKey, endKey }: KeyboardProps) {
         onClick={() => setCurrentStartKey((prev) => prev + 12)}
         disabled={currentStartKey >= 96}
       >
-        <EditorControlIcon icon={Icon.ChevronRight} size={26} />
+        <EditorControlIcon icon="chevronRight" size={26} />
       </button>
     </div>
   );

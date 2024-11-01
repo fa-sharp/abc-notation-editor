@@ -1,4 +1,4 @@
-import { Accidental, Icon, Rhythm } from "@abc-editor/core";
+import { Accidental, Rhythm } from "@abc-editor/core";
 import clsx from "clsx";
 import { useEditorContext } from "../../context/EditorContext";
 import EditorControlIcon from "./EditorControlIcon";
@@ -41,7 +41,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon icon={Icon.Flat} size={iconSize} />
+          <EditorControlIcon icon="flat" size={iconSize} />
         </button>
         <button
           title="Sharp"
@@ -57,7 +57,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
+          <EditorControlIcon icon="sharp" size={iconSize} />
         </button>
         <button
           title="Natural"
@@ -74,7 +74,7 @@ export default function EditorControls() {
             })
           }
         >
-          <EditorControlIcon icon={Icon.Natural} size={iconSize} />
+          <EditorControlIcon icon="natural" size={iconSize} />
         </button>
         <div className={styles.spacer}></div>
         <button
@@ -89,9 +89,9 @@ export default function EditorControls() {
           }
         >
           {currentCommands.rest ? (
-            <EditorControlIcon icon={Icon.WholeRest} size={iconSize} />
+            <EditorControlIcon icon="wholeRest" size={iconSize} />
           ) : (
-            <EditorControlIcon icon={Icon.WholeNote} size={iconSize} />
+            <EditorControlIcon icon="wholeNote" size={iconSize} />
           )}
         </button>
         <button
@@ -106,9 +106,9 @@ export default function EditorControls() {
           }
         >
           {currentCommands.rest ? (
-            <EditorControlIcon icon={Icon.HalfRest} size={iconSize} />
+            <EditorControlIcon icon="halfRest" size={iconSize} />
           ) : (
-            <EditorControlIcon icon={Icon.HalfNote} size={iconSize} />
+            <EditorControlIcon icon="halfNote" size={iconSize} />
           )}
         </button>
         <button
@@ -123,9 +123,9 @@ export default function EditorControls() {
           }
         >
           {currentCommands.rest ? (
-            <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
+            <EditorControlIcon icon="quarterRest" size={iconSize} />
           ) : (
-            <EditorControlIcon icon={Icon.QuarterNote} size={iconSize} />
+            <EditorControlIcon icon="quarterNote" size={iconSize} />
           )}
         </button>
         <button
@@ -140,9 +140,9 @@ export default function EditorControls() {
           }
         >
           {currentCommands.rest ? (
-            <EditorControlIcon icon={Icon.EighthRest} size={iconSize} />
+            <EditorControlIcon icon="eighthRest" size={iconSize} />
           ) : (
-            <EditorControlIcon icon={Icon.EighthNote} size={iconSize} />
+            <EditorControlIcon icon="eighthNote" size={iconSize} />
           )}
         </button>
         <button
@@ -157,9 +157,9 @@ export default function EditorControls() {
           }
         >
           {currentCommands.rest ? (
-            <EditorControlIcon icon={Icon.SixteenthRest} size={iconSize} />
+            <EditorControlIcon icon="sixteenthRest" size={iconSize} />
           ) : (
-            <EditorControlIcon icon={Icon.SixteenthNote} size={iconSize} />
+            <EditorControlIcon icon="sixteenthNote" size={iconSize} />
           )}
         </button>
         <div className={styles.spacer}></div>
@@ -172,7 +172,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleDotted" })}
         >
-          <EditorControlIcon icon={Icon.Dot} size={iconSize} />
+          <EditorControlIcon icon="dot" size={iconSize} />
         </button>
         <button
           title="Toggle rest"
@@ -183,7 +183,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleRest" })}
         >
-          <EditorControlIcon icon={Icon.QuarterRest} size={iconSize} />
+          <EditorControlIcon icon="quarterRest" size={iconSize} />
         </button>
         <button
           title="Toggle triplet"
@@ -194,7 +194,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleTriplet" })}
         >
-          <EditorControlIcon icon={Icon.Triplet} size={iconSize} />
+          <EditorControlIcon icon="triplet" size={iconSize} />
         </button>
         <button
           title="Toggle tied note"
@@ -205,7 +205,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleTied" })}
         >
-          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
+          <EditorControlIcon icon="tie" size={iconSize} />
         </button>
         <button
           title="Toggle beamed note"
@@ -217,7 +217,7 @@ export default function EditorControls() {
           onClick={() => dispatchCommand({ type: "toggleBeamed" })}
           disabled={![8, 16].includes(currentCommands.rhythm)}
         >
-          <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
+          <EditorControlIcon icon="beaming" size={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -239,7 +239,7 @@ export default function EditorControls() {
             )
           }
         >
-          <EditorControlIcon icon={Icon.Flat} size={iconSize} />
+          <EditorControlIcon icon="flat" size={iconSize} />
         </button>
         <button
           title="Toggle sharp"
@@ -258,7 +258,7 @@ export default function EditorControls() {
             )
           }
         >
-          <EditorControlIcon icon={Icon.Sharp} size={iconSize} />
+          <EditorControlIcon icon="sharp" size={iconSize} />
         </button>
         <button
           title="Toggle natural"
@@ -277,7 +277,7 @@ export default function EditorControls() {
             )
           }
         >
-          <EditorControlIcon icon={Icon.Natural} size={iconSize} />
+          <EditorControlIcon icon="natural" size={iconSize} />
         </button>
         <button
           title="Toggle tied note"
@@ -289,7 +289,7 @@ export default function EditorControls() {
           disabled={!selectedNote?.data || selectedNote.data.rest}
           onClick={onToggleTie}
         >
-          <EditorControlIcon icon={Icon.Tie} size={iconSize} />
+          <EditorControlIcon icon="tie" size={iconSize} />
         </button>
         <button
           title="Toggle beamed note"
@@ -306,7 +306,7 @@ export default function EditorControls() {
             selectedNote.data.beamed === undefined
           }
         >
-          <EditorControlIcon icon={Icon.Beaming} size={iconSize} />
+          <EditorControlIcon icon="beaming" size={iconSize} />
         </button>
         <div className={styles.spacer}></div>
         <button
@@ -314,7 +314,7 @@ export default function EditorControls() {
           className={clsx(styles.iconButton)}
           onClick={onBackspace}
         >
-          <EditorControlIcon icon={Icon.Backspace} size={iconSize} />
+          <EditorControlIcon icon="backspace" size={iconSize} />
         </button>
         {!abcjsOptions?.lineBreaks && !abcjsOptions?.wrap && (
           <button
@@ -322,7 +322,7 @@ export default function EditorControls() {
             className={clsx(styles.iconButton)}
             onClick={onNewLine}
           >
-            <EditorControlIcon icon={Icon.NewLine} size={iconSize} />
+            <EditorControlIcon icon="newLine" size={iconSize} />
           </button>
         )}
         <button
@@ -331,7 +331,7 @@ export default function EditorControls() {
           disabled={!history.canUndo}
           onClick={onUndo}
         >
-          <EditorControlIcon icon={Icon.Undo} size={iconSize} />
+          <EditorControlIcon icon="undo" size={iconSize} />
         </button>
         <button
           title="Redo"
@@ -339,7 +339,7 @@ export default function EditorControls() {
           disabled={!history.canRedo}
           onClick={onRedo}
         >
-          <EditorControlIcon icon={Icon.Redo} size={iconSize} />
+          <EditorControlIcon icon="redo" size={iconSize} />
         </button>
       </fieldset>
       <fieldset className={styles.controlGroup}>
@@ -353,7 +353,7 @@ export default function EditorControls() {
           })}
           onClick={() => dispatchCommand({ type: "toggleShowKeyboard" })}
         >
-          <EditorControlIcon icon={Icon.Piano} size={iconSize} />
+          <EditorControlIcon icon="piano" size={iconSize} />
         </button>
         <button
           title="Toggle MIDI input"

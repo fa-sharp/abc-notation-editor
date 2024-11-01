@@ -1,5 +1,5 @@
 import { Scale } from "tonal";
-import { Icon, getIcon } from "../icons";
+import { getIcon } from "../icons";
 import { Accidental, Clef, Rhythm } from "../types/constants";
 
 /**
@@ -305,15 +305,15 @@ function getCursorIcon({
   const svg = (() => {
     switch (rhythm) {
       case Rhythm.Eighth:
-        return getIcon(rest ? Icon.EighthRest : Icon.EighthNote);
+        return getIcon(rest ? "eighthRest" : "eighthNote");
       case Rhythm.Whole:
-        return getIcon(rest ? Icon.WholeRest : Icon.WholeNote);
+        return getIcon(rest ? "wholeRest" : "wholeNote");
       case Rhythm.Half:
-        return getIcon(rest ? Icon.HalfRest : Icon.HalfNote);
+        return getIcon(rest ? "halfRest" : "halfNote");
       case Rhythm.Quarter:
-        return getIcon(rest ? Icon.QuarterRest : Icon.QuarterNote);
+        return getIcon(rest ? "quarterRest" : "quarterNote");
       case Rhythm.Sixteenth:
-        return getIcon(rest ? Icon.SixteenthRest : Icon.SixteenthNote);
+        return getIcon(rest ? "sixteenthRest" : "sixteenthNote");
     }
   })();
   const div = document.createElement("div");
@@ -332,11 +332,11 @@ function getCursorIcon({
     const accidentalSvg = (() => {
       switch (accidental) {
         case Accidental.Sharp:
-          return getIcon(Icon.Sharp);
+          return getIcon("sharp");
         case Accidental.Flat:
-          return getIcon(Icon.Flat);
+          return getIcon("flat");
         case Accidental.Natural:
-          return getIcon(Icon.Natural);
+          return getIcon("natural");
       }
     })();
     const accidentalDiv = document.createElement("div");
@@ -355,7 +355,7 @@ function getCursorIcon({
   }
   if (dotted) {
     const dotDiv = document.createElement("div");
-    dotDiv.innerHTML = getIcon(Icon.Dot);
+    dotDiv.innerHTML = getIcon("dot");
     const svgEl = dotDiv.querySelector("svg");
     if (svgEl)
       Object.assign(svgEl.style, {
@@ -370,7 +370,7 @@ function getCursorIcon({
   }
   if (triplet) {
     const tripletDiv = document.createElement("div");
-    tripletDiv.innerHTML = getIcon(Icon.Triplet);
+    tripletDiv.innerHTML = getIcon("triplet");
     const svgEl = tripletDiv.querySelector("svg");
     if (svgEl)
       Object.assign(svgEl.style, {
