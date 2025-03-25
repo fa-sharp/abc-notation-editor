@@ -1,7 +1,7 @@
+import react from "@astrojs/react";
+import starlight from "@astrojs/starlight";
 import { viteCommonjs } from "@originjs/vite-plugin-commonjs";
 import { defineConfig } from "astro/config";
-import starlight from "@astrojs/starlight";
-import react from "@astrojs/react";
 import Icons from "unplugin-icons/vite";
 
 // https://astro.build/config
@@ -14,6 +14,7 @@ export default defineConfig({
       social: {
         github: "https://github.com/fa-sharp/abc-notation-editor",
       },
+      expressiveCode: { themes: ["github-dark"] },
       sidebar: [
         {
           label: "Guides",
