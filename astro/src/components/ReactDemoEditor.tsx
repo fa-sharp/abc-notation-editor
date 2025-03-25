@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, type ChangeEventHandler } from "react";
-import PlayIcon from "~icons/fa-solid/play";
 import PauseIcon from "~icons/fa-solid/pause";
+import PlayIcon from "~icons/fa-solid/play";
 import StopIcon from "~icons/fa-solid/stop";
 
 import abcjs, { type MidiBuffer, type TuneObject } from "abcjs";
@@ -120,6 +120,10 @@ export default function ReactDemoEditor() {
         onNote={onNote}
         enableKbdShortcuts
         responsive
+        colors={{
+          selectionColor: "var(--sl-color-text-accent)",
+          menuButtonColor: "var(--sl-color-accent-low)",
+        }}
       />
       <br />
       <p>Generated ABC notation:</p>
