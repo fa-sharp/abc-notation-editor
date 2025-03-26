@@ -19,7 +19,6 @@ import {
 import { type Measure, parseMeasuresFromAbcjs } from "~src/parsing/measures";
 import type { AbcjsNote } from "~src/types/abcjs";
 import { Accidental, Clef, Rhythm } from "~src/types/constants";
-import { getBeamingOfAbcjsNote } from "~src/utils/beaming";
 import { History } from "~src/utils/history";
 import {
   getAbcNoteFromMidiNum,
@@ -28,8 +27,9 @@ import {
   getMidiNumForEditedNote,
 } from "~src/utils/notes";
 import { equalUpToN } from "~src/utils/numbers";
-import { getAbcRhythm, getRhythmFromAbcDuration } from "~src/utils/rhythm";
+import { getAbcRhythm } from "~src/utils/rhythm";
 import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
+import { SelectionManager } from "./SelectionManager";
 
 export default class EditorState {
   abc: string;
@@ -51,21 +51,7 @@ export default class EditorState {
     lastBarline?: "thin-thin" | "thin-thick";
   };
 
-  selected: {
-    measureIdx: number;
-    noteIdx: number;
-    data?: {
-      note?: string;
-      rhythm?: Rhythm;
-      accidental?: Accidental;
-      beamed?: boolean;
-      rest?: boolean;
-      dotted?: boolean;
-      triplet?: boolean;
-      tied?: boolean;
-    };
-  } | null = null;
-  onSelected?: (selected: EditorState["selected"]) => void;
+  selectionManager: SelectionManager;
   onNote?: (midiNum: number) => void;
 
   constructor(
@@ -74,10 +60,17 @@ export default class EditorState {
       chordTemplate?: string;
       ending?: EditorState["ending"];
       errors?: EditorState["errorOptions"];
-      onSelected?: (selected: EditorState["selected"]) => void;
+      onSelected?: (selected: SelectionManager["selected"]) => void;
       onNote?: (midiNum: number) => void;
     },
   ) {
+    this.errorOptions = options?.errors;
+    this.ending = options?.ending;
+    this.onNote = options?.onNote;
+    this.selectionManager = new SelectionManager({
+      onNote: options?.onNote,
+      onSelected: options?.onSelected,
+    });
     if (initialAbc) {
       this.abc = initialAbc;
       const { clef, keySig, timeSig } = parseAbcHeaders(initialAbc);
@@ -114,10 +107,6 @@ export default class EditorState {
         if (chordToAdd) this.abc += `"^${chordToAdd.name}"`;
       }
     }
-    this.errorOptions = options?.errors;
-    this.ending = options?.ending;
-    this.onSelected = options?.onSelected;
-    this.onNote = options?.onNote;
   }
 
   updateTuneData(tuneObject: TuneObject) {
@@ -129,9 +118,10 @@ export default class EditorState {
       return arr;
     }, []);
     this.measures = parseMeasuresFromAbcjs(this.tuneLines, this.timeSig);
+    this.selectionManager.renderSelection(this.measures, tuneObject);
     if (this.errorOptions?.measureDuration)
       this.measures
-        .filter((m) => m.duration > 1.0001)
+        .filter((m) => m.duration >= 1.0001)
         .forEach((measure) => {
           measure.notes.forEach((note) =>
             note.abselem?.elemset.forEach((elem) =>
@@ -139,35 +129,6 @@ export default class EditorState {
             ),
           );
         });
-    // Update selected note and re-highlight if needed
-    if (this.selected) {
-      const existingNote = this.measures
-        .at(this.selected.measureIdx)
-        ?.notes.at(this.selected.noteIdx);
-      if (!existingNote) this.selected = null;
-      else {
-        const rhythmData = getRhythmFromAbcDuration(existingNote.duration);
-        this.selected = {
-          measureIdx: this.selected.measureIdx,
-          noteIdx: this.selected.noteIdx,
-          data: {
-            note: existingNote.pitches?.[0]?.name,
-            accidental: existingNote.pitches?.[0]?.accidental as Accidental,
-            tied: !!existingNote.pitches?.[0]?.startTie,
-            rhythm: rhythmData?.rhythm,
-            dotted: rhythmData?.dotted,
-            beamed: getBeamingOfAbcjsNote(existingNote),
-            rest: !!existingNote.rest,
-          },
-        };
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        this.tuneObject?.engraver?.rangeHighlight(
-          existingNote.startChar,
-          existingNote.endChar,
-        );
-      }
-      this.onSelected?.(this.selected);
-    }
   }
 
   addNote(
@@ -267,7 +228,7 @@ export default class EditorState {
 
     // Add the note to the ABC score, and select the note
     this.history.addEdit(this.abc, (this.abc += abcToAdd));
-    this.selected = {
+    this.selectionManager.setSelection({
       measureIdx: this.measures.length - 1,
       noteIdx: currentMeasure.notes.length,
       data: {
@@ -279,7 +240,7 @@ export default class EditorState {
         beamed: options?.beamed,
         rest: options?.rest,
       },
-    };
+    });
   }
 
   selectNote(
@@ -287,127 +248,32 @@ export default class EditorState {
     analysis: ClickListenerAnalysis,
     drag?: ClickListenerDrag,
   ) {
-    let measureIdx = this.measures.findIndex((m) => m.line === analysis.line);
-    if (measureIdx === -1) return;
-    measureIdx += analysis.measure;
-    const measure = this.measures[measureIdx];
-    const noteIdx = measure?.notes.findIndex(
-      (note) => note.startChar === abcElem.startChar,
+    const result = this.selectionManager.selectNote(
+      abcElem,
+      analysis,
+      this.measures,
+      this.keySig,
+      drag,
     );
-    if (noteIdx === undefined || noteIdx === -1) return;
-
-    const note = measure!.notes[noteIdx]!;
-    const rhythmData = getRhythmFromAbcDuration(note.duration);
-    this.selected = {
-      measureIdx,
-      noteIdx,
-      data: {
-        note: note.pitches?.[0]?.name,
-        accidental: note.pitches?.[0]?.accidental as Accidental,
-        tied: !!note.pitches?.[0]?.startTie,
-        rhythm: rhythmData?.rhythm,
-        dotted: rhythmData?.dotted,
-        beamed: getBeamingOfAbcjsNote(note),
-        rest: !!note.rest,
-      },
-    };
-    if (drag && drag.step !== 0) this.moveNote(-drag.step);
-    else {
-      this.onSelected?.(this.selected);
-      if (this.selected.data?.note && measure) {
-        const midiNum = getMidiNumForEditedNote(
-          this.selected.data.note,
-          measure,
-          note.startChar,
-          this.keySig,
-        );
-        if (midiNum) this.onNote?.(midiNum);
-      }
+    if (result?.moveStep) {
+      this.moveNote(result.moveStep);
     }
   }
 
   selectNextNote() {
-    if (!this.selected) return;
-    let { noteIdx, measureIdx } = this.selected;
-    let nextNote = this.measures.at(measureIdx)?.notes.at(++noteIdx);
-    if (!nextNote)
-      nextNote = this.measures.at(++measureIdx)?.notes.at((noteIdx = 0));
-    if (nextNote) {
-      const rhythmData = getRhythmFromAbcDuration(nextNote.duration);
-      this.selected = {
-        noteIdx,
-        measureIdx,
-        data: {
-          note: nextNote.pitches?.[0]?.name,
-          accidental: nextNote.pitches?.[0]?.accidental as Accidental,
-          tied: !!nextNote.pitches?.[0]?.startTie,
-          rhythm: rhythmData?.rhythm,
-          dotted: rhythmData?.dotted,
-          beamed: getBeamingOfAbcjsNote(nextNote),
-          rest: !!nextNote.rest,
-        },
-      };
-      this.onSelected?.(this.selected);
-      if (this.selected.data?.note && this.measures[measureIdx]) {
-        const midiNum = getMidiNumForEditedNote(
-          this.selected.data.note,
-          this.measures[measureIdx]!,
-          nextNote.startChar,
-          this.keySig,
-        );
-        if (midiNum) this.onNote?.(midiNum);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.tuneObject?.engraver?.rangeHighlight(
-        nextNote.startChar,
-        nextNote.endChar,
-      );
-    }
+    this.selectionManager.selectNextNote(
+      this.measures,
+      this.keySig,
+      this.tuneObject,
+    );
   }
 
   selectPrevNote() {
-    if (!this.selected) return;
-    let { noteIdx, measureIdx } = this.selected;
-    let prevNote;
-    if (noteIdx > 0)
-      prevNote = this.measures.at(measureIdx)?.notes.at(--noteIdx);
-    else if (measureIdx > 0) {
-      const prevMeasure = this.measures.at(--measureIdx);
-      if (!prevMeasure) return;
-      noteIdx = prevMeasure.notes.length - 1;
-      prevNote = prevMeasure.notes.at(noteIdx);
-    }
-    if (prevNote) {
-      const rhythmData = getRhythmFromAbcDuration(prevNote.duration);
-      this.selected = {
-        noteIdx,
-        measureIdx,
-        data: {
-          note: prevNote.pitches?.[0]?.name,
-          accidental: prevNote.pitches?.[0]?.accidental as Accidental,
-          tied: !!prevNote.pitches?.[0]?.startTie,
-          rhythm: rhythmData?.rhythm,
-          dotted: rhythmData?.dotted,
-          beamed: getBeamingOfAbcjsNote(prevNote),
-          rest: !!prevNote.rest,
-        },
-      };
-      this.onSelected?.(this.selected);
-      if (this.selected.data?.note && this.measures[measureIdx]) {
-        const midiNum = getMidiNumForEditedNote(
-          this.selected.data.note,
-          this.measures[measureIdx]!,
-          prevNote.startChar,
-          this.keySig,
-        );
-        if (midiNum) this.onNote?.(midiNum);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      this.tuneObject?.engraver?.rangeHighlight(
-        prevNote.startChar,
-        prevNote.endChar,
-      );
-    }
+    this.selectionManager.selectPrevNote(
+      this.measures,
+      this.keySig,
+      this.tuneObject,
+    );
   }
 
   editNote(data: {
@@ -418,9 +284,10 @@ export default class EditorState {
     dotted?: boolean;
     tied?: boolean;
   }) {
-    if (!this.selected) return;
-    const measure = this.measures.at(this.selected.measureIdx);
-    const existingNote = measure?.notes.at(this.selected.noteIdx);
+    const selected = this.selectionManager.getSelected();
+    if (!selected) return;
+    const measure = this.measures.at(selected.measureIdx);
+    const existingNote = measure?.notes.at(selected.noteIdx);
     if (!measure || !existingNote) return;
 
     let newAbc = "";
@@ -470,64 +337,77 @@ export default class EditorState {
   }
 
   moveNote(step: number) {
-    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+    const selected = this.selectionManager.getSelected();
+    if (!selected?.data?.note || !selected.data.rhythm) return;
+    const {
+      data: { note, rhythm, dotted, tied },
+    } = selected;
 
-    const [acc] = AbcNotation.tokenize(this.selected.data.note);
+    const [acc] = AbcNotation.tokenize(note);
     const [, newLetter, newOctave] = AbcNotation.tokenize(
-      AbcNotation.transpose(
-        this.selected.data.note,
-        `M${step < 0 ? step - 1 : step + 1}`,
-      ),
+      AbcNotation.transpose(note, `M${step < 0 ? step - 1 : step + 1}`),
     );
     const newNote = `${acc}${newLetter}${newOctave}`;
 
     this.editNote({
       note: newNote,
-      rhythm: this.selected.data.rhythm,
-      dotted: this.selected.data.dotted,
-      tied: this.selected.data.tied,
+      rhythm,
+      dotted,
+      tied,
     });
   }
 
   changeAccidental(accidental: Accidental) {
-    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+    const selected = this.selectionManager.getSelected();
+    if (!selected?.data?.note || !selected.data.rhythm) return;
+    const {
+      data: { note, rhythm, dotted, tied },
+    } = selected;
 
-    const [, letter, octave] = AbcNotation.tokenize(this.selected.data.note);
+    const [, letter, octave] = AbcNotation.tokenize(note);
     const noteWithoutAcc = AbcNotation.abcToScientificNotation(letter + octave);
     const newNote = getAbcNoteFromNoteName(noteWithoutAcc, accidental);
     this.editNote({
       note: newNote,
-      rhythm: this.selected.data.rhythm,
-      dotted: this.selected.data.dotted,
-      tied: this.selected.data.tied,
+      rhythm,
+      dotted,
+      tied,
     });
   }
 
   toggleBeaming() {
+    const selected = this.selectionManager.getSelected();
     if (
-      !this.selected?.data?.note ||
-      !this.selected.data.rhythm ||
-      this.selected.data.beamed === undefined
+      !selected?.data?.note ||
+      !selected.data.rhythm ||
+      selected.data.beamed === undefined
     )
       return;
+    const {
+      data: { note, rhythm, dotted, tied, beamed },
+    } = selected;
 
     this.editNote({
-      note: this.selected.data.note,
-      rhythm: this.selected.data.rhythm,
-      dotted: this.selected.data.dotted,
-      tied: this.selected.data.tied,
-      beamed: !this.selected.data.beamed,
+      note,
+      rhythm,
+      dotted,
+      tied,
+      beamed: !beamed,
     });
   }
 
   toggleTie() {
-    if (!this.selected?.data?.note || !this.selected.data.rhythm) return;
+    const selected = this.selectionManager.getSelected();
+    if (!selected?.data?.note || !selected.data.rhythm) return;
+    const {
+      data: { note, rhythm, dotted, tied },
+    } = selected;
 
     this.editNote({
-      note: this.selected.data.note,
-      rhythm: this.selected.data.rhythm,
-      dotted: this.selected.data.dotted,
-      tied: !this.selected.data.tied,
+      note,
+      rhythm,
+      dotted,
+      tied: !tied,
     });
   }
 
