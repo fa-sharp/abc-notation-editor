@@ -339,19 +339,22 @@ function getCursorIcon({
           return getIcon("natural");
       }
     })();
-    const accidentalDiv = document.createElement("div");
-    accidentalDiv.innerHTML = accidentalSvg;
-    const svgEl = accidentalDiv.querySelector("svg");
-    if (svgEl)
-      Object.assign(svgEl.style, {
-        position: "absolute",
-        right: `${size * 0.65}px`,
-        top: `${size * 0.35}px`,
-        height: `${size * 0.7}px`,
-        width: `${size * 0.7}px`,
-        color: cursorIconColor,
-      });
-    div.appendChild(accidentalDiv);
+    // TODO add other accidental icons and remove if statement
+    if (accidentalSvg) {
+      const accidentalDiv = document.createElement("div");
+      accidentalDiv.innerHTML = accidentalSvg;
+      const svgEl = accidentalDiv.querySelector("svg");
+      if (svgEl)
+        Object.assign(svgEl.style, {
+          position: "absolute",
+          right: `${size * 0.65}px`,
+          top: `${size * 0.35}px`,
+          height: `${size * 0.7}px`,
+          width: `${size * 0.7}px`,
+          color: cursorIconColor,
+        });
+      div.appendChild(accidentalDiv);
+    }
   }
   if (dotted) {
     const dotDiv = document.createElement("div");

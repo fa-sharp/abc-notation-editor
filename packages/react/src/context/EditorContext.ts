@@ -1,23 +1,24 @@
 import {
-  Accidental,
-  EditorCommandState,
-  EditorState,
-  Rhythm,
-  editorCommandReducer,
-  setupKeyboardListener,
-  setupMIDIListener,
-  setupStaffMouseListeners,
+    Accidental,
+    EditorCommandState,
+    EditorState,
+    Rhythm,
+    type SelectionState,
+    editorCommandReducer,
+    setupKeyboardListener,
+    setupMIDIListener,
+    setupStaffMouseListeners,
 } from "@abc-editor/core";
 import type { AbcVisualParams, TuneObject } from "abcjs";
 import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import {
-  useCallback,
-  useContext,
-  useEffect,
-  useReducer,
-  useRef,
-  useState,
+    useCallback,
+    useContext,
+    useEffect,
+    useReducer,
+    useRef,
+    useState,
 } from "react";
 import { EditorProps } from "../components/editor/Editor";
 
@@ -46,10 +47,9 @@ const useEditor = ({
   onChange = () => {},
   onNote,
 }: EditorProviderProps) => {
-  const [selectedNote, setSelectedNote] =
-    useState<EditorState["selected"]>(null);
+  const [selectedNote, setSelectedNote] = useState<SelectionState | null>(null);
 
-  const onSelected = useCallback((selected: EditorState["selected"]) => {
+  const onSelected = useCallback((selected: SelectionState | null) => {
     if (selected?.data?.note && selected.data.rhythm) {
       setSelectedNote(selected);
     } else setSelectedNote(null);
