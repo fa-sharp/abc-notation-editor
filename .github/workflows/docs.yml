@@ -36,7 +36,7 @@ jobs:
         run: pnpm --filter @abc-editor/docs build
 
       - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "astro/dist/"
 
