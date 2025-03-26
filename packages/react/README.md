@@ -1,3 +1,3 @@
 # ABC Notation Editor - React
 
-This package contains the React components for the ABC visual notation editor.
+This package contains the React components and types for the ABC visual notation editor.
