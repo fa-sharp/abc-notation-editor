@@ -14,7 +14,7 @@ export default defineConfig({
       social: {
         github: "https://github.com/fa-sharp/abc-notation-editor",
       },
-      expressiveCode: { themes: ["github-dark"] },
+      expressiveCode: { themes: ["github-light", "github-dark"] },
       sidebar: [
         {
           label: "Guides",

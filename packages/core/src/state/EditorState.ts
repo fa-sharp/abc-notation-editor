@@ -117,8 +117,11 @@ export default class EditorState {
       if (items) arr.push(items);
       return arr;
     }, []);
+    // Parse measures and render currently selected note
     this.measures = parseMeasuresFromAbcjs(this.tuneLines, this.timeSig);
     this.selectionManager.renderSelection(this.measures, tuneObject);
+
+    // Highlight errors if needed
     if (this.errorOptions?.measureDuration)
       this.measures
         .filter((m) => m.duration >= 1.0001)
