@@ -294,7 +294,55 @@ export default function EditorControls() {
           disabled={!selectedNote?.data || selectedNote.data.rest}
           onClick={() => onToggleDecoration(Decoration.Staccato)}
         >
-          <EditorControlIcon icon="dot" size={iconSize} />
+          <EditorControlIcon icon="staccato" size={iconSize} />
+        </button>
+        <button
+          role="switch"
+          title="Toggle accent"
+          aria-checked={selectedNote?.data?.decorations?.includes(
+            Decoration.Accent,
+          )}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.decorations?.includes(
+              Decoration.Accent,
+            ),
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={() => onToggleDecoration(Decoration.Accent)}
+        >
+          <EditorControlIcon icon="accent" size={iconSize} />
+        </button>
+        <button
+          role="switch"
+          title="Toggle tenuto"
+          aria-checked={selectedNote?.data?.decorations?.includes(
+            Decoration.Tenuto,
+          )}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.decorations?.includes(
+              Decoration.Tenuto,
+            ),
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={() => onToggleDecoration(Decoration.Tenuto)}
+        >
+          <EditorControlIcon icon="tenuto" size={iconSize} />
+        </button>
+        <button
+          role="switch"
+          title="Toggle trill"
+          aria-checked={selectedNote?.data?.decorations?.includes(
+            Decoration.Trill,
+          )}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.decorations?.includes(
+              Decoration.Trill,
+            ),
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={() => onToggleDecoration(Decoration.Trill)}
+        >
+          <EditorControlIcon icon="trill" size={iconSize} />
         </button>
         <button
           title="Toggle tied note"
