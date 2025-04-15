@@ -1,24 +1,25 @@
 import {
-    Accidental,
-    EditorCommandState,
-    EditorState,
-    Rhythm,
-    type SelectionState,
-    editorCommandReducer,
-    setupKeyboardListener,
-    setupMIDIListener,
-    setupStaffMouseListeners,
+  Accidental,
+  Decoration,
+  EditorCommandState,
+  EditorState,
+  Rhythm,
+  type SelectionState,
+  editorCommandReducer,
+  setupKeyboardListener,
+  setupMIDIListener,
+  setupStaffMouseListeners,
 } from "@abc-editor/core";
 import type { AbcVisualParams, TuneObject } from "abcjs";
 import { renderAbc } from "abcjs";
 import { createProvider } from "puro";
 import {
-    useCallback,
-    useContext,
-    useEffect,
-    useReducer,
-    useRef,
-    useState,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
 } from "react";
 import { EditorProps } from "../components/editor/Editor";
 
@@ -215,6 +216,11 @@ const useEditor = ({
     setAbc(editorState.current.abc);
   }, []);
 
+  const onToggleDecoration = useCallback((decoration: Decoration) => {
+    editorState.current.toggleDecoration(decoration);
+    setAbc(editorState.current.abc);
+  }, []);
+
   const onToggleTie = useCallback(() => {
     editorState.current.toggleTie();
     setAbc(editorState.current.abc);
@@ -318,6 +324,7 @@ const useEditor = ({
     onNewLine,
     onChangeAccidental,
     onToggleBeaming,
+    onToggleDecoration,
     onToggleTie,
     onUndo,
     onRedo,

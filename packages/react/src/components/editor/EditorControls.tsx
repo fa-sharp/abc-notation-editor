@@ -1,4 +1,4 @@
-import { Accidental, Rhythm } from "@abc-editor/core";
+import { Accidental, Decoration, Rhythm } from "@abc-editor/core";
 import clsx from "clsx";
 import { useEditorContext } from "../../context/EditorContext";
 import EditorControlIcon from "./EditorControlIcon";
@@ -14,6 +14,7 @@ export default function EditorControls() {
     onNewLine,
     onChangeAccidental,
     onToggleBeaming,
+    onToggleDecoration,
     onToggleTie,
     history,
     onUndo,
@@ -278,6 +279,22 @@ export default function EditorControls() {
           }
         >
           <EditorControlIcon icon="natural" size={iconSize} />
+        </button>
+        <button
+          role="switch"
+          title="Toggle staccato"
+          aria-checked={selectedNote?.data?.decorations?.includes(
+            Decoration.Staccato,
+          )}
+          className={clsx(styles.iconButton, {
+            [styles.selected]: selectedNote?.data?.decorations?.includes(
+              Decoration.Staccato,
+            ),
+          })}
+          disabled={!selectedNote?.data || selectedNote.data.rest}
+          onClick={() => onToggleDecoration(Decoration.Staccato)}
+        >
+          <EditorControlIcon icon="dot" size={iconSize} />
         </button>
         <button
           title="Toggle tied note"
