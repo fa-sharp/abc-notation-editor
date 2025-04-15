@@ -19,6 +19,11 @@ import SharpIcon from "~dist-icons/Sharp.svg?raw";
 import TieIcon from "~dist-icons/Tie.svg?raw";
 import TripletIcon from "~dist-icons/Triplet.svg?raw";
 
+import AccentIcon from "~dist-icons/Accent.svg?raw";
+import StaccatoIcon from "~dist-icons/Staccato.svg?raw";
+import TenutoIcon from "~dist-icons/Tenuto.svg?raw";
+import TrillIcon from "~dist-icons/Trill.svg?raw";
+
 import BackspaceIcon from "~dist-icons/Backspace.svg?raw";
 import NewLineIcon from "~dist-icons/NewLine.svg?raw";
 
@@ -29,6 +34,7 @@ import RedoIcon from "~dist-icons/Redo.svg?raw";
 import UndoIcon from "~dist-icons/Undo.svg?raw";
 
 type Icon =
+  | "accent"
   | "backspace"
   | "beaming"
   | "chevronLeft"
@@ -48,7 +54,10 @@ type Icon =
   | "sharp"
   | "sixteenthNote"
   | "sixteenthRest"
+  | "staccato"
+  | "tenuto"
   | "tie"
+  | "trill"
   | "triplet"
   | "undo"
   | "wholeNote"
@@ -57,6 +66,8 @@ type Icon =
 /** Get the raw SVG of the given icon */
 function getIcon(icon: Icon): string {
   switch (icon) {
+    case "accent":
+      return AccentIcon;
     case "backspace":
       return BackspaceIcon;
     case "beaming":
@@ -95,8 +106,14 @@ function getIcon(icon: Icon): string {
       return SixteenthNoteIcon;
     case "sixteenthRest":
       return SixteenthRestIcon;
+    case "staccato":
+      return StaccatoIcon;
+    case "tenuto":
+      return TenutoIcon;
     case "tie":
       return TieIcon;
+    case "trill":
+      return TrillIcon;
     case "triplet":
       return TripletIcon;
     case "undo":

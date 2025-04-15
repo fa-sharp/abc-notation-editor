@@ -215,7 +215,7 @@ export class NoteManager {
   moveNote(selected: SelectionState | null, step: number): string | null {
     if (!selected?.data?.note || !selected.data.rhythm) return null;
     const {
-      data: { note, rhythm, dotted, tied },
+      data: { note, rhythm, dotted, tied, decorations },
     } = selected;
 
     const [acc] = AbcNotation.tokenize(note);
@@ -229,6 +229,7 @@ export class NoteManager {
       rhythm,
       dotted,
       tied,
+      decorations,
     });
   }
 
@@ -238,7 +239,7 @@ export class NoteManager {
   ): string | null {
     if (!selected?.data?.note || !selected.data.rhythm) return null;
     const {
-      data: { note, rhythm, dotted, tied },
+      data: { note, rhythm, dotted, tied, decorations },
     } = selected;
 
     const [, letter, octave] = AbcNotation.tokenize(note);
@@ -250,6 +251,7 @@ export class NoteManager {
       rhythm,
       dotted,
       tied,
+      decorations,
     });
   }
 
@@ -261,7 +263,7 @@ export class NoteManager {
     )
       return null;
     const {
-      data: { note, rhythm, dotted, tied, beamed },
+      data: { note, rhythm, dotted, tied, beamed, decorations },
     } = selected;
 
     return this.editNote(selected, {
@@ -270,6 +272,7 @@ export class NoteManager {
       dotted,
       tied,
       beamed: !beamed,
+      decorations,
     });
   }
 
@@ -297,7 +300,7 @@ export class NoteManager {
   toggleTie(selected: SelectionState | null): string | null {
     if (!selected?.data?.note || !selected.data.rhythm) return null;
     const {
-      data: { note, rhythm, dotted, tied },
+      data: { note, rhythm, dotted, tied, decorations },
     } = selected;
 
     return this.editNote(selected, {
@@ -305,6 +308,7 @@ export class NoteManager {
       rhythm,
       dotted,
       tied: !tied,
+      decorations,
     });
   }
 
