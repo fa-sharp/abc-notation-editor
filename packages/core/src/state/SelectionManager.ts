@@ -7,7 +7,7 @@ import type {
 import type { KeySignatureType } from "~src/parsing/headers";
 import type { Measure } from "~src/parsing/measures";
 import type { AbcjsNote } from "~src/types/abcjs";
-import type { Accidental, Rhythm } from "~src/types/constants";
+import type { Accidental, Decoration, Rhythm } from "~src/types/constants";
 import { getBeamingOfAbcjsNote } from "~src/utils/beaming";
 import { getMidiNumForEditedNote } from "~src/utils/notes";
 import { getRhythmFromAbcDuration } from "~src/utils/rhythm";
@@ -24,6 +24,7 @@ export interface SelectionState {
     dotted?: boolean;
     triplet?: boolean;
     tied?: boolean;
+    decorations?: Decoration[];
   };
 }
 
@@ -63,8 +64,9 @@ export class SelectionManager {
       noteIdx,
       data: {
         note: note.pitches?.[0]?.name,
-        accidental: note.pitches?.[0]?.accidental as Accidental,
+        accidental: note.pitches?.[0]?.accidental,
         tied: !!note.pitches?.[0]?.startTie,
+        decorations: note.decoration,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
         beamed: getBeamingOfAbcjsNote(note),
@@ -151,8 +153,9 @@ export class SelectionManager {
       const rhythmData = getRhythmFromAbcDuration(note.duration);
       this.selected.data = {
         note: note.pitches?.[0]?.name,
-        accidental: note.pitches?.[0]?.accidental as Accidental,
+        accidental: note.pitches?.[0]?.accidental,
         tied: !!note.pitches?.[0]?.startTie,
+        decorations: note.decoration,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
         beamed: getBeamingOfAbcjsNote(note),
@@ -181,8 +184,9 @@ export class SelectionManager {
       measureIdx,
       data: {
         note: note.pitches?.[0]?.name,
-        accidental: note.pitches?.[0]?.accidental as Accidental,
+        accidental: note.pitches?.[0]?.accidental,
         tied: !!note.pitches?.[0]?.startTie,
+        decorations: note.decoration,
         rhythm: rhythmData?.rhythm,
         dotted: rhythmData?.dotted,
         beamed: getBeamingOfAbcjsNote(note),

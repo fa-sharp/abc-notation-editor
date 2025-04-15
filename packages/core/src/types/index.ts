@@ -1,3 +1,3 @@
-import { Accidental, Rhythm } from "./constants";
+import { Accidental, Decoration, Rhythm } from "./constants";
 
-export { Accidental, Rhythm };
+export { Accidental, Decoration, Rhythm };

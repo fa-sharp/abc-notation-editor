@@ -6,7 +6,7 @@ import type {
   VoiceItem,
 } from "abcjs";
 import { parseOnly } from "abcjs";
-import { AbcNotation, Key, TimeSignature } from "tonal";
+import { Key, TimeSignature } from "tonal";
 import {
   type ChordTemplateMeasure,
   parseChordTemplate,
@@ -18,17 +18,10 @@ import {
 } from "~src/parsing/headers";
 import { type Measure, parseMeasuresFromAbcjs } from "~src/parsing/measures";
 import type { AbcjsNote } from "~src/types/abcjs";
-import { Accidental, Clef, Rhythm } from "~src/types/constants";
+import { Accidental, Clef, Decoration, Rhythm } from "~src/types/constants";
 import { History } from "~src/utils/history";
-import {
-  getAbcNoteFromMidiNum,
-  getAbcNoteFromNoteName,
-  getMidiNumForAddedNote,
-  getMidiNumForEditedNote,
-} from "~src/utils/notes";
 import { equalUpToN } from "~src/utils/numbers";
-import { getAbcRhythm } from "~src/utils/rhythm";
-import { getMeasureDurationFromTimeSig } from "~src/utils/timeSig";
+import { NoteManager } from "./NoteManager";
 import { SelectionManager } from "./SelectionManager";
 
 export default class EditorState {
@@ -51,8 +44,8 @@ export default class EditorState {
     lastBarline?: "thin-thin" | "thin-thick";
   };
 
+  noteManager: NoteManager;
   selectionManager: SelectionManager;
-  onNote?: (midiNum: number) => void;
 
   constructor(
     initialAbc?: string,
@@ -66,7 +59,18 @@ export default class EditorState {
   ) {
     this.errorOptions = options?.errors;
     this.ending = options?.ending;
-    this.onNote = options?.onNote;
+    this.noteManager = new NoteManager(
+      () => ({
+        abc: this.abc,
+        clef: this.clef,
+        keySig: this.keySig,
+        timeSig: this.timeSig,
+        measures: this.measures,
+        chordTemplate: this.chordTemplate,
+        ending: this.ending,
+      }),
+      options?.onNote,
+    );
     this.selectionManager = new SelectionManager({
       onNote: options?.onNote,
       onSelected: options?.onSelected,
@@ -146,104 +150,25 @@ export default class EditorState {
       tied?: boolean;
     },
   ) {
-    if (
-      this.ending?.lastMeasure &&
-      this.measures.length > this.ending.lastMeasure
-    )
-      return;
-
-    const currentMeasure = this.measures.at(-1);
-    if (!currentMeasure) return;
-
-    const abcNote =
-      typeof midiNumOrNoteName === "number"
-        ? getAbcNoteFromMidiNum(
-            midiNumOrNoteName,
-            options?.accidental,
-            currentMeasure,
-            this.keySig,
-          )
-        : getAbcNoteFromNoteName(midiNumOrNoteName, options?.accidental);
-
-    let abcToAdd = "";
-    if (!options?.beamed) abcToAdd += " ";
-
-    // Determine if this is the start of a triplet
-    if (options?.triplet) {
-      const startTripletIdx = currentMeasure.notes.findLastIndex(
-        (n) => !!n.startTriplet,
-      );
-      const endTripletIdx = currentMeasure.notes.findLastIndex(
-        (n) => !!n.endTriplet,
-      );
-      if (startTripletIdx === -1 || startTripletIdx < endTripletIdx) {
-        abcToAdd += "(3";
-      }
+    const { newAbc, addedNoteAbc } =
+      this.noteManager.addNote(midiNumOrNoteName, rhythm, options) || {};
+    if (newAbc) {
+      this.history.addEdit(this.abc, newAbc);
+      this.abc = newAbc;
+      this.selectionManager.setSelection({
+        measureIdx: this.measures.length - 1,
+        noteIdx: this.measures.at(-1)?.notes.length ?? 0,
+        data: {
+          note: addedNoteAbc,
+          rhythm,
+          accidental: options?.accidental,
+          tied: options?.tied,
+          dotted: options?.dotted,
+          beamed: options?.beamed,
+          rest: options?.rest,
+        },
+      });
     }
-
-    // Add the actual note and rhythm
-    abcToAdd += `${!options?.rest ? abcNote : "z"}${getAbcRhythm(
-      rhythm,
-      options?.dotted,
-    )}`;
-    if (options?.tied) abcToAdd += "-";
-
-    // Add barline if we're at the end of the measure
-    const measureTotalDuration = getMeasureDurationFromTimeSig(this.timeSig);
-    const durationWithAddedNote =
-      currentMeasure.duration +
-      (1 / rhythm) *
-        (options?.dotted ? 3 / 2 : 1) *
-        (options?.triplet ? 2 / 3 : 1);
-
-    if (durationWithAddedNote >= measureTotalDuration - 0.001) {
-      if (
-        this.ending?.lastMeasure &&
-        this.measures.length === this.ending.lastMeasure
-      )
-        abcToAdd += this.ending.lastBarline === "thin-thick" ? " |]" : " ||";
-      else {
-        abcToAdd += " |";
-        const chordToAdd = this.chordTemplate
-          ?.at(this.measures.length)
-          ?.find((chord) => equalUpToN(chord.fractionalBeat, 0));
-        if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
-      }
-    } else {
-      const chordToAdd = this.chordTemplate
-        ?.at(this.measures.length - 1)
-        ?.find((chord) =>
-          equalUpToN(chord.fractionalBeat, durationWithAddedNote),
-        );
-      if (chordToAdd) abcToAdd += ` "^${chordToAdd.name}"`;
-    }
-
-    const midiNum =
-      typeof midiNumOrNoteName === "number"
-        ? midiNumOrNoteName
-        : getMidiNumForAddedNote(
-            abcNote,
-            currentMeasure,
-            options?.accidental,
-            this.keySig,
-          );
-    if (midiNum && !options?.rest) this.onNote?.(midiNum);
-
-    // Add the note to the ABC score, and select the note
-    this.history.addEdit(this.abc, (this.abc += abcToAdd));
-    this.selectionManager.setSelection({
-      measureIdx: this.measures.length - 1,
-      noteIdx: currentMeasure.notes.length,
-      data: {
-        note: abcNote,
-        rhythm,
-        accidental: options?.accidental,
-        tied: options?.tied,
-        dotted: options?.dotted,
-        beamed: options?.beamed,
-        rest: options?.rest,
-      },
-    });
   }
 
   selectNote(
@@ -287,131 +212,49 @@ export default class EditorState {
     dotted?: boolean;
     tied?: boolean;
   }) {
-    const selected = this.selectionManager.getSelected();
-    if (!selected) return;
-    const measure = this.measures.at(selected.measureIdx);
-    const existingNote = measure?.notes.at(selected.noteIdx);
-    if (!measure || !existingNote) return;
-
-    let newAbc = "";
-    if (existingNote.startTriplet) newAbc += "(3";
-    newAbc += `${!data.rest ? data.note : "z"}${getAbcRhythm(
-      data.rhythm,
-      data?.dotted,
-    )}`;
-    if (data.tied) newAbc += "-";
-
-    // get starting and ending index of note, ignoring any chord symbol before or spaces after
-    const existingNoteAbc = this.abc.slice(
-      existingNote.startChar,
-      existingNote.endChar,
+    const newAbc = this.noteManager.editNote(
+      this.selectionManager.getSelected(),
+      data,
     );
-    const startIdxOfNoteWithoutChord = /(^\s*"[^"]*"\s*)?(.*)/d.exec(
-      existingNoteAbc,
-    )?.indices?.[2]?.[0];
-    if (typeof startIdxOfNoteWithoutChord !== "number") return;
-    const endIdxOfNoteWithoutSpaces =
-      /\s+$/.exec(existingNoteAbc)?.index || existingNoteAbc.length;
-
-    const startIdx = existingNote.startChar + startIdxOfNoteWithoutChord;
-    let endIdx = existingNote.startChar + endIdxOfNoteWithoutSpaces;
-    if (
-      data.beamed &&
-      this.abc[endIdx] === " " &&
-      this.abc[endIdx + 1] !== '"' &&
-      this.abc[endIdx + 1] !== "|"
-    )
-      endIdx += 1;
-    else if (data.beamed === false && this.abc[endIdx] !== " ") newAbc += " ";
-
-    this.history.addEdit(
-      this.abc,
-      (this.abc =
-        this.abc.slice(0, startIdx) + newAbc + this.abc.slice(endIdx)),
-    );
-
-    const midiNum = getMidiNumForEditedNote(
-      data.note,
-      measure,
-      startIdx,
-      this.keySig,
-    );
-    if (midiNum) this.onNote?.(midiNum);
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   moveNote(step: number) {
-    const selected = this.selectionManager.getSelected();
-    if (!selected?.data?.note || !selected.data.rhythm) return;
-    const {
-      data: { note, rhythm, dotted, tied },
-    } = selected;
-
-    const [acc] = AbcNotation.tokenize(note);
-    const [, newLetter, newOctave] = AbcNotation.tokenize(
-      AbcNotation.transpose(note, `M${step < 0 ? step - 1 : step + 1}`),
+    const newAbc = this.noteManager.moveNote(
+      this.selectionManager.getSelected(),
+      step,
     );
-    const newNote = `${acc}${newLetter}${newOctave}`;
-
-    this.editNote({
-      note: newNote,
-      rhythm,
-      dotted,
-      tied,
-    });
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   changeAccidental(accidental: Accidental) {
-    const selected = this.selectionManager.getSelected();
-    if (!selected?.data?.note || !selected.data.rhythm) return;
-    const {
-      data: { note, rhythm, dotted, tied },
-    } = selected;
-
-    const [, letter, octave] = AbcNotation.tokenize(note);
-    const noteWithoutAcc = AbcNotation.abcToScientificNotation(letter + octave);
-    const newNote = getAbcNoteFromNoteName(noteWithoutAcc, accidental);
-    this.editNote({
-      note: newNote,
-      rhythm,
-      dotted,
-      tied,
-    });
+    const newAbc = this.noteManager.changeAccidental(
+      this.selectionManager.getSelected(),
+      accidental,
+    );
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   toggleBeaming() {
-    const selected = this.selectionManager.getSelected();
-    if (
-      !selected?.data?.note ||
-      !selected.data.rhythm ||
-      selected.data.beamed === undefined
-    )
-      return;
-    const {
-      data: { note, rhythm, dotted, tied, beamed },
-    } = selected;
+    const newAbc = this.noteManager.toggleBeaming(
+      this.selectionManager.getSelected(),
+    );
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
+  }
 
-    this.editNote({
-      note,
-      rhythm,
-      dotted,
-      tied,
-      beamed: !beamed,
-    });
+  toggleDecoration(decoration: Decoration) {
+    const newAbc = this.noteManager.toggleDecoration(
+      this.selectionManager.getSelected(),
+      decoration,
+    );
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   toggleTie() {
-    const selected = this.selectionManager.getSelected();
-    if (!selected?.data?.note || !selected.data.rhythm) return;
-    const {
-      data: { note, rhythm, dotted, tied },
-    } = selected;
-
-    this.editNote({
-      note,
-      rhythm,
-      dotted,
-      tied: !tied,
-    });
+    const newAbc = this.noteManager.toggleTie(
+      this.selectionManager.getSelected(),
+    );
+    if (newAbc) this.history.addEdit(this.abc, (this.abc = newAbc));
   }
 
   backspace() {
@@ -463,25 +306,7 @@ export default class EditorState {
   }
 
   shouldBeamNextNote(nextRhythm: Rhythm) {
-    const lastMeasure = this.measures.at(-1);
-    const lastNote = lastMeasure?.notes.at(-1);
-    if (!lastNote || !lastMeasure || lastNote.endTriplet) return false;
-
-    const currentDuration = lastMeasure.notes.reduce(
-      (acc, curr) => acc + curr.duration * (curr.isTriplet ? 2 / 3 : 1),
-      0,
-    );
-    const currentBeat = currentDuration * 4;
-
-    // TODO handle beaming and different time signatures
-    return (
-      ((nextRhythm === Rhythm.Eighth && ![0, 2].includes(currentBeat)) ||
-        (nextRhythm === Rhythm.Sixteenth &&
-          ![0, 1, 2, 3].includes(currentBeat))) &&
-      [0.125, 0.0625]
-        .concat([0.125, 0.0625].map((v) => v * 1.5))
-        .includes(lastNote.duration)
-    );
+    return this.noteManager.shouldBeamNextNote(nextRhythm);
   }
 
   get lastItem() {

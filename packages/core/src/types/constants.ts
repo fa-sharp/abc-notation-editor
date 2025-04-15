@@ -33,3 +33,14 @@ export const Clef = Object.freeze({
 });
 
 export type Clef = (typeof Clef)[keyof typeof Clef];
+
+export const Decoration = Object.freeze({
+  None: "",
+  Staccato: "staccato",
+  Trill: "trill",
+  Accent: "accent",
+  Tenuto: "tenuto",
+  Wedge: "wedge",
+});
+
+export type Decoration = (typeof Decoration)[keyof typeof Decoration];
