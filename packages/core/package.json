@@ -1,6 +1,6 @@
 {
   "name": "@abc-editor/core",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "author": "fa-sharp",
   "license": "MIT",
   "repository": {
@@ -13,7 +13,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/abc-editor-core.umd.cjs",
+  "main": "dist/abc-editor-core.cjs",
   "module": "dist/abc-editor-core.js",
   "types": "dist/index.d.ts",
   "scripts": {

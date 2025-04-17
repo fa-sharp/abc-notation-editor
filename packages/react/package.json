@@ -1,6 +1,6 @@
 {
   "name": "@abc-editor/react",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "author": "fa-sharp",
   "license": "MIT",
   "repository": {
@@ -13,7 +13,7 @@
   "files": [
     "dist"
   ],
-  "main": "dist/abc-editor.umd.cjs",
+  "main": "dist/abc-editor.cjs",
   "module": "dist/abc-editor.js",
   "types": "dist/index.d.ts",
   "scripts": {

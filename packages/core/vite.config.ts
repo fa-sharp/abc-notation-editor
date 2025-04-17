@@ -10,15 +10,10 @@ export default defineConfig({
       entry: resolve(__dirname, "src/index.ts"),
       name: "ABCEditorCore",
       fileName: "abc-editor-core",
+      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: ["tonal", "abcjs"],
-      output: {
-        globals: {
-          tonal: "Tonal",
-          abcjs: "ABCJS",
-        },
-      },
     },
   },
   plugins: [tsconfigPaths(), dts({ entryRoot: "./src", rollupTypes: true })],
