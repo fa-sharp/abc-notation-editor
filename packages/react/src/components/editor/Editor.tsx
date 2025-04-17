@@ -11,6 +11,7 @@ import styles from "./Editor.module.css";
 export type EditorChangeHandler = (
   abc: string,
   tuneObject: TuneObject,
+  errors?: EditorState["errors"],
   renderDiv?: HTMLDivElement,
 ) => void;
 

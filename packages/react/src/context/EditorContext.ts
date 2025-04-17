@@ -33,6 +33,7 @@ interface EditorProviderProps {
   onChange?: (
     abc: string,
     tuneObject: TuneObject,
+    errors?: EditorState["errors"],
     renderDiv?: HTMLDivElement,
   ) => void;
   onNote?: (midiNum: number) => void;
@@ -164,7 +165,12 @@ const useEditor = ({
       },
     );
     editorState.current.updateTuneData(tuneObject);
-    onChange(abc, tuneObject, renderDiv.current || undefined);
+    onChange(
+      abc,
+      tuneObject,
+      editorState.current.errors,
+      renderDiv.current || undefined,
+    );
 
     // Determine beaming depending on next note
     dispatchEditorCommand({

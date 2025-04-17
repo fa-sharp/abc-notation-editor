@@ -35,6 +35,7 @@ export default class EditorState {
   timeSig: TimeSignatureType;
   clef: Clef;
 
+  errors: Array<{ type: "measureDuration"; measureIdx: number }> = [];
   errorOptions?: {
     measureDuration?: boolean;
   };
@@ -126,16 +127,22 @@ export default class EditorState {
     this.selectionManager.renderSelection(this.measures, tuneObject);
 
     // Highlight errors if needed
-    if (this.errorOptions?.measureDuration)
-      this.measures
-        .filter((m) => m.duration >= 1.0001)
-        .forEach((measure) => {
-          measure.notes.forEach((note) =>
-            note.abselem?.elemset.forEach((elem) =>
-              elem.setAttribute("fill", "var(--abc-editor-error)"),
-            ),
-          );
-        });
+    if (this.errorOptions?.measureDuration) {
+      const tooLongMeasures = this.measures
+        .map((measure, idx) => ({ measure, idx }))
+        .filter(({ measure }) => measure.duration >= 1.0001);
+      tooLongMeasures.forEach(({ measure }) => {
+        measure.notes.forEach((note) =>
+          note.abselem?.elemset.forEach((elem) =>
+            elem.setAttribute("fill", "var(--abc-editor-error)"),
+          ),
+        );
+      });
+      this.errors = tooLongMeasures.map(({ idx }) => ({
+        type: "measureDuration",
+        measureIdx: idx,
+      }));
+    }
   }
 
   addNote(
