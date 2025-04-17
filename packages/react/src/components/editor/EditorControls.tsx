@@ -1,9 +1,11 @@
-import { Accidental, Decoration, Rhythm } from "@abc-editor/core";
+import { Accidental, Rhythm } from "@abc-editor/core";
 import clsx from "clsx";
 import { useEditorContext } from "../../context/EditorContext";
 import EditorControlIcon from "./EditorControlIcon";
 
+import { useMemo } from "react";
 import styles from "./EditorControls.module.css";
+import EditorControlsMenu from "./EditorControlsMenu";
 
 export default function EditorControls() {
   const {
@@ -23,6 +25,37 @@ export default function EditorControls() {
   } = useEditorContext();
 
   const iconSize = 18;
+
+  const accidentalControls = useMemo(
+    () =>
+      (["flat", "sharp", "natural"] as const).map((accidental) => ({
+        label: accidental,
+        checked: selectedNote?.data?.accidental === accidental,
+        disabled: !selectedNote?.data || !!selectedNote.data?.rest,
+        icon: accidental,
+        onClick: () =>
+          onChangeAccidental(
+            selectedNote?.data?.accidental === accidental
+              ? Accidental.None
+              : accidental,
+          ),
+      })),
+    [onChangeAccidental, selectedNote?.data],
+  );
+
+  const decorationControls = useMemo(
+    () =>
+      (["accent", "trill", "staccato", "tenuto"] as const).map(
+        (decoration) => ({
+          label: decoration,
+          checked: !!selectedNote?.data?.decorations?.includes(decoration),
+          disabled: !selectedNote?.data || !!selectedNote.data?.rest,
+          icon: decoration,
+          onClick: () => onToggleDecoration(decoration),
+        }),
+      ),
+    [onToggleDecoration, selectedNote?.data],
+  );
 
   return (
     <div className={styles.controls}>
@@ -223,127 +256,14 @@ export default function EditorControls() {
       </fieldset>
       <fieldset className={styles.controlGroup}>
         <legend>Edit</legend>
-        <button
-          title="Toggle flat"
-          role="switch"
-          aria-checked={selectedNote?.data?.accidental === Accidental.Flat}
-          className={clsx(styles.iconButton, {
-            [styles.selected]:
-              selectedNote?.data?.accidental === Accidental.Flat,
-          })}
-          disabled={!selectedNote || selectedNote.data?.rest}
-          onClick={() =>
-            onChangeAccidental(
-              selectedNote?.data?.accidental === Accidental.Flat
-                ? Accidental.None
-                : Accidental.Flat,
-            )
-          }
-        >
-          <EditorControlIcon icon="flat" size={iconSize} />
-        </button>
-        <button
-          title="Toggle sharp"
-          role="switch"
-          aria-checked={selectedNote?.data?.accidental === Accidental.Sharp}
-          className={clsx(styles.iconButton, {
-            [styles.selected]:
-              selectedNote?.data?.accidental === Accidental.Sharp,
-          })}
-          disabled={!selectedNote || selectedNote.data?.rest}
-          onClick={() =>
-            onChangeAccidental(
-              selectedNote?.data?.accidental === Accidental.Sharp
-                ? Accidental.None
-                : Accidental.Sharp,
-            )
-          }
-        >
-          <EditorControlIcon icon="sharp" size={iconSize} />
-        </button>
-        <button
-          title="Toggle natural"
-          role="switch"
-          aria-checked={selectedNote?.data?.accidental === Accidental.Natural}
-          className={clsx(styles.iconButton, {
-            [styles.selected]:
-              selectedNote?.data?.accidental === Accidental.Natural,
-          })}
-          disabled={!selectedNote || selectedNote.data?.rest}
-          onClick={() =>
-            onChangeAccidental(
-              selectedNote?.data?.accidental === Accidental.Natural
-                ? Accidental.None
-                : Accidental.Natural,
-            )
-          }
-        >
-          <EditorControlIcon icon="natural" size={iconSize} />
-        </button>
-        <button
-          role="switch"
-          title="Toggle staccato"
-          aria-checked={selectedNote?.data?.decorations?.includes(
-            Decoration.Staccato,
-          )}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: selectedNote?.data?.decorations?.includes(
-              Decoration.Staccato,
-            ),
-          })}
-          disabled={!selectedNote?.data || selectedNote.data.rest}
-          onClick={() => onToggleDecoration(Decoration.Staccato)}
-        >
-          <EditorControlIcon icon="staccato" size={iconSize} />
-        </button>
-        <button
-          role="switch"
-          title="Toggle accent"
-          aria-checked={selectedNote?.data?.decorations?.includes(
-            Decoration.Accent,
-          )}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: selectedNote?.data?.decorations?.includes(
-              Decoration.Accent,
-            ),
-          })}
-          disabled={!selectedNote?.data || selectedNote.data.rest}
-          onClick={() => onToggleDecoration(Decoration.Accent)}
-        >
-          <EditorControlIcon icon="accent" size={iconSize} />
-        </button>
-        <button
-          role="switch"
-          title="Toggle tenuto"
-          aria-checked={selectedNote?.data?.decorations?.includes(
-            Decoration.Tenuto,
-          )}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: selectedNote?.data?.decorations?.includes(
-              Decoration.Tenuto,
-            ),
-          })}
-          disabled={!selectedNote?.data || selectedNote.data.rest}
-          onClick={() => onToggleDecoration(Decoration.Tenuto)}
-        >
-          <EditorControlIcon icon="tenuto" size={iconSize} />
-        </button>
-        <button
-          role="switch"
-          title="Toggle trill"
-          aria-checked={selectedNote?.data?.decorations?.includes(
-            Decoration.Trill,
-          )}
-          className={clsx(styles.iconButton, {
-            [styles.selected]: selectedNote?.data?.decorations?.includes(
-              Decoration.Trill,
-            ),
-          })}
-          disabled={!selectedNote?.data || selectedNote.data.rest}
-          onClick={() => onToggleDecoration(Decoration.Trill)}
-        >
-          <EditorControlIcon icon="trill" size={iconSize} />
-        </button>
+        <EditorControlsMenu
+          label="Open accidentals"
+          controls={accidentalControls}
+        />
+        <EditorControlsMenu
+          label="Open articulations"
+          controls={decorationControls}
+        />
         <button
           title="Toggle tied note"
           role="switch"

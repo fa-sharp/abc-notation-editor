@@ -121,8 +121,8 @@ export default function ReactDemoEditor() {
         enableKbdShortcuts
         responsive
         colors={{
-          selectionColor: "var(--sl-color-text-accent)",
-          menuButtonColor: "var(--sl-color-accent-low)",
+          selectionColor: "hsl(234, 90%, 60%)",
+          menuButtonColor: "hsl(234, 88%, 90%)",
         }}
       />
       <br />

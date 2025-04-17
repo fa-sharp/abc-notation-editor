@@ -1,8 +1,8 @@
-import { defineConfig } from "vite";
-import path from "node:path";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import path from "node:path";
+import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,8 +10,8 @@ export default defineConfig({
     minify: false,
     lib: {
       entry: path.resolve(__dirname, "src/index.ts"),
-      name: "ABCEditorReact",
       fileName: "abc-editor",
+      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: [
@@ -21,17 +21,8 @@ export default defineConfig({
         "tonal",
         "abcjs",
         "@abc-editor/core",
+        "@szhsin/react-menu",
       ],
-      output: {
-        globals: {
-          "@abc-editor/core": "ABCEditorCore",
-          react: "React",
-          "react/jsx-runtime": "react/jsx-runtime",
-          "react-dom": "ReactDOM",
-          abcjs: "ABCJS",
-          tonal: "Tonal",
-        },
-      },
     },
   },
   plugins: [

@@ -58,6 +58,7 @@
   },
   "dependencies": {
     "@abc-editor/core": "workspace:^",
+    "@szhsin/react-menu": "^4.4.0",
     "tonal": "^6.4.1"
   }
 }

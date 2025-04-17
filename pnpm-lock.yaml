@@ -121,6 +121,9 @@ importers:
       '@abc-editor/core':
         specifier: workspace:^
         version: link:../core
+      '@szhsin/react-menu':
+        specifier: ^4.4.0
+        version: 4.4.0(react-dom@18.2.0)(react@18.3.1)
       abcjs:
         specifier: ^6.4
         version: 6.4.3
@@ -2258,6 +2261,17 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@szhsin/react-menu@4.4.0(react-dom@18.2.0)(react@18.3.1):
+    resolution: {integrity: sha512-cfZLJq4eL+TzqCbaKRO0SE1zr+uAadyKI/vnnrujQXOhlCtFmQFdH05syuEsBfmrFv34g4Sd2l3K9vQSJjgsgw==}
+    peerDependencies:
+      react: '>=16.14.0'
+      react-dom: '>=16.14.0'
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.2.0(react@18.3.1)
+      react-transition-state: 2.3.1(react-dom@18.2.0)(react@18.3.1)
+    dev: false
 
   /@tonaljs/abc-notation@4.9.1:
     resolution: {integrity: sha512-2fDUdPsFDdgZgyIiZCTYGKy30QiwIQxSXCSN2thGrSMXbQKCp8iTC8haStYcrA+25MPWhWlmvC/pz3tGcTNAqQ==}
@@ -7544,6 +7558,16 @@ packages:
   /react-refresh@0.14.2:
     resolution: {integrity: sha512-jCvmsr+1IUSMUyzOkRcvnVbX3ZYC6g9TDrDbFuFmRDq7PD4yaGbLKNQL6k2jnArV8hjYxh7hVhAZB6s9HDGpZA==}
     engines: {node: '>=0.10.0'}
+
+  /react-transition-state@2.3.1(react-dom@18.2.0)(react@18.3.1):
+    resolution: {integrity: sha512-Z48el73x+7HUEM131dof9YpcQ5IlM4xB+pKWH/lX3FhxGfQaNTZa16zb7pWkC/y5btTZzXfCtglIJEGc57giOw==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.2.0(react@18.3.1)
+    dev: false
 
   /react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
